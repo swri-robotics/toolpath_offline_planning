@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="user_name" default="ros-client"/>
+  <arg name="host_name" default="localhost"/>
+  <arg name="db_password" default="0000"/>
+  <arg name="db_name" default="opp"/>
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find opp_startup)/config/planner.rviz" output="screen" required="true"/>
+
+  <node name="tool_path_planner" pkg="noether" type="surface_raster_planner_server" output="screen" respawn="true"/>
+
+  <!-- Launch the segmentation server -->
+  <node name="mesh_segmenter_server_node" type="segmentation_server" pkg="noether" output="screen" required="true" />
+</launch>

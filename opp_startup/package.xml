@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>opp_startup</name>
+  <version>0.0.0</version>
+  <description>The opp_startup package</description>
+
+  <author email="mripperger@swri.org">mripperger</author>
+  <maintainer email="mripperger@swri.org">mripperger</maintainer>
+
+  <license>Apache 2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+</package>

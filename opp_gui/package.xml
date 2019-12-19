@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>opp_gui</name>
+  <version>0.0.0</version>
+  <description>
+    The opp_gui package contains the various files for the on- and
+    off-line guis.  The .ui files contain the visual layout, and are used
+    to generate basic QT objects.  The .h and .cpp files specify how those
+    basic QT objects interact with each other and the rest of the system.
+
+    Most of the direct interaction with the ROS system is actually handled
+    by the classes in the opp_application package.  The GUI objects
+    own a copy of an application object, and pass user input down into the
+    ROS system.
+  </description>
+
+  <author email="mripperger@swri.org">mripperger</author>
+  <maintainer email="mripperger@swri.org">mripperger</maintainer>
+
+  <license>Apache 2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>actionlib</depend>
+  <depend>eigen_conversions</depend>
+  <depend>eigen_stl_containers</depend>
+  <depend>geometric_shapes</depend>
+  <depend>geometry_msgs</depend>
+  <depend>noether_msgs</depend>
+  <depend>pluginlib</depend>
+  <depend>roscpp</depend>
+  <depend>opp_area_selection</depend>
+  <depend>opp_msgs</depend>
+  <depend>opp_database</depend>
+  <depend>rviz</depend>
+  <depend>shape_msgs</depend>
+  <depend>std_srvs</depend>
+  <depend>visualization_msgs</depend>
+
+  <export>
+    <rviz plugin="${prefix}/plugin_description.xml"/>
+  </export>
+</package>

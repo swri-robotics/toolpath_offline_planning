@@ -1,0 +1,16 @@
+<library path="lib/libopp_gui_panels">
+  <class name="opp_gui/ToolPathPlannerPanel"
+         type="opp_gui::ToolPathPlannerPanel"
+         base_class_type="rviz::Panel">
+    <description>
+      A panel for creating registration and tool path data for new models
+    </description>
+  </class>
+  <class name="opp_gui/ChemicalDepaintApplicationPanel"
+         type="opp_gui::ChemicalDepaintApplicationPanel"
+         base_class_type="rviz::Panel">
+    <description>
+      A panel for operating the chemical depaint process
+    </description>
+  </class>
+</library>

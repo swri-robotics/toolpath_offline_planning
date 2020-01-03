@@ -237,7 +237,8 @@ bool SelectionArtist::clearROIPointsCb(
     std_srvs::TriggerRequest& req,
     std_srvs::TriggerResponse& res)
 {
-  (void)req;
+  (void)req; // To suppress warnings, tell the compiler we will not use this parameter
+
   for(auto it = marker_array_.markers.begin(); it != marker_array_.markers.end(); ++it)
   {
     it->points.clear();

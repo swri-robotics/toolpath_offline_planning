@@ -218,7 +218,6 @@ std::vector<int> AreaSelector::getPointsInROI(
     cluster_indices.push_back(output_set);
   }
 
-
   if(cluster_indices.size() > 1)
   {
     ROS_INFO("%lu clusters found in ROI selection; choosing closest cluster to ROI selection centroid", cluster_indices.size());

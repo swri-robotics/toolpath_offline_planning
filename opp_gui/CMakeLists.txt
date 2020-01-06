@@ -70,7 +70,6 @@ include_directories(
 )
 
 set(rpg_gui_UIS
-  ui/database_browser.ui
   ui/list_editor.ui
   ui/polygon_area_selection_widget.ui
   ui/segmentation_parameters_editor.ui
@@ -78,7 +77,6 @@ set(rpg_gui_UIS
   ui/tool_path_parameters_editor.ui
   ui/tool_path_planner.ui
   ui/touch_point_parameters_editor.ui
-  ui/database_log.ui
 )
 
 set(rpg_gui_widget_HEADERS

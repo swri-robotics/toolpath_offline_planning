@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-#include <opp_gui/widgets/touch_point_editor_widget.h>
-#include <ros/ros.h>
 #include <QApplication>
+
+#include <ros/ros.h>
+
+#include "opp_gui/widgets/touch_point_editor_widget.h"
 
 int main(int argc, char** argv)
 {

@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-#include <opp_gui/tool_path_planner_panel.h>
-#include <opp_gui/widgets/tool_path_planner_widget.h>
+#include "opp_gui/tool_path_planner_panel.h"
+
 #include <QVBoxLayout>
 
 #include <rviz/display.h>
 #include <rviz/frame_manager.h>
 #include <rviz/visualization_manager.h>
+
+#include "opp_gui/widgets/tool_path_planner_widget.h"
 
 namespace opp_gui
 {

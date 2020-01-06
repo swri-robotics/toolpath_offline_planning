@@ -42,6 +42,6 @@ bool planeFit(
 
 } // end namespace opp_area_selection
 
-#include <opp_area_selection/filter_impl.h>
+#include "opp_area_selection/filter_impl.h"
 
 #endif // OPP_AREA_SELECTION_FILTER_H

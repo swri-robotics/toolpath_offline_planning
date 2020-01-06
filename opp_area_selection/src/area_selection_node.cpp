@@ -17,8 +17,8 @@
 #include <ros/ros.h>
 #include <tf/transform_listener.h>
 
-#include <opp_area_selection/area_selector.h>
-#include <opp_area_selection/selection_artist.h>
+#include "opp_area_selection/area_selector.h"
+#include "opp_area_selection/selection_artist.h"
 
 static const float TIMEOUT = 15.0;
 

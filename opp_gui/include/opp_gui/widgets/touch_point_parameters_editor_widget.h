@@ -18,12 +18,15 @@
 #define OPP_GUI_WIDGETS_TOUCH_POINT_PARAMETERS_EDITOR_H
 
 #include <atomic>
+
+#include <QWidget>
+
 #include <geometry_msgs/PoseStamped.h>
 #include <ros/node_handle.h>
 #include <ros/publisher.h>
 #include <ros/subscriber.h>
+
 #include <opp_msgs/TouchPoint.h>
-#include <QWidget>
 
 namespace Ui
 {

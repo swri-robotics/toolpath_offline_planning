@@ -17,7 +17,7 @@
 #ifndef OPP_AREA_SELECTION_FILTER_IMPL_H
 #define OPP_AREA_SELECTION_FILTER_IMPL_H
 
-#include <opp_area_selection/filter.h>
+#include "opp_area_selection/filter.h"
 
 #include <pcl/filters/extract_indices.h>
 #include <pcl/sample_consensus/ransac.h>

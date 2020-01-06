@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-#include <opp_gui/widgets/surface_selection_combo_widget.h>
+#include "opp_gui/widgets/surface_selection_combo_widget.h"
 
 #include <QMessageBox>
 #include <QMetaType>
 
 #include <visualization_msgs/Marker.h>
 
-#include <opp_gui/widgets/polygon_area_selection_widget.h>
-#include <opp_gui/widgets/segmentation_parameters_editor_widget.h>
+#include "opp_gui/widgets/polygon_area_selection_widget.h"
+#include "opp_gui/widgets/segmentation_parameters_editor_widget.h"
 #include "ui_surface_selection_combo_widget.h"
 
 namespace opp_gui

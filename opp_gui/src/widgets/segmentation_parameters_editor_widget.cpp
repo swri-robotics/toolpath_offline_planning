@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <opp_gui/widgets/segmentation_parameters_editor_widget.h>
+#include "opp_gui/widgets/segmentation_parameters_editor_widget.h"
 
 #include <pcl/io/vtk_lib_io.h>
 #include <QProgressDialog>
@@ -23,8 +23,8 @@
 #include <eigen_conversions/eigen_msg.h>
 #include <pcl_conversions/pcl_conversions.h>
 
+#include "opp_gui/utils.h"
 #include "ui_segmentation_parameters_editor.h"
-#include <opp_gui/utils.h>
 
 const static std::string SEGMENTATION_ACTION = "/mesh_segmenter_server_node/segmenter/";
 

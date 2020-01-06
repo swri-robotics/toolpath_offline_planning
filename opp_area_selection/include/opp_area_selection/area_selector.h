@@ -25,7 +25,7 @@
 #include <pcl_ros/point_cloud.h>
 #include <sensor_msgs/PointCloud2.h>
 
-#include <opp_area_selection/area_selector_parameters.h>
+#include "opp_area_selection/area_selector_parameters.h"
 
 namespace opp_area_selection
 {

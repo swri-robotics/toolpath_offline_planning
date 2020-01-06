@@ -16,9 +16,10 @@
 #ifndef OPP_MSGS_SERIALIZATION_SENSOR_MSGS_YAML
 #define OPP_MSGS_SERIALIZATION_SENSOR_MSGS_YAML
 
-#include <opp_msgs_serialization/std_msgs_yaml.h>
 #include <sensor_msgs/CameraInfo.h>
 #include <sensor_msgs/JointState.h>
+
+#include "opp_msgs_serialization/std_msgs_yaml.h"
 
 namespace YAML
 {

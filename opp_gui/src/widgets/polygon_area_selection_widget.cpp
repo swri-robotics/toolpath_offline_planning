@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <opp_gui/widgets/polygon_area_selection_widget.h>
+#include "opp_gui/widgets/polygon_area_selection_widget.h"
 
 #include <QMessageBox>
 #include <QPushButton>

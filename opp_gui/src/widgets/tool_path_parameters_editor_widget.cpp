@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-#include <opp_gui/widgets/tool_path_parameters_editor_widget.h>
-#include "ui_tool_path_parameters_editor.h"
+#include "opp_gui/widgets/tool_path_parameters_editor_widget.h"
 
 #include <QMessageBox>
 #include <QProgressDialog>
@@ -25,7 +24,8 @@
 #include <std_srvs/Trigger.h>
 
 #include <opp_area_selection/selection_artist.h>
-#include <opp_gui/utils.h>
+#include "opp_gui/utils.h"
+#include "ui_tool_path_parameters_editor.h"
 
 const static std::string GENERATE_TOOLPATHS_ACTION = "generate_tool_paths";
 

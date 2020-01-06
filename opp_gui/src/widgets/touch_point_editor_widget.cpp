@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-#include <eigen_conversions/eigen_msg.h>
-#include <opp_gui/widgets/touch_point_editor_widget.h>
-#include <opp_gui/widgets/touch_point_parameters_editor_widget.h>
-#include <opp_gui/utils.h>
+#include "opp_gui/widgets/touch_point_editor_widget.h"
+
 #include <QInputDialog>
+
+#include <eigen_conversions/eigen_msg.h>
+
+#include "opp_gui/utils.h"
+#include "opp_gui/widgets/touch_point_parameters_editor_widget.h"
 #include "ui_touch_point_parameters_editor.h"
 
 namespace opp_gui

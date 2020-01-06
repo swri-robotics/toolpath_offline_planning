@@ -17,7 +17,9 @@
 #define OPP_MSGS_SERIALIZATION_SERIALIZE_H
 
 #include <fstream>
+
 #include <yaml-cpp/yaml.h>
+
 #include <ros/console.h>
 
 namespace opp_msgs_serialization

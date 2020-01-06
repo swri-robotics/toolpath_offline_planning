@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-#include <opp_gui/widgets/tool_path_planner_widget.h>
-#include "ui_tool_path_planner.h"
+#include "opp_gui/widgets/tool_path_planner_widget.h"
 
 #include <map>
 #include <regex>
@@ -31,9 +30,10 @@
 #include <geometric_shapes/shape_operations.h>
 #include <ros/console.h>
 
-#include <opp_gui/utils.h>
-#include <opp_gui/widgets/tool_path_editor_widget.h>
-#include <opp_gui/widgets/touch_point_editor_widget.h>
+#include "opp_gui/utils.h"
+#include "opp_gui/widgets/tool_path_editor_widget.h"
+#include "opp_gui/widgets/touch_point_editor_widget.h"
+#include "ui_tool_path_planner.h"
 
 const static std::string MESH_MARKER_TOPIC = "mesh_marker";
 

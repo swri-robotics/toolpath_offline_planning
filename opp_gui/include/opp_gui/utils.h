@@ -17,11 +17,12 @@
 #ifndef OPP_GUI_UTILS_H
 #define OPP_GUI_UTILS_H
 
+#include <QStringList>
+
+#include <Eigen/Geometry>
+#include <pcl_msgs/PolygonMesh.h>
 #include <shape_msgs/Mesh.h>
 #include <visualization_msgs/Marker.h>
-#include <Eigen/Geometry>
-#include <QStringList>
-#include <pcl_msgs/PolygonMesh.h>
 
 namespace opp_gui
 {

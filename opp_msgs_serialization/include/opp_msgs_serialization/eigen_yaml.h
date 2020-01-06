@@ -16,8 +16,9 @@
 #ifndef OPP_MSGS_SERIALIZATION_EIGEN_YAML_H
 #define OPP_MSGS_SERIALIZATION_EIGEN_YAML_H
 
-#include <opp_msgs_serialization/geometry_msgs_yaml.h>
 #include <eigen_conversions/eigen_msg.h>
+
+#include "opp_msgs_serialization/geometry_msgs_yaml.h"
 
 namespace YAML
 {

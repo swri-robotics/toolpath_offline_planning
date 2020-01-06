@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <opp_database/opp_database_interface_cpp.h>
+#include "opp_database/opp_database_interface_cpp.h"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem.hpp>

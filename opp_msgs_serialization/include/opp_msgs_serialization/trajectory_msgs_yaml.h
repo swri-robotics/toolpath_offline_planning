@@ -17,7 +17,8 @@
 #define OPP_MSGS_SERIALIZATION_TRAJECTORY_MSGS_YAML
 
 #include <trajectory_msgs/JointTrajectory.h>
-#include <opp_msgs_serialization/std_msgs_yaml.h>
+
+#include "opp_msgs_serialization/std_msgs_yaml.h"
 
 namespace YAML
 {

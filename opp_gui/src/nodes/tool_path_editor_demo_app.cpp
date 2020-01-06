@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-#include <opp_gui/widgets/tool_path_editor_widget.h>
-#include <opp_gui/utils.h>
-#include <ros/ros.h>
 #include <QApplication>
+
+#include <ros/ros.h>
+
+#include "opp_gui/utils.h"
+#include "opp_gui/widgets/tool_path_editor_widget.h"
 
 template<typename T>
 bool get(const ros::NodeHandle& nh,

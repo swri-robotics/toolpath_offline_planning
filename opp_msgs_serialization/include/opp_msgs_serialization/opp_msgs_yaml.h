@@ -21,8 +21,8 @@
 
 #include <opp_msgs/ToolPath.h>
 #include <opp_msgs/TouchPoint.h>
-#include <opp_msgs_serialization/geometry_msgs_yaml.h>
-#include <opp_msgs_serialization/sensor_msgs_yaml.h>
+#include "opp_msgs_serialization/geometry_msgs_yaml.h"
+#include "opp_msgs_serialization/sensor_msgs_yaml.h"
 
 namespace YAML
 {

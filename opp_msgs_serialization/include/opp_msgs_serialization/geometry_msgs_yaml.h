@@ -17,9 +17,10 @@
 #define OPP_MSGS_SERIALIZATION_GEOMETRY_MSGS_YAML
 
 #include <geometry_msgs/PoseArray.h>
-#include <geometry_msgs/TransformStamped.h>
-#include <opp_msgs_serialization/std_msgs_yaml.h>
 #include <geometry_msgs/PoseStamped.h>
+#include <geometry_msgs/TransformStamped.h>
+
+#include "opp_msgs_serialization/std_msgs_yaml.h"
 
 namespace YAML
 {

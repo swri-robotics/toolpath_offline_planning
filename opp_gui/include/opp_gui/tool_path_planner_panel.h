@@ -17,8 +17,8 @@
 #ifndef OPP_GUI_TOOL_PATH_PLANNER_PANEL_H
 #define OPP_GUI_TOOL_PATH_PLANNER_PANEL_H
 
-#include <rviz/panel.h>
 #include <ros/node_handle.h>
+#include <rviz/panel.h>
 
 namespace opp_gui
 {

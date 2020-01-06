@@ -23,9 +23,9 @@
 
 #include <noether_msgs/SegmentationConfig.h>
 
-#include <opp_gui/register_ros_msgs_for_qt.h>
-#include <opp_gui/widgets/polygon_area_selection_widget.h>
-#include <opp_gui/widgets/segmentation_parameters_editor_widget.h>
+#include "opp_gui/register_ros_msgs_for_qt.h"
+#include "opp_gui/widgets/polygon_area_selection_widget.h"
+#include "opp_gui/widgets/segmentation_parameters_editor_widget.h"
 
 namespace Ui {
 class SurfaceSelectionComboWidget;

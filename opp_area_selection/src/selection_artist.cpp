@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <opp_area_selection/selection_artist.h>
+#include "opp_area_selection/selection_artist.h"
 
 #include <pcl/conversions.h>
 #include <pcl/point_cloud.h>
@@ -29,8 +29,8 @@
 #include <tf/tf.h>
 #include <tf_conversions/tf_eigen.h>
 
-#include <opp_area_selection/area_selector.h>
-#include <opp_area_selection/area_selector_parameters.h>
+#include "opp_area_selection/area_selector.h"
+#include "opp_area_selection/area_selector_parameters.h"
 #include <opp_msgs/GetROISelection.h>
 
 namespace opp_area_selection

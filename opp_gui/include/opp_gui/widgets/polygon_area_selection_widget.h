@@ -23,7 +23,7 @@
 #include <shape_msgs/Mesh.h>
 
 #include <opp_area_selection/selection_artist.h>
-#include <opp_gui/register_ros_msgs_for_qt.h>
+#include "opp_gui/register_ros_msgs_for_qt.h"
 
 namespace Ui {
 class PolygonAreaSelectionWidget;

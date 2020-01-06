@@ -25,9 +25,9 @@
 #include <ros/publisher.h>
 #include <shape_msgs/Mesh.h>
 
-#include <opp_gui/widgets/list_editor_widget_base.h>
-#include <opp_gui/widgets/surface_selection_combo_widget.h>
-#include <opp_gui/widgets/tool_path_parameters_editor_widget.h>
+#include "opp_gui/widgets/list_editor_widget_base.h"
+#include "opp_gui/widgets/surface_selection_combo_widget.h"
+#include "opp_gui/widgets/tool_path_parameters_editor_widget.h"
 #include <opp_msgs/ToolPath.h>
 
 namespace opp_gui

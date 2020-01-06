@@ -17,13 +17,15 @@
 #ifndef OPP_GUI_WIDGETS_TOUCH_POINT_EDITOR_WIDGET_H
 #define OPP_GUI_WIDGETS_TOUCH_POINT_EDITOR_WIDGET_H
 
-#include <geometry_msgs/Pose.h>
-#include <opp_gui/widgets/list_editor_widget_base.h>
-#include <opp_msgs/TouchPoint.h>
 #include <QWidget>
-#include <ros/publisher.h>
+
+#include <geometry_msgs/Pose.h>
 #include <ros/node_handle.h>
+#include <ros/publisher.h>
 #include <std_msgs/ColorRGBA.h>
+
+#include "opp_gui/widgets/list_editor_widget_base.h"
+#include <opp_msgs/TouchPoint.h>
 
 namespace Ui
 {

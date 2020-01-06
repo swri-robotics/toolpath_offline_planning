@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-#include <opp_gui/utils.h>
+#include "opp_gui/utils.h"
+
+#include <eigen_conversions/eigen_msg.h>
 #include <geometric_shapes/mesh_operations.h>
 #include <geometric_shapes/shape_operations.h>
 #include <ros/console.h>
-#include <eigen_conversions/eigen_msg.h>
 #include <pcl/conversions.h>
 #include <pcl/point_cloud.h>
 #include <pcl/PolygonMesh.h>

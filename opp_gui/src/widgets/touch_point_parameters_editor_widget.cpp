@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include <opp_gui/widgets/touch_point_parameters_editor_widget.h>
-#include <ui_touch_point_parameters_editor.h>
+#include "opp_gui/widgets/touch_point_parameters_editor_widget.h"
+#include "ui_touch_point_parameters_editor.h"
 
 const std::string CLICKED_POINT_TOPIC = "/selection_point";
 

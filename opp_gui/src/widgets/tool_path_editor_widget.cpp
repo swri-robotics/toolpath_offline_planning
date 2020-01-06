@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include <opp_gui/widgets/tool_path_editor_widget.h>
-#include <opp_gui/widgets/tool_path_parameters_editor_widget.h>
+#include "opp_gui/widgets/tool_path_editor_widget.h"
+#include "opp_gui/widgets/tool_path_parameters_editor_widget.h"
 
 const static std::string TOOL_PATH_TOPIC = "tool_path";
 

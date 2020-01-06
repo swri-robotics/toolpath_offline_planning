@@ -2,6 +2,7 @@
 #define OPP_MSGS_SERIALIZATION_BINARY_SERIALIZATION_H
 
 #include <fstream>
+
 #include <ros/serialization.h>
 
 namespace opp_msgs_serialization

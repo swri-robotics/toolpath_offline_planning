@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-#include <opp_gui/widgets/segmentation_parameters_editor_widget.h>
-#include <opp_gui/utils.h>
-#include <ros/ros.h>
+#include <pcl/io/vtk_lib_io.h>
 #include <QApplication>
 
-#include <pcl/io/vtk_lib_io.h>
 #include <pcl_conversions/pcl_conversions.h>
 #include <ros/package.h>
+#include <ros/ros.h>
+
+#include "opp_gui/utils.h"
+#include "opp_gui/widgets/segmentation_parameters_editor_widget.h"
 
 int main(int argc, char** argv)
 {

@@ -17,11 +17,13 @@
 #ifndef OPP_GUI_WIDGETS_TOOL_PATH_PARAMETERS_EDITOR_WIDGET_H
 #define OPP_GUI_WIDGETS_TOOL_PATH_PARAMETERS_EDITOR_WIDGET_H
 
+#include <QWidget>
+
 #include <actionlib/client/simple_action_client.h>
 #include <noether_msgs/GenerateToolPathsAction.h>
 #include <ros/ros.h>
+
 #include <opp_msgs/ToolPath.h>
-#include <QWidget>
 
 namespace Ui
 {

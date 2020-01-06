@@ -16,8 +16,9 @@
 #ifndef OPP_MSGS_SERIALIZATION_STD_MSGS_YAML
 #define OPP_MSGS_SERIALIZATION_STD_MSGS_YAML
 
-#include <std_msgs/Header.h>
 #include <yaml-cpp/yaml.h>
+
+#include <std_msgs/Header.h>
 
 namespace YAML
 {

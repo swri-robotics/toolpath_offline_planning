@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef MESSAGE_SERIALIZATION_SERIALIZE_H
-#define MESSAGE_SERIALIZATION_SERIALIZE_H
+#ifndef OPP_MSGS_SERIALIZATION_SERIALIZE_H
+#define OPP_MSGS_SERIALIZATION_SERIALIZE_H
 
 #include <fstream>
 #include <yaml-cpp/yaml.h>
@@ -57,4 +57,4 @@ bool deserialize(const std::string &file, T& val)
 
 } // namespace opp_msgs_serialization
 
-#endif // MESSAGE_SERIALIZATION_SERIALIZE_H
+#endif // OPP_MSGS_SERIALIZATION_SERIALIZE_H

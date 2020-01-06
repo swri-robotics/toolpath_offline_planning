@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef SURFACE_SELECTION_COMBO_WIDGET_H
-#define SURFACE_SELECTION_COMBO_WIDGET_H
+#ifndef OPP_GUI_WIDGETS_SURFACE_SELECTION_COMBO_WIDGET_H
+#define OPP_GUI_WIDGETS_SURFACE_SELECTION_COMBO_WIDGET_H
 
 #include <QWidget>
 
@@ -87,4 +87,4 @@ private:
 
 } // end namespace opp_gui
 
-#endif // SURFACE_SELECTION_COMBO_WIDGET_H
+#endif // OPP_GUI_WIDGETS_SURFACE_SELECTION_COMBO_WIDGET_H

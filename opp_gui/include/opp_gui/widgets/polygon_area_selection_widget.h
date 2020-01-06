@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef POLYGON_AREA_SELECTION_WIDGET_H
-#define POLYGON_AREA_SELECTION_WIDGET_H
+#ifndef OPP_GUI_WIDGETS_POLYGON_AREA_SELECTION_WIDGET_H
+#define OPP_GUI_WIDGETS_POLYGON_AREA_SELECTION_WIDGET_H
 
 #include <QWidget>
 
@@ -67,4 +67,4 @@ private:
 
 } // end namespace opp_gui
 
-#endif // POLYGON_AREA_SELECTION_WIDGET_H
+#endif // OPP_GUI_WIDGETS_POLYGON_AREA_SELECTION_WIDGET_H

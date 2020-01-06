@@ -1,5 +1,5 @@
-#ifndef MESSAGE_SERIALIZATION_BINARY_SERIALIZATION_H
-#define MESSAGE_SERIALIZATION_BINARY_SERIALIZATION_H
+#ifndef OPP_MSGS_SERIALIZATION_BINARY_SERIALIZATION_H
+#define OPP_MSGS_SERIALIZATION_BINARY_SERIALIZATION_H
 
 #include <fstream>
 #include <ros/serialization.h>
@@ -51,6 +51,6 @@ inline bool deserializeFromBinary(const std::string& file,
   return true;
 }
 
-} // namespace amsted_opp_msgs_serialization
+} // namespace opp_msgs_serialization
 
-#endif // AMSTED_MESSAGE_SERIALIZATION_BINARY_SERIALIZATION_H
+#endif // OPP_MSGS_SERIALIZATION_BINARY_SERIALIZATION_H

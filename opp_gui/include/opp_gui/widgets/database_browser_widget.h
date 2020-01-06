@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef DATABASE_BROWSER_H
-#define DATABASE_BROWSER_H
+#ifndef OPP_GUI_WIDGETS_DATABASE_BROWSER_H
+#define OPP_GUI_WIDGETS_DATABASE_BROWSER_H
 
 #include <QWidget>
 #include <ros/service.h>
@@ -76,4 +76,4 @@ protected:
 
 } // namespace opp_gui
 
-#endif // DATABASE_BROWSER_H
+#endif // OPP_GUI_WIDGETS_DATABASE_BROWSER_H

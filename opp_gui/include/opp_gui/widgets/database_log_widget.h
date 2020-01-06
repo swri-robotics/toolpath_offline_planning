@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-#ifndef DATABASE_LOG_WIDGET_H
-#define DATABASE_LOG_WIDGET_H
+#ifndef OPP_GUI_WIDGETS_DATABASE_LOG_WIDGET_H
+#define OPP_GUI_WIDGETS_DATABASE_LOG_WIDGET_H
+
+#include <map>
 
 #include <QString>
 #include <QTimer>
 #include <QWidget>
-#include <opp_application/application/application_context_base.h>
+
 #include <ros/service.h>
-#include <map>
-#include <opp_msgs/Job.h> // TODO add the Log service to msgs, and change this to Log.h
+
+#include <opp_application/application/application_context_base.h>
+#include <opp_msgs/Job.h>
 
 namespace Ui {
   class DatabaseLog;
@@ -63,4 +66,4 @@ protected:
 };
 } // end of namespace opp_gui
 
-#endif // DATABASE_LOG_WIDGET_H
+#endif // OPP_GUI_WIDGETS_DATABASE_LOG_WIDGET_H

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef AREA_SELECTOR_IMPL_H
-#define AREA_SELECTOR_IMPL_H
+#ifndef OPP_AREA_SELECTION_FILTER_IMPL_H
+#define OPP_AREA_SELECTION_FILTER_IMPL_H
 
 #include <opp_area_selection/filter.h>
 
@@ -72,4 +72,4 @@ bool planeFit(const CloudPtr<PointT> input_cloud,
 
 } // end namespace opp_area_selection
 
-#endif // AREA_SELECTOR_IMPL_H
+#endif // OPP_AREA_SELECTION_FILTER_IMPL_H

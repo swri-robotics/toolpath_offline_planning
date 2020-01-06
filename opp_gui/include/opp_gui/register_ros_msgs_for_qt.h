@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef REGISTER_ROS_MSGS_FOR_QT_H
-#define REGISTER_ROS_MSGS_FOR_QT_H
+#ifndef OPP_GUI_REGISTER_ROS_MSGS_FOR_QT_H
+#define OPP_GUI_REGISTER_ROS_MSGS_FOR_QT_H
 
 #include <QMetaType>
 
@@ -26,4 +26,4 @@ Q_DECLARE_METATYPE(shape_msgs::Mesh::Ptr);
 Q_DECLARE_METATYPE(std::vector<shape_msgs::Mesh>);
 Q_DECLARE_METATYPE(std::vector<shape_msgs::Mesh::Ptr>);
 
-#endif // REGISTER_ROS_MSGS_FOR_QT_H
+#endif // OPP_GUI_REGISTER_ROS_MSGS_FOR_QT_H

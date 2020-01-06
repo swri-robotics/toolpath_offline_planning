@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef FILTER_H
-#define FILTER_H
+#ifndef OPP_AREA_SELECTION_FILTER_H
+#define OPP_AREA_SELECTION_FILTER_H
 
 #include <pcl/point_cloud.h>
 
@@ -44,4 +44,4 @@ bool planeFit(
 
 #include <opp_area_selection/filter_impl.h>
 
-#endif // FILTER_H
+#endif // OPP_AREA_SELECTION_FILTER_H

@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef MESSAGE_SERIALIZATION_STD_MSGS_YAML
-#define MESSAGE_SERIALIZATION_STD_MSGS_YAML
+#ifndef OPP_MSGS_SERIALIZATION_STD_MSGS_YAML
+#define OPP_MSGS_SERIALIZATION_STD_MSGS_YAML
 
 #include <std_msgs/Header.h>
 #include <yaml-cpp/yaml.h>
@@ -72,4 +72,4 @@ struct convert<std_msgs::Header>
 
 }
 
-#endif // MESSAGE_SERIALIZATION_STD_MSGS_YAML
+#endif // OPP_MSGS_SERIALIZATION_STD_MSGS_YAML

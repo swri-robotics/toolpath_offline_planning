@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef MESSAGE_SERIALIZATION_GEOMETRY_MSGS_YAML
-#define MESSAGE_SERIALIZATION_GEOMETRY_MSGS_YAML
+#ifndef OPP_MSGS_SERIALIZATION_GEOMETRY_MSGS_YAML
+#define OPP_MSGS_SERIALIZATION_GEOMETRY_MSGS_YAML
 
 #include <geometry_msgs/PoseArray.h>
 #include <geometry_msgs/TransformStamped.h>
@@ -215,4 +215,4 @@ struct convert<geometry_msgs::TransformStamped>
 
 }
 
-#endif // MESSAGE_SERIALIZATION_GEOMETRY_MSGS_YAML
+#endif // OPP_MSGS_SERIALIZATION_GEOMETRY_MSGS_YAML

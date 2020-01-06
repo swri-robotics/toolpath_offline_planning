@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef TOOL_PATH_PLANNER_WIDGET_H
-#define TOOL_PATH_PLANNER_WIDGET_H
+#ifndef OPP_GUI_WIDGETS_TOOL_PATH_PLANNER_WIDGET_H
+#define OPP_GUI_WIDGETS_TOOL_PATH_PLANNER_WIDGET_H
 
 #include <QSqlTableModel>
 #include <QWidget>
@@ -119,4 +119,4 @@ private:
 } // namespace opp_gui
 
 
-#endif // TOOL_PATH_PLANNER_WIDGET_H
+#endif // OPP_GUI_WIDGETS_TOOL_PATH_PLANNER_WIDGET_H

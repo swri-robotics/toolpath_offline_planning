@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef MESSAGE_SERIALIZATION_EIGEN_YAML_H
-#define MESSAGE_SERIALIZATION_EIGEN_YAML_H
+#ifndef OPP_MSGS_SERIALIZATION_EIGEN_YAML_H
+#define OPP_MSGS_SERIALIZATION_EIGEN_YAML_H
 
 #include <opp_msgs_serialization/geometry_msgs_yaml.h>
 #include <eigen_conversions/eigen_msg.h>
@@ -64,4 +64,4 @@ struct convert<Eigen::Vector3d>
 
 }
 
-#endif // MESSAGE_SERIALIZATION_EIGEN_YAML_H
+#endif // OPP_MSGS_SERIALIZATION_EIGEN_YAML_H

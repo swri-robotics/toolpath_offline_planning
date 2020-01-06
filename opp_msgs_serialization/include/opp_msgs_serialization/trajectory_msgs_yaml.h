@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef MESSAGE_SERIALIZATION_TRAJECTORY_MSGS_YAML
-#define MESSAGE_SERIALIZATION_TRAJECTORY_MSGS_YAML
+#ifndef OPP_MSGS_SERIALIZATION_TRAJECTORY_MSGS_YAML
+#define OPP_MSGS_SERIALIZATION_TRAJECTORY_MSGS_YAML
 
 #include <trajectory_msgs/JointTrajectory.h>
 #include <opp_msgs_serialization/std_msgs_yaml.h>
@@ -77,4 +77,4 @@ struct convert<trajectory_msgs::JointTrajectory>
 
 }
 
-#endif // MESSAGE_SERIALIZATION_TRAJECTORY_MSGS_YAML
+#endif // OPP_MSGS_SERIALIZATION_TRAJECTORY_MSGS_YAML

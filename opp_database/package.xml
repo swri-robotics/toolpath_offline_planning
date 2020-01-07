@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>opp_database</name>
+  <version>0.0.0</version>
+
+  <description>
+    The opp_database package contains two database interfaces which
+    used in different places in the project.  The first accesses a MySQL
+    database through a python connector, which communicates with the
+    system via ROS services.  The second is a C++ library utilizing QSQL
+    to more flexibly and directly interface with the MySQL database.
+  </description>
+
+  <maintainer email="david.merz@swri.org">David Merz, Jr.</maintainer>
+  <author email="david.merz@swri.org">David Merz, Jr.</author>
+
+  <license>Apache 2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>roscpp</depend>
+  <depend>roslib</depend>
+  <depend>opp_msgs</depend>
+  <depend>opp_msgs_serialization</depend>
+  <depend>libqt5sql5-mysql</depend>
+  <depend>libmysqlclient-dev</depend>
+  <depend>libssl-dev</depend>
+
+</package>

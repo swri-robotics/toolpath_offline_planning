@@ -1,7 +1,7 @@
 # No process
 uint8 NONE = 0
 
-# Chemical Depaint Processes - use the Chem Depaint process planner(s)
+# Depaint Processes
 uint8 PROCESS_PAINT = 1
 uint8 PROCESS_DEPAINT = 2
 

@@ -25,23 +25,22 @@
 #include <opp_area_selection/selection_artist.h>
 #include "opp_gui/register_ros_msgs_for_qt.h"
 
-namespace Ui {
+namespace Ui
+{
 class PolygonAreaSelectionWidget;
 }
 
 namespace opp_gui
 {
-
 class PolygonAreaSelectionWidget : public QWidget
 {
   Q_OBJECT
 
 public:
-  explicit PolygonAreaSelectionWidget(
-      ros::NodeHandle& nh,
-      const std::string& selection_world_frame,
-      const std::string& selection_sensor_frame,
-      QWidget *parent = nullptr);
+  explicit PolygonAreaSelectionWidget(ros::NodeHandle& nh,
+                                      const std::string& selection_world_frame,
+                                      const std::string& selection_sensor_frame,
+                                      QWidget* parent = nullptr);
   ~PolygonAreaSelectionWidget();
 
 public Q_SLOTS:
@@ -56,15 +55,15 @@ private Q_SLOTS:
   void applySelection();
 
 private:
-  Ui::PolygonAreaSelectionWidget *ui_;
+  Ui::PolygonAreaSelectionWidget* ui_;
 
   shape_msgs::Mesh::Ptr mesh_;
 
   shape_msgs::Mesh::Ptr submesh_;
 
   opp_area_selection::SelectionArtist selector_;
-}; // end class PolygonAreaSelectionWidget
+};  // end class PolygonAreaSelectionWidget
 
-} // end namespace opp_gui
+}  // end namespace opp_gui
 
-#endif // OPP_GUI_WIDGETS_POLYGON_AREA_SELECTION_WIDGET_H
+#endif  // OPP_GUI_WIDGETS_POLYGON_AREA_SELECTION_WIDGET_H

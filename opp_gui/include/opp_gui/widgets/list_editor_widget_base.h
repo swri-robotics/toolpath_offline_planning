@@ -23,7 +23,6 @@
 
 namespace opp_gui
 {
-
 /**
  * @brief Base class widget for editing the parameters of a list of objects. The UI for this
  * widget has a `QListWidget` display on the left to enumerate the objects and an empty panel
@@ -31,28 +30,20 @@ namespace opp_gui
  */
 class ListEditorWidgetBase : public QWidget
 {
-Q_OBJECT
+  Q_OBJECT
 public:
-
-  ListEditorWidgetBase(QWidget* parent = nullptr)
-    : QWidget(parent)
+  ListEditorWidgetBase(QWidget* parent = nullptr) : QWidget(parent)
   {
     ui_ = new Ui::ListEditor();
     ui_->setupUi(this);
   }
 
-  virtual ~ListEditorWidgetBase()
-  {
-
-  }
+  virtual ~ListEditorWidgetBase() {}
 
   /**
    * @brief Clears the entries in the `QListWidget` display
    */
-  virtual void clear()
-  {
-    ui_->list_widget->clear();
-  }
+  virtual void clear() { ui_->list_widget->clear(); }
 
 protected Q_SLOTS:
 
@@ -65,10 +56,9 @@ protected Q_SLOTS:
   virtual void onDataChanged() = 0;
 
 protected:
-
   Ui::ListEditor* ui_;
 };
 
-} // namespace opp_gui
+}  // namespace opp_gui
 
-#endif // OPP_GUI_WIDGETS_LIST_EDITOR_WIDGET_BASE_H
+#endif  // OPP_GUI_WIDGETS_LIST_EDITOR_WIDGET_BASE_H

@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2018 Southwest Research Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,15 +35,16 @@
 
 namespace opp_area_selection
 {
-
 const static double TF_LOOKUP_TIMEOUT = 5.0;
 const static std::string MARKER_ARRAY_TOPIC = "roi_markers";
 const static std::string CLICKED_POINT_TOPIC = "clicked_point";
 const static std::string CLEAR_ROI_POINTS_SERVICE = "clear_selection_points";
 const static std::string COLLECT_ROI_POINTS_SERVICE = "collect_selection_points";
-const static std::string area_selection_config_file = ros::package::getPath("opp_area_selection") + "/config/area_selection_parameters.yaml";
+const static std::string area_selection_config_file = ros::package::getPath("opp_area_selection") + "/config/"
+                                                                                                    "area_selection_"
+                                                                                                    "parameters.yaml";
 
-} // end namespace opp_area_selection.  It appears twice - once for constants and once for actual code.
+}  // namespace opp_area_selection
 
 namespace
 {
@@ -160,12 +161,11 @@ bool pclFromShapeMsg(const shape_msgs::Mesh& mesh_msg, pcl::PolygonMesh& pcl_mes
   return true;
 }
 
-} // end anonymous namespace, used for utility functions
+}  // namespace
 
 namespace YAML
 {
-
-template<>
+template <>
 struct convert<opp_area_selection::AreaSelectorParameters>
 {
   static Node encode(const opp_area_selection::AreaSelectorParameters& rhs)
@@ -188,58 +188,53 @@ struct convert<opp_area_selection::AreaSelectorParameters>
     {
       return false;
     }
-    rhs.cluster_tolerance = node["cluster_tolerance"].as<decltype (rhs.cluster_tolerance)>();
-    rhs.min_cluster_size = node["min_cluster_size"].as<decltype (rhs.min_cluster_size)>();
-    rhs.max_cluster_size = node["max_cluster_size"].as<decltype (rhs.max_cluster_size)>();
-    rhs.plane_distance_threshold = node["plane_distance_threshold"].as<decltype (rhs.plane_distance_threshold)>();
-    rhs.normal_est_radius = node["normal_est_radius"].as<decltype (rhs.normal_est_radius)>();
-    rhs.region_growing_nneighbors = node["region_growing_nneighbors"].as<decltype (rhs.region_growing_nneighbors)>();
-    rhs.region_growing_smoothness = node["region_growing_smoothness"].as<decltype (rhs.region_growing_smoothness)>();
-    rhs.region_growing_curvature = node["region_growing_curvature"].as<decltype (rhs.region_growing_curvature)>();
+    rhs.cluster_tolerance = node["cluster_tolerance"].as<decltype(rhs.cluster_tolerance)>();
+    rhs.min_cluster_size = node["min_cluster_size"].as<decltype(rhs.min_cluster_size)>();
+    rhs.max_cluster_size = node["max_cluster_size"].as<decltype(rhs.max_cluster_size)>();
+    rhs.plane_distance_threshold = node["plane_distance_threshold"].as<decltype(rhs.plane_distance_threshold)>();
+    rhs.normal_est_radius = node["normal_est_radius"].as<decltype(rhs.normal_est_radius)>();
+    rhs.region_growing_nneighbors = node["region_growing_nneighbors"].as<decltype(rhs.region_growing_nneighbors)>();
+    rhs.region_growing_smoothness = node["region_growing_smoothness"].as<decltype(rhs.region_growing_smoothness)>();
+    rhs.region_growing_curvature = node["region_growing_curvature"].as<decltype(rhs.region_growing_curvature)>();
     return true;
   }
 };
 
-} // end namespace YAML, used to deserialize config file
+}  // namespace YAML
 
 namespace opp_area_selection
 {
-
-SelectionArtist::SelectionArtist(
-    const ros::NodeHandle& nh,
-    const std::string& world_frame,
-    const std::string& sensor_frame)
-  : nh_(nh)
-  , world_frame_(world_frame)
-  , sensor_frame_(sensor_frame)
+SelectionArtist::SelectionArtist(const ros::NodeHandle& nh,
+                                 const std::string& world_frame,
+                                 const std::string& sensor_frame)
+  : nh_(nh), world_frame_(world_frame), sensor_frame_(sensor_frame)
 {
   marker_pub_ = nh_.advertise<visualization_msgs::MarkerArray>(MARKER_ARRAY_TOPIC, 1, false);
-  listener_.reset(new tf::TransformListener (nh_));
+  listener_.reset(new tf::TransformListener(nh_));
 
-  if(!listener_->waitForTransform(sensor_frame_, world_frame_, ros::Time(0), ros::Duration(TF_LOOKUP_TIMEOUT)))
+  if (!listener_->waitForTransform(sensor_frame_, world_frame_, ros::Time(0), ros::Duration(TF_LOOKUP_TIMEOUT)))
   {
     ROS_ERROR("Transform lookup from %s to %s timed out", sensor_frame_.c_str(), world_frame_.c_str());
     throw std::runtime_error("Transform lookup timed out");
   }
 
   clear_roi_points_srv_ = nh_.advertiseService(CLEAR_ROI_POINTS_SERVICE, &SelectionArtist::clearROIPointsCb, this);
-  collect_roi_points_srv_ = nh_.advertiseService(COLLECT_ROI_POINTS_SERVICE, &SelectionArtist::collectROIPointsCb, this);
+  collect_roi_points_srv_ =
+      nh_.advertiseService(COLLECT_ROI_POINTS_SERVICE, &SelectionArtist::collectROIPointsCb, this);
 
   // Initialize subscribers and callbacks
-  boost::function<void (const geometry_msgs::PointStampedConstPtr&)> drawn_points_cb;
+  boost::function<void(const geometry_msgs::PointStampedConstPtr&)> drawn_points_cb;
   drawn_points_cb = boost::bind(&SelectionArtist::addSelectionPoint, this, _1);
   drawn_points_sub_ = nh_.subscribe(CLICKED_POINT_TOPIC, 1, drawn_points_cb);
 
   marker_array_.markers = makeVisual(sensor_frame);
 }
 
-bool SelectionArtist::clearROIPointsCb(
-    std_srvs::TriggerRequest& req,
-    std_srvs::TriggerResponse& res)
+bool SelectionArtist::clearROIPointsCb(std_srvs::TriggerRequest& req, std_srvs::TriggerResponse& res)
 {
-  (void)req; // To suppress warnings, tell the compiler we will not use this parameter
+  (void)req;  // To suppress warnings, tell the compiler we will not use this parameter
 
-  for(auto it = marker_array_.markers.begin(); it != marker_array_.markers.end(); ++it)
+  for (auto it = marker_array_.markers.begin(); it != marker_array_.markers.end(); ++it)
   {
     it->points.clear();
   }
@@ -251,10 +246,9 @@ bool SelectionArtist::clearROIPointsCb(
   return true;
 }
 
-bool SelectionArtist::collectROIMesh(
-    const shape_msgs::Mesh& mesh_msg,
-    shape_msgs::Mesh& submesh_msg,
-    std::string& message)
+bool SelectionArtist::collectROIMesh(const shape_msgs::Mesh& mesh_msg,
+                                     shape_msgs::Mesh& submesh_msg,
+                                     std::string& message)
 {
   pcl::PolygonMesh mesh;
   pclFromShapeMsg(mesh_msg, mesh);
@@ -278,24 +272,22 @@ bool SelectionArtist::collectROIMesh(
   return true;
 }
 
-bool SelectionArtist::collectROIPointsCb(
-    opp_msgs::GetROISelectionRequest& req,
-    opp_msgs::GetROISelectionResponse& res)
+bool SelectionArtist::collectROIPointsCb(opp_msgs::GetROISelectionRequest& req, opp_msgs::GetROISelectionResponse& res)
 {
   auto points_it = std::find_if(marker_array_.markers.begin(),
                                 marker_array_.markers.end(),
-                                [] (const visualization_msgs::Marker& marker) {return marker.id == 0;});
+                                [](const visualization_msgs::Marker& marker) { return marker.id == 0; });
 
   // Convert the selection points to Eigen vectors
   std::vector<Eigen::Vector3d> points;
-  for(const geometry_msgs::Point& pt : points_it->points)
+  for (const geometry_msgs::Point& pt : points_it->points)
   {
     Eigen::Vector3d e;
     tf::pointMsgToEigen(pt, e);
     points.push_back(std::move(e));
   }
 
-  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ> ());
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>());
   pcl::fromROSMsg(req.input_cloud, *cloud);
 
   AreaSelectorParameters params;
@@ -308,7 +300,7 @@ bool SelectionArtist::collectROIPointsCb(
   AreaSelector sel;
   res.cloud_indices = sel.getRegionOfInterest(cloud, points, params);
 
-  if(!res.cloud_indices.empty())
+  if (!res.cloud_indices.empty())
   {
     res.success = true;
     res.message = "Selection complete";
@@ -322,9 +314,8 @@ bool SelectionArtist::collectROIPointsCb(
   return true;
 }
 
-bool SelectionArtist::transformPoint(
-    const geometry_msgs::PointStamped::ConstPtr pt_stamped,
-    geometry_msgs::Point& transformed_pt)
+bool SelectionArtist::transformPoint(const geometry_msgs::PointStamped::ConstPtr pt_stamped,
+                                     geometry_msgs::Point& transformed_pt)
 {
   ROS_INFO_STREAM(pt_stamped->header.frame_id);
   // Get the current transform from the world frame to the frame of the sensor data
@@ -333,7 +324,7 @@ bool SelectionArtist::transformPoint(
   {
     listener_->lookupTransform(sensor_frame_, world_frame_, ros::Time(0), frame);
   }
-  catch(tf::TransformException ex)
+  catch (tf::TransformException ex)
   {
     ROS_ERROR("%s", ex.what());
     return false;
@@ -344,7 +335,7 @@ bool SelectionArtist::transformPoint(
 
   // Transform the current selection point
   Eigen::Vector3d pt_vec_sensor;
-  Eigen::Vector3d pt_vec_ff (pt_stamped->point.x, pt_stamped->point.y, pt_stamped->point.z);
+  Eigen::Vector3d pt_vec_ff(pt_stamped->point.x, pt_stamped->point.y, pt_stamped->point.z);
   pt_vec_sensor = transform * pt_vec_ff;
 
   transformed_pt.x = pt_vec_sensor(0);
@@ -357,7 +348,7 @@ bool SelectionArtist::transformPoint(
 void SelectionArtist::addSelectionPoint(const geometry_msgs::PointStampedConstPtr pt_stamped)
 {
   geometry_msgs::Point pt;
-  if(!transformPoint(pt_stamped, pt))
+  if (!transformPoint(pt_stamped, pt))
   {
     return;
   }
@@ -366,15 +357,15 @@ void SelectionArtist::addSelectionPoint(const geometry_msgs::PointStampedConstPt
   std::vector<visualization_msgs::Marker>::iterator points_it;
   points_it = std::find_if(marker_array_.markers.begin(),
                            marker_array_.markers.end(),
-                           [] (const visualization_msgs::Marker& marker) {return marker.id == 0;});
+                           [](const visualization_msgs::Marker& marker) { return marker.id == 0; });
 
   std::vector<visualization_msgs::Marker>::iterator lines_it;
   lines_it = std::find_if(marker_array_.markers.begin(),
                           marker_array_.markers.end(),
-                          [] (const visualization_msgs::Marker& marker) {return marker.id == 1;});
+                          [](const visualization_msgs::Marker& marker) { return marker.id == 1; });
 
   // Add new point to the points marker
-  if(points_it == marker_array_.markers.end() || lines_it == marker_array_.markers.end())
+  if (points_it == marker_array_.markers.end() || lines_it == marker_array_.markers.end())
   {
     ROS_ERROR("Unable to find line or point marker");
     return;
@@ -385,7 +376,7 @@ void SelectionArtist::addSelectionPoint(const geometry_msgs::PointStampedConstPt
 
     // Add the point to the front and back of the lines' points array if it is the first entry
     // Lines connect adjacent points, so first point must be entered twice to close the polygon
-    if(lines_it->points.empty())
+    if (lines_it->points.empty())
     {
       lines_it->points.push_back(pt);
       lines_it->points.push_back(pt);
@@ -401,16 +392,15 @@ void SelectionArtist::addSelectionPoint(const geometry_msgs::PointStampedConstPt
   marker_pub_.publish(marker_array_);
 }
 
-void SelectionArtist::filterMesh(
-    const pcl::PolygonMesh& input_mesh,
-    const std::vector<int>& inlying_indices,
-    pcl::PolygonMesh& output_mesh)
+void SelectionArtist::filterMesh(const pcl::PolygonMesh& input_mesh,
+                                 const std::vector<int>& inlying_indices,
+                                 pcl::PolygonMesh& output_mesh)
 {
   // mark inlying points as true and outlying points as false
-  std::vector<bool> whitelist (input_mesh.cloud.width * input_mesh.cloud.height, false);
+  std::vector<bool> whitelist(input_mesh.cloud.width * input_mesh.cloud.height, false);
   for (std::size_t i = 0; i < inlying_indices.size(); ++i)
   {
-    whitelist[ static_cast<std::size_t>(inlying_indices[i]) ] = true;
+    whitelist[static_cast<std::size_t>(inlying_indices[i])] = true;
   }
 
   // All points marked 'false' in the whitelist will be removed. If
@@ -420,11 +410,10 @@ void SelectionArtist::filterMesh(
   intermediate_mesh.cloud = input_mesh.cloud;
   for (std::size_t i = 0; i < input_mesh.polygons.size(); ++i)
   {
-    if (whitelist[ input_mesh.polygons[i].vertices[0] ] &&
-        whitelist[ input_mesh.polygons[i].vertices[1] ] &&
-        whitelist[ input_mesh.polygons[i].vertices[2] ])
+    if (whitelist[input_mesh.polygons[i].vertices[0]] && whitelist[input_mesh.polygons[i].vertices[1]] &&
+        whitelist[input_mesh.polygons[i].vertices[2]])
     {
-      intermediate_mesh.polygons.push_back( input_mesh.polygons[i] );
+      intermediate_mesh.polygons.push_back(input_mesh.polygons[i]);
     }
   }
 
@@ -435,4 +424,4 @@ void SelectionArtist::filterMesh(
   return;
 }
 
-} // namespace opp_area_selection
+}  // namespace opp_area_selection

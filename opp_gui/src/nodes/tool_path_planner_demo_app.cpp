@@ -36,7 +36,7 @@ int main(int argc, char** argv)
   // Create and start the Qt application
   QApplication app(argc, argv);
 
-  opp_gui::ToolPathPlannerWidget* tpp_widget = new opp_gui::ToolPathPlannerWidget(nullptr, nh, {fixed_frame});
+  opp_gui::ToolPathPlannerWidget* tpp_widget = new opp_gui::ToolPathPlannerWidget(nullptr, nh, { fixed_frame });
   tpp_widget->show();
 
   app.exec();

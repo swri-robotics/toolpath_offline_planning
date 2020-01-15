@@ -27,8 +27,7 @@
 
 namespace YAML
 {
-
-template<>
+template <>
 struct convert<noether_msgs::ToolPathConfig>
 {
   static Node encode(const noether_msgs::ToolPathConfig& rhs)
@@ -48,21 +47,22 @@ struct convert<noether_msgs::ToolPathConfig>
 
   static bool decode(const Node& node, noether_msgs::ToolPathConfig& rhs)
   {
-    if(node.size() != 9) return false;
-    rhs.pt_spacing = node["pt_spacing"].as<decltype (rhs.pt_spacing)>();
-    rhs.line_spacing = node["line_spacing"].as<decltype (rhs.line_spacing)>();
-    rhs.tool_offset = node["tool_offset"].as<decltype (rhs.tool_offset)>();
-    rhs.intersecting_plane_height = node["intersecting_plane_height"].as<decltype (rhs.intersecting_plane_height)>();
-    rhs.min_hole_size = node["min_hole_size"].as<decltype (rhs.min_hole_size)>();
-    rhs.min_segment_size = node["min_segment_size"].as<decltype (rhs.min_segment_size)>();
-    rhs.raster_angle = node["raster_angle"].as<decltype (rhs.raster_angle)>();
-    rhs.raster_wrt_global_axes = node["raster_wrt_global_axes"].as<decltype (rhs.raster_wrt_global_axes)>();
-    rhs.generate_extra_rasters = node["generate_extra_rasters"].as<decltype (rhs.generate_extra_rasters)>();
+    if (node.size() != 9)
+      return false;
+    rhs.pt_spacing = node["pt_spacing"].as<decltype(rhs.pt_spacing)>();
+    rhs.line_spacing = node["line_spacing"].as<decltype(rhs.line_spacing)>();
+    rhs.tool_offset = node["tool_offset"].as<decltype(rhs.tool_offset)>();
+    rhs.intersecting_plane_height = node["intersecting_plane_height"].as<decltype(rhs.intersecting_plane_height)>();
+    rhs.min_hole_size = node["min_hole_size"].as<decltype(rhs.min_hole_size)>();
+    rhs.min_segment_size = node["min_segment_size"].as<decltype(rhs.min_segment_size)>();
+    rhs.raster_angle = node["raster_angle"].as<decltype(rhs.raster_angle)>();
+    rhs.raster_wrt_global_axes = node["raster_wrt_global_axes"].as<decltype(rhs.raster_wrt_global_axes)>();
+    rhs.generate_extra_rasters = node["generate_extra_rasters"].as<decltype(rhs.generate_extra_rasters)>();
     return true;
   }
 };
 
-template<>
+template <>
 struct convert<opp_msgs::Job>
 {
   static Node encode(const opp_msgs::Job& rhs)
@@ -79,18 +79,19 @@ struct convert<opp_msgs::Job>
 
   static bool decode(const Node& node, opp_msgs::Job& rhs)
   {
-    if(node.size() != 6) return false;
-    rhs.header = node["header"].as<decltype (rhs.header)>();
-    rhs.id = node["id"].as<decltype (rhs.id)>();
-    rhs.name = node["name"].as<decltype (rhs.name)>();
-    rhs.description = node["description"].as<decltype (rhs.description)>();
-    rhs.part_id = node["part_id"].as<decltype (rhs.part_id)>();
-    rhs.paths = node["paths"].as<decltype (rhs.paths)>();
+    if (node.size() != 6)
+      return false;
+    rhs.header = node["header"].as<decltype(rhs.header)>();
+    rhs.id = node["id"].as<decltype(rhs.id)>();
+    rhs.name = node["name"].as<decltype(rhs.name)>();
+    rhs.description = node["description"].as<decltype(rhs.description)>();
+    rhs.part_id = node["part_id"].as<decltype(rhs.part_id)>();
+    rhs.paths = node["paths"].as<decltype(rhs.paths)>();
     return true;
   }
 };
 
-template<>
+template <>
 struct convert<opp_msgs::ProcessType>
 {
   static Node encode(const opp_msgs::ProcessType& rhs)
@@ -102,13 +103,14 @@ struct convert<opp_msgs::ProcessType>
 
   static bool decode(const Node& node, opp_msgs::ProcessType& rhs)
   {
-    if(node.size() != 1) return false;
-    rhs.val = node["val"].as<decltype (rhs.val)>();
+    if (node.size() != 1)
+      return false;
+    rhs.val = node["val"].as<decltype(rhs.val)>();
     return true;
   }
 };
 
-template<>
+template <>
 struct convert<opp_msgs::ToolPath>
 {
   static Node encode(const opp_msgs::ToolPath& rhs)
@@ -126,25 +128,26 @@ struct convert<opp_msgs::ToolPath>
   static bool decode(const Node& node, opp_msgs::ToolPath& rhs)
   {
     // Allow both old entries (without Noether params) and new entries (with Noether params)
-    if(node.size() != 5 && node.size() != 6) return false;
+    if (node.size() != 5 && node.size() != 6)
+      return false;
 
     // Get the opp_msgs::ToolPath fields
-    rhs.header = node["header"].as<decltype (rhs.header)>();
-    rhs.process_type = node["process_type"].as<decltype (rhs.process_type)>();
-    rhs.paths = node["paths"].as<decltype (rhs.paths)>();
-    rhs.dwell_time = node["dwell_time"].as<decltype (rhs.dwell_time)>();
-    rhs.tool_offset = node["tool_offset"].as<decltype (rhs.tool_offset)>();
+    rhs.header = node["header"].as<decltype(rhs.header)>();
+    rhs.process_type = node["process_type"].as<decltype(rhs.process_type)>();
+    rhs.paths = node["paths"].as<decltype(rhs.paths)>();
+    rhs.dwell_time = node["dwell_time"].as<decltype(rhs.dwell_time)>();
+    rhs.tool_offset = node["tool_offset"].as<decltype(rhs.tool_offset)>();
 
     // Get the Noether parameters, if they exist
     if (node["params"])
     {
-      rhs.params = node["params"].as<decltype (rhs.params)>();
+      rhs.params = node["params"].as<decltype(rhs.params)>();
     }
     return true;
   }
 };
 
-template<>
+template <>
 struct convert<opp_msgs::ToolPathParams>
 {
   static Node encode(const opp_msgs::ToolPathParams& rhs)
@@ -159,15 +162,18 @@ struct convert<opp_msgs::ToolPathParams>
 
   static bool decode(const Node& node, opp_msgs::ToolPathParams& rhs)
   {
-    if (node.size() != 3) { return false; }
-    rhs.config = node["config"].as<decltype (rhs.config)>();
-    rhs.curvature_threshold = node["curvature_threshold"].as<decltype (rhs.curvature_threshold)>();
-    rhs.min_polygons_per_cluster = node["min_polygons_per_cluster"].as<decltype (rhs.min_polygons_per_cluster)>();
+    if (node.size() != 3)
+    {
+      return false;
+    }
+    rhs.config = node["config"].as<decltype(rhs.config)>();
+    rhs.curvature_threshold = node["curvature_threshold"].as<decltype(rhs.curvature_threshold)>();
+    rhs.min_polygons_per_cluster = node["min_polygons_per_cluster"].as<decltype(rhs.min_polygons_per_cluster)>();
     return true;
   }
 };
 
-template<>
+template <>
 struct convert<opp_msgs::TouchPoint>
 {
   static Node encode(const opp_msgs::TouchPoint& rhs)
@@ -182,15 +188,16 @@ struct convert<opp_msgs::TouchPoint>
 
   static bool decode(const Node& node, opp_msgs::TouchPoint& rhs)
   {
-    if(node.size() != 4) return false;
-    rhs.name = node["name"].as<decltype (rhs.name)>();
-    rhs.description = node["description"].as<decltype (rhs.description)>();
-    rhs.threshold = node["threshold"].as<decltype (rhs.threshold)>();
-    rhs.transform = node["transform"].as<decltype (rhs.transform)>();
+    if (node.size() != 4)
+      return false;
+    rhs.name = node["name"].as<decltype(rhs.name)>();
+    rhs.description = node["description"].as<decltype(rhs.description)>();
+    rhs.threshold = node["threshold"].as<decltype(rhs.threshold)>();
+    rhs.transform = node["transform"].as<decltype(rhs.transform)>();
     return true;
   }
 };
 
-} // namespace YAML
+}  // namespace YAML
 
-#endif // OPP_MSGS_SERIALIZATION_OPP_MSGS_YAML_H
+#endif  // OPP_MSGS_SERIALIZATION_OPP_MSGS_YAML_H

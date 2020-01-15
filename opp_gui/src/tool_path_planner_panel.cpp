@@ -26,12 +26,7 @@
 
 namespace opp_gui
 {
-
-ToolPathPlannerPanel::ToolPathPlannerPanel(QWidget* parent)
-  : rviz::Panel(parent)
-{
-
-}
+ToolPathPlannerPanel::ToolPathPlannerPanel(QWidget* parent) : rviz::Panel(parent) {}
 
 void ToolPathPlannerPanel::onInitialize()
 {
@@ -48,7 +43,7 @@ void ToolPathPlannerPanel::onInitialize()
   setLayout(layout);
 }
 
-} // namespace opp_gui
+}  // namespace opp_gui
 
 #include <pluginlib/class_list_macros.h>
 PLUGINLIB_EXPORT_CLASS(opp_gui::ToolPathPlannerPanel, rviz::Panel)

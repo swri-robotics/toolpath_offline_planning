@@ -35,15 +35,13 @@ class TouchPointParametersEditor;
 
 namespace opp_gui
 {
-
 /**
  * @brief Widget for editing the parameters associated with a touch-off point
  */
 class TouchPointParametersEditorWidget : public QWidget
 {
-Q_OBJECT
+  Q_OBJECT
 public:
-
   TouchPointParametersEditorWidget(QWidget* parent = nullptr);
 
   opp_msgs::TouchPoint getTouchPoint() const;
@@ -66,7 +64,6 @@ protected Q_SLOTS:
   void onSelectWithMouse();
 
 private:
-
   void setPose(const geometry_msgs::Pose& pose);
 
   geometry_msgs::Pose getPose() const;
@@ -82,6 +79,6 @@ private:
   std::atomic<bool> accept_mouse_input_;
 };
 
-} // namespace opp_gui
+}  // namespace opp_gui
 
-#endif // OPP_GUI_WIDGETS_TOUCH_POINT_PARAMETERS_EDITOR_H
+#endif  // OPP_GUI_WIDGETS_TOUCH_POINT_PARAMETERS_EDITOR_H

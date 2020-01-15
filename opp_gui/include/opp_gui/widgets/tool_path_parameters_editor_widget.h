@@ -34,20 +34,15 @@ class QProgressDialog;
 
 namespace opp_gui
 {
-
 /**
  * @brief A widget for editing the parameters associated with a single tool path, and generating
  * a tool path on a specified mesh based on those parameters
  */
 class ToolPathParametersEditorWidget : public QWidget
 {
-Q_OBJECT
+  Q_OBJECT
 public:
-
-  ToolPathParametersEditorWidget(
-      ros::NodeHandle& nh,
-      QWidget* parent = nullptr
-  );
+  ToolPathParametersEditorWidget(ros::NodeHandle& nh, QWidget* parent = nullptr);
 
   /**
    * @brief Sets the internal mesh to be used for path planning and a parameter (not intended to
@@ -81,7 +76,6 @@ private Q_SLOTS:
   void generateToolPath();
 
 private:
-
   void onGenerateToolPathsComplete(const actionlib::SimpleClientGoalState& state,
                                    const noether_msgs::GenerateToolPathsResultConstPtr& res);
 
@@ -96,6 +90,6 @@ private:
   QProgressDialog* progress_dialog_;
 };
 
-} // opp_gui
+}  // namespace opp_gui
 
-#endif // OPP_GUI_WIDGETS_TOOL_PATH_PARAMETERS_EDITOR_WIDGET_H
+#endif  // OPP_GUI_WIDGETS_TOOL_PATH_PARAMETERS_EDITOR_WIDGET_H

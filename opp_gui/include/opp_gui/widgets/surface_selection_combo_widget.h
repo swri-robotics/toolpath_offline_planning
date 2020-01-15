@@ -27,24 +27,22 @@
 #include "opp_gui/widgets/polygon_area_selection_widget.h"
 #include "opp_gui/widgets/segmentation_parameters_editor_widget.h"
 
-namespace Ui {
+namespace Ui
+{
 class SurfaceSelectionComboWidget;
 }
 
 namespace opp_gui
 {
-
 class SurfaceSelectionComboWidget : public QWidget
 {
-
   Q_OBJECT
 
 public:
-  explicit SurfaceSelectionComboWidget(
-      ros::NodeHandle& nh,
-      const std::string& selection_world_frame,
-      const std::string& selection_sensor_frame,
-      QWidget *parent = nullptr);
+  explicit SurfaceSelectionComboWidget(ros::NodeHandle& nh,
+                                       const std::string& selection_world_frame,
+                                       const std::string& selection_sensor_frame,
+                                       QWidget* parent = nullptr);
   ~SurfaceSelectionComboWidget();
 
   void init(const shape_msgs::Mesh& mesh);
@@ -66,7 +64,6 @@ private Q_SLOTS:
   void newSelectedSubmesh(const shape_msgs::Mesh::Ptr& selected_submesh);
 
 private:
-
   void publishTargetMesh();
 
   Ui::SurfaceSelectionComboWidget* ui_;
@@ -82,9 +79,8 @@ private:
   std::vector<shape_msgs::Mesh::Ptr> segment_list_;
 
   shape_msgs::Mesh::Ptr selected_area_;
-
 };
 
-} // end namespace opp_gui
+}  // end namespace opp_gui
 
-#endif // OPP_GUI_WIDGETS_SURFACE_SELECTION_COMBO_WIDGET_H
+#endif  // OPP_GUI_WIDGETS_SURFACE_SELECTION_COMBO_WIDGET_H

@@ -31,13 +31,8 @@ const static std::string GENERATE_TOOLPATHS_ACTION = "generate_tool_paths";
 
 namespace opp_gui
 {
-
-ToolPathParametersEditorWidget::ToolPathParametersEditorWidget(
-    ros::NodeHandle& nh,
-    QWidget* parent
-)
-  : QWidget(parent)
-  , client_(GENERATE_TOOLPATHS_ACTION, false)
+ToolPathParametersEditorWidget::ToolPathParametersEditorWidget(ros::NodeHandle& nh, QWidget* parent)
+  : QWidget(parent), client_(GENERATE_TOOLPATHS_ACTION, false)
 {
   ui_ = new Ui::ToolPathParametersEditor();
   ui_->setupUi(this);
@@ -59,14 +54,17 @@ ToolPathParametersEditorWidget::ToolPathParametersEditorWidget(
 
   // Connect the button press to the function that calls the toolpath generation action
   connect(ui_->push_button_generate, &QPushButton::clicked, this, &ToolPathParametersEditorWidget::generateToolPath);
-  connect(ui_->combo_box_process_type, &QComboBox::currentTextChanged, this, &ToolPathParametersEditorWidget::updateProcessType);
-  connect(ui_->spin_box_dwell_time, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &ToolPathParametersEditorWidget::updateDwellTime);
+  connect(ui_->combo_box_process_type,
+          &QComboBox::currentTextChanged,
+          this,
+          &ToolPathParametersEditorWidget::updateProcessType);
+  connect(ui_->spin_box_dwell_time,
+          static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+          this,
+          &ToolPathParametersEditorWidget::updateDwellTime);
 }
 
-void ToolPathParametersEditorWidget::init(const shape_msgs::Mesh& mesh)
-{
-  mesh_.reset(new shape_msgs::Mesh(mesh));
-}
+void ToolPathParametersEditorWidget::init(const shape_msgs::Mesh& mesh) { mesh_.reset(new shape_msgs::Mesh(mesh)); }
 
 void ToolPathParametersEditorWidget::setToolPathConfig(const noether_msgs::ToolPathConfig& config)
 {
@@ -98,7 +96,7 @@ noether_msgs::ToolPathConfig ToolPathParametersEditorWidget::getToolPathConfig()
 
 void ToolPathParametersEditorWidget::setToolPath(const opp_msgs::ToolPath& tool_path)
 {
-  if(!tool_path_)
+  if (!tool_path_)
   {
     tool_path_.reset(new opp_msgs::ToolPath(tool_path));
   }
@@ -112,7 +110,7 @@ void ToolPathParametersEditorWidget::setToolPath(const opp_msgs::ToolPath& tool_
 
 bool ToolPathParametersEditorWidget::getToolPath(opp_msgs::ToolPath& tool_path) const
 {
-  if(tool_path_)
+  if (tool_path_)
   {
     tool_path = *tool_path_;
     return true;
@@ -122,14 +120,14 @@ bool ToolPathParametersEditorWidget::getToolPath(opp_msgs::ToolPath& tool_path) 
 
 void ToolPathParametersEditorWidget::generateToolPath()
 {
-  if(!client_.isServerConnected())
+  if (!client_.isServerConnected())
   {
     std::string message = "Action server on '" + GENERATE_TOOLPATHS_ACTION + "' is not connected";
     QMessageBox::warning(this, "ROS Communication Error", QString(message.c_str()));
     return;
   }
 
-  if(!mesh_)
+  if (!mesh_)
   {
     QMessageBox::warning(this, "Input Error", "Mesh has not yet been specified");
     return;
@@ -153,24 +151,25 @@ void ToolPathParametersEditorWidget::generateToolPath()
   progress_dialog_->show();
 }
 
-void ToolPathParametersEditorWidget::onGenerateToolPathsComplete(const actionlib::SimpleClientGoalState& state,
-                                                                 const noether_msgs::GenerateToolPathsResultConstPtr& res)
+void ToolPathParametersEditorWidget::onGenerateToolPathsComplete(
+    const actionlib::SimpleClientGoalState& state,
+    const noether_msgs::GenerateToolPathsResultConstPtr& res)
 {
-  for(int i = progress_dialog_->minimum(); i < progress_dialog_->maximum(); ++i)
+  for (int i = progress_dialog_->minimum(); i < progress_dialog_->maximum(); ++i)
   {
     progress_dialog_->setValue(i);
     ros::Duration(0.01).sleep();
   }
   progress_dialog_->hide();
 
-  if(state != actionlib::SimpleClientGoalState::SUCCEEDED)
+  if (state != actionlib::SimpleClientGoalState::SUCCEEDED)
   {
     std::string message = "Action '" + GENERATE_TOOLPATHS_ACTION + "' failed to succeed";
     QMessageBox::warning(this, "Tool Path Planning Error", QString(message.c_str()));
   }
   else
   {
-    if(!res->success || !res->tool_path_validities[0])
+    if (!res->success || !res->tool_path_validities[0])
     {
       QMessageBox::warning(this, "Tool Path Planning Error", "Tool path generation failed");
     }
@@ -188,15 +187,16 @@ void ToolPathParametersEditorWidget::onGenerateToolPathsComplete(const actionlib
       tp.params.config.raster_angle = ui_->double_spin_box_raster_angle->value() * M_PI / 180.0;
       tp.params.config.min_hole_size = ui_->double_spin_box_min_hole_size->value();
       tp.params.config.min_segment_size = ui_->double_spin_box_min_segment_length->value();
-      tp.params.config.generate_extra_rasters = false; // No option to set this from GUI at present.
-      tp.params.config.raster_wrt_global_axes = false; // No option to set this from GUI at present.
+      tp.params.config.generate_extra_rasters = false;  // No option to set this from GUI at present.
+      tp.params.config.raster_wrt_global_axes = false;  // No option to set this from GUI at present.
       tp.params.config.intersecting_plane_height = ui_->double_spin_box_intersecting_plane_height->value();
 
       // Create the tool path offset transform
       // 1. Add z offset
       // 2. Rotate 180 degrees about X
       Eigen::Isometry3d tool_offset = Eigen::Isometry3d::Identity();
-      tool_offset.rotate(Eigen::AngleAxisd(ui_->double_spin_box_tool_pitch->value()*M_PI/180.0, Eigen::Vector3d::UnitY()));
+      tool_offset.rotate(
+          Eigen::AngleAxisd(ui_->double_spin_box_tool_pitch->value() * M_PI / 180.0, Eigen::Vector3d::UnitY()));
       tool_offset.translate(Eigen::Vector3d(0.0, 0.0, ui_->double_spin_box_tool_z_offset->value()));
       tool_offset.rotate(Eigen::AngleAxisd(M_PI, Eigen::Vector3d::UnitX()));
       tf::poseEigenToMsg(tool_offset, tp.tool_offset);
@@ -211,18 +211,19 @@ void ToolPathParametersEditorWidget::onGenerateToolPathsComplete(const actionlib
 
 void ToolPathParametersEditorWidget::updateProcessType(const QString&)
 {
-  if(tool_path_)
+  if (tool_path_)
   {
-    tool_path_->process_type.val = qvariant_cast<opp_msgs::ProcessType::_val_type>(ui_->combo_box_process_type->currentData());
+    tool_path_->process_type.val =
+        qvariant_cast<opp_msgs::ProcessType::_val_type>(ui_->combo_box_process_type->currentData());
   }
 }
 
 void ToolPathParametersEditorWidget::updateDwellTime(const int value)
 {
-  if(tool_path_)
+  if (tool_path_)
   {
     tool_path_->dwell_time = static_cast<uint32_t>(value * 60);
   }
 }
 
-} // namespace opp_gui
+}  // namespace opp_gui

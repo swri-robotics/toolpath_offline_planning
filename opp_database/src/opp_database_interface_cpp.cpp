@@ -31,7 +31,6 @@
 
 namespace opp_db
 {
-
 ROSDatabaseInterface::ROSDatabaseInterface()
 {
   database_ = QSqlDatabase::addDatabase("QMYSQL");
@@ -48,34 +47,25 @@ ROSDatabaseInterface::ROSDatabaseInterface()
     createJobsTable();
     createPartsTable();
   }
-  save_dir_ = std::string (std::getenv("HOME")) + "/.local/share/offline_generated_paths";
+  save_dir_ = std::string(std::getenv("HOME")) + "/.local/share/offline_generated_paths";
 }
 
-ROSDatabaseInterface::~ROSDatabaseInterface()
-{
-  database_.close();
-}
+ROSDatabaseInterface::~ROSDatabaseInterface() { database_.close(); }
 
-QSqlDatabase& ROSDatabaseInterface::getDatabase()
-{
-  return database_;
-}
+QSqlDatabase& ROSDatabaseInterface::getDatabase() { return database_; }
 
-bool ROSDatabaseInterface::isConnected() const
-{
-  return database_.isOpen();
-}
+bool ROSDatabaseInterface::isConnected() const { return database_.isOpen(); }
 
-long int ROSDatabaseInterface::addJobToDatabase(const opp_msgs::Job& job,
-                                                std::string& message)
+long int ROSDatabaseInterface::addJobToDatabase(const opp_msgs::Job& job, std::string& message)
 {
-  std::vector<std::string> columns = {"name", "description", "part_id", "paths"};
+  std::vector<std::string> columns = { "name", "description", "part_id", "paths" };
   std::vector<std::string> values;
   values.push_back(boost::lexical_cast<std::string>(job.name));
   values.push_back(boost::lexical_cast<std::string>(job.description));
   values.push_back(boost::lexical_cast<std::string>(job.part_id));
 
-  std::string filepath = save_dir_ + "/job_" + job.name + "_" + boost::posix_time::to_iso_string(ros::Time::now().toBoost()) + ".yaml";
+  std::string filepath =
+      save_dir_ + "/job_" + job.name + "_" + boost::posix_time::to_iso_string(ros::Time::now().toBoost()) + ".yaml";
   bool success = opp_msgs_serialization::serialize(filepath, job.paths);
   if (!success)
   {
@@ -85,13 +75,14 @@ long int ROSDatabaseInterface::addJobToDatabase(const opp_msgs::Job& job,
 
   values.push_back(boost::lexical_cast<std::string>(filepath));
 
-  return  insert(JOBS_TABLE_NAME, columns, values, message);
+  return insert(JOBS_TABLE_NAME, columns, values, message);
 }
 
-long int ROSDatabaseInterface::addPartToDatabase(const opp_msgs::Part& part,
-                                                 std::string& message)
+long int ROSDatabaseInterface::addPartToDatabase(const opp_msgs::Part& part, std::string& message)
 {
-  std::vector<std::string> columns = {"name", "description", "mesh_resource", "touchoff_points", "verification_points"};
+  std::vector<std::string> columns = {
+    "name", "description", "mesh_resource", "touchoff_points", "verification_points"
+  };
   std::vector<std::string> values;
   values.push_back(boost::lexical_cast<std::string>(part.name));
   values.push_back(boost::lexical_cast<std::string>(part.description));
@@ -124,17 +115,17 @@ long int ROSDatabaseInterface::addPartToDatabase(const opp_msgs::Part& part,
   return insert(PARTS_TABLE_NAME, columns, values, message);
 }
 
-bool ROSDatabaseInterface::getJobFromDatabase(const unsigned int job_id,
-                                              std::string& message,
-                                              opp_msgs::Job& job)
+bool ROSDatabaseInterface::getJobFromDatabase(const unsigned int job_id, std::string& message, opp_msgs::Job& job)
 {
   // If the user tries to pull a specific suppressed job, let them
-  QString script = QString("SELECT * FROM %1 WHERE `id`=\"%2\";").arg(QString::fromStdString(JOBS_TABLE_NAME)).arg(job_id);
+  QString script =
+      QString("SELECT * FROM %1 WHERE `id`=\"%2\";").arg(QString::fromStdString(JOBS_TABLE_NAME)).arg(job_id);
   QSqlQuery result = database_.exec(script);
 
   if (!result.isActive())
   {
-    message = "Database query failed: " + getErrorString(result);;
+    message = "Database query failed: " + getErrorString(result);
+    ;
     return false;
   }
 
@@ -172,12 +163,15 @@ bool ROSDatabaseInterface::getAllJobsFromDatabase(const unsigned int part_id,
                                                   std::map<unsigned int, opp_msgs::Job>& jobs)
 {
   // Retrieve only non-suppressed jobs when jobs are requested en masse
-  QString script = QString("SELECT * FROM %1 WHERE `part_id`=\"%2\" AND `suppressed`!=\"1\";").arg(QString::fromStdString(JOBS_TABLE_NAME)).arg(part_id);
+  QString script = QString("SELECT * FROM %1 WHERE `part_id`=\"%2\" AND `suppressed`!=\"1\";")
+                       .arg(QString::fromStdString(JOBS_TABLE_NAME))
+                       .arg(part_id);
   QSqlQuery result = database_.exec(script);
 
   if (!result.isActive())
   {
-    message = "Database query failed: " + getErrorString(result);;
+    message = "Database query failed: " + getErrorString(result);
+    ;
     return false;
   }
 
@@ -188,7 +182,7 @@ bool ROSDatabaseInterface::getAllJobsFromDatabase(const unsigned int part_id,
   }
 
   jobs.clear();
-  while(result.next())
+  while (result.next())
   {
     opp_msgs::Job j;
     j.id = result.value("id").toUInt();
@@ -211,17 +205,17 @@ bool ROSDatabaseInterface::getAllJobsFromDatabase(const unsigned int part_id,
   return true;
 }
 
-bool ROSDatabaseInterface::getPartFromDatabase(const unsigned int part_id,
-                                               std::string& message,
-                                               opp_msgs::Part& part)
+bool ROSDatabaseInterface::getPartFromDatabase(const unsigned int part_id, std::string& message, opp_msgs::Part& part)
 {
   // Let the user request a suppressed part specifically - they may need it for this job
-  QString script = QString("SELECT * FROM %1 WHERE `part_id`=\"%2\";").arg(QString::fromStdString(PARTS_TABLE_NAME)).arg(part_id);
+  QString script =
+      QString("SELECT * FROM %1 WHERE `part_id`=\"%2\";").arg(QString::fromStdString(PARTS_TABLE_NAME)).arg(part_id);
   QSqlQuery result = database_.exec(script);
 
   if (!result.isActive())
   {
-    message = "Database query failed: " + getErrorString(result);;
+    message = "Database query failed: " + getErrorString(result);
+    ;
     return false;
   }
 
@@ -262,8 +256,7 @@ bool ROSDatabaseInterface::getPartFromDatabase(const unsigned int part_id,
   return success;
 }
 
-bool ROSDatabaseInterface::getAllPartsFromDatabase(std::string& message,
-                                                   std::map<unsigned int, opp_msgs::Part>& parts)
+bool ROSDatabaseInterface::getAllPartsFromDatabase(std::string& message, std::map<unsigned int, opp_msgs::Part>& parts)
 {
   // Do not retrieve suppressed parts when retrieved en masse
   QString script = QString("SELECT * FROM %1 WHERE `suppressed`!=\"1\";").arg(QString::fromStdString(PARTS_TABLE_NAME));
@@ -271,7 +264,8 @@ bool ROSDatabaseInterface::getAllPartsFromDatabase(std::string& message,
 
   if (!result.isActive())
   {
-    message = "Database query failed: " + getErrorString(result);;
+    message = "Database query failed: " + getErrorString(result);
+    ;
     return false;
   }
 
@@ -282,7 +276,7 @@ bool ROSDatabaseInterface::getAllPartsFromDatabase(std::string& message,
   }
 
   parts.clear();
-  while(result.next())
+  while (result.next())
   {
     opp_msgs::Part p;
     p.id = result.value("part_id").toUInt();
@@ -312,15 +306,17 @@ bool ROSDatabaseInterface::getAllPartsFromDatabase(std::string& message,
   return true;
 }
 
-bool ROSDatabaseInterface::suppressPart(const unsigned int part_id,
-                                        std::string& message)
+bool ROSDatabaseInterface::suppressPart(const unsigned int part_id, std::string& message)
 {
-  QString script = QString("UPDATE %1 SET `suppressed`=\"1\" WHERE `part_id`=\"%2\";").arg(QString::fromStdString(PARTS_TABLE_NAME)).arg(part_id);
+  QString script = QString("UPDATE %1 SET `suppressed`=\"1\" WHERE `part_id`=\"%2\";")
+                       .arg(QString::fromStdString(PARTS_TABLE_NAME))
+                       .arg(part_id);
   QSqlQuery result = database_.exec(script);
 
   if (!result.isActive())
   {
-    message = "Database query failed: " + getErrorString(result);;
+    message = "Database query failed: " + getErrorString(result);
+    ;
     return false;
   }
 
@@ -330,15 +326,17 @@ bool ROSDatabaseInterface::suppressPart(const unsigned int part_id,
   return true;
 }
 
-bool ROSDatabaseInterface::suppressJob(const unsigned int job_id,
-                                        std::string& message)
+bool ROSDatabaseInterface::suppressJob(const unsigned int job_id, std::string& message)
 {
-  QString script = QString("UPDATE %1 SET `suppressed`=\"1\" WHERE `id`=\"%2\";").arg(QString::fromStdString(JOBS_TABLE_NAME)).arg(job_id);
+  QString script = QString("UPDATE %1 SET `suppressed`=\"1\" WHERE `id`=\"%2\";")
+                       .arg(QString::fromStdString(JOBS_TABLE_NAME))
+                       .arg(job_id);
   QSqlQuery result = database_.exec(script);
 
   if (!result.isActive())
   {
-    message = "Database query failed: " + getErrorString(result);;
+    message = "Database query failed: " + getErrorString(result);
+    ;
     return false;
   }
 
@@ -348,7 +346,10 @@ bool ROSDatabaseInterface::suppressJob(const unsigned int job_id,
   return true;
 }
 
-long ROSDatabaseInterface::insert(const std::string &table_name, const std::vector<std::string> &columns, const std::vector<std::string> &values, std::string &message)
+long ROSDatabaseInterface::insert(const std::string& table_name,
+                                  const std::vector<std::string>& columns,
+                                  const std::vector<std::string>& values,
+                                  std::string& message)
 {
   QString columns_string, values_string;
   for (const auto& column : columns)
@@ -361,7 +362,10 @@ long ROSDatabaseInterface::insert(const std::string &table_name, const std::vect
 
   values_string.chop(1);
 
-  QString script = QString("INSERT INTO %1 (%2) VALUES (%3);").arg(QString::fromStdString(table_name)).arg(columns_string).arg(values_string);
+  QString script = QString("INSERT INTO %1 (%2) VALUES (%3);")
+                       .arg(QString::fromStdString(table_name))
+                       .arg(columns_string)
+                       .arg(values_string);
 
   QSqlQuery result = database_.exec(script);
   if (result.isActive())
@@ -387,7 +391,8 @@ bool ROSDatabaseInterface::createJobsTable()
       `paths` varchar(200) NOT NULL,\
       `suppressed` BOOLEAN NOT NULL DEFAULT 0,\
       PRIMARY KEY (`id`)\
-    ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1").arg(table_name);
+    ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1")
+                       .arg(table_name);
 
   return createTableHelper(table_name, script);
 }
@@ -404,7 +409,8 @@ bool ROSDatabaseInterface::createPartsTable()
       `verification_points` varchar(200) NOT NULL,\
       `suppressed` BOOLEAN NOT NULL DEFAULT 0,\
       PRIMARY KEY (`part_id`)\
-    ) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=latin1").arg(table_name);
+    ) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=latin1")
+                       .arg(table_name);
 
   return createTableHelper(table_name, script);
 }
@@ -456,4 +462,4 @@ long int ROSDatabaseInterface::getLastEntryId(const std::string& table_name)
   return -1;
 }
 
-}
+}  // namespace opp_db

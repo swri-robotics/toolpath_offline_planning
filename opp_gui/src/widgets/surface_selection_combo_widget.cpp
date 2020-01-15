@@ -27,16 +27,14 @@
 
 namespace opp_gui
 {
-
 const static std::string MARKER_TOPIC = "/target_area";
 
-SurfaceSelectionComboWidget::SurfaceSelectionComboWidget(
-    ros::NodeHandle& nh,
-    const std::string& selection_world_frame,
-    const std::string& selection_sensor_frame,
-    QWidget *parent)
-  : QWidget(parent) // call the base-class constructor
-  , ui_(new Ui::SurfaceSelectionComboWidget) // initialize the visible element
+SurfaceSelectionComboWidget::SurfaceSelectionComboWidget(ros::NodeHandle& nh,
+                                                         const std::string& selection_world_frame,
+                                                         const std::string& selection_sensor_frame,
+                                                         QWidget* parent)
+  : QWidget(parent)                           // call the base-class constructor
+  , ui_(new Ui::SurfaceSelectionComboWidget)  // initialize the visible element
 {
   // Setup the publisher for visualizing the selected area in RViz
   selected_area_marker_publisher_ = nh.advertise<visualization_msgs::Marker>(MARKER_TOPIC, 1, true);
@@ -59,25 +57,24 @@ SurfaceSelectionComboWidget::SurfaceSelectionComboWidget(
   ui_->list_widget_segment_list->addItem("Full Mesh");
 
   // Create and attach the area selection widget
-  area_selector_ = new opp_gui::PolygonAreaSelectionWidget(
-      nh,
-      selection_world_frame,
-      selection_sensor_frame,
-      this);
+  area_selector_ = new opp_gui::PolygonAreaSelectionWidget(nh, selection_world_frame, selection_sensor_frame, this);
   ui_->layout_for_selector_widget->addWidget(area_selector_);
 
   // Connect the inputs and outputs of sub-widgets
-  connect(
-      segmenter_, &opp_gui::SegmentationParametersEditorWidget::segmentationFinished,
-      this, &opp_gui::SurfaceSelectionComboWidget::newSegmentList);
+  connect(segmenter_,
+          &opp_gui::SegmentationParametersEditorWidget::segmentationFinished,
+          this,
+          &opp_gui::SurfaceSelectionComboWidget::newSegmentList);
 
-  connect(
-      ui_->list_widget_segment_list, &QListWidget::itemSelectionChanged,
-      this, &opp_gui::SurfaceSelectionComboWidget::newSelectedSegment);
+  connect(ui_->list_widget_segment_list,
+          &QListWidget::itemSelectionChanged,
+          this,
+          &opp_gui::SurfaceSelectionComboWidget::newSelectedSegment);
 
-  connect(
-      area_selector_, &PolygonAreaSelectionWidget::selectedSubmesh,
-      this, &SurfaceSelectionComboWidget::newSelectedSubmesh);
+  connect(area_selector_,
+          &PolygonAreaSelectionWidget::selectedSubmesh,
+          this,
+          &SurfaceSelectionComboWidget::newSelectedSubmesh);
 }
 
 SurfaceSelectionComboWidget::~SurfaceSelectionComboWidget()
@@ -135,9 +132,8 @@ void SurfaceSelectionComboWidget::init(const shape_msgs::Mesh& mesh)
   return;
 }
 
-void SurfaceSelectionComboWidget::newSegmentList(
-    const std::vector<shape_msgs::Mesh::Ptr>& segments,
-    const shape_msgs::Mesh::Ptr& remnants)
+void SurfaceSelectionComboWidget::newSegmentList(const std::vector<shape_msgs::Mesh::Ptr>& segments,
+                                                 const shape_msgs::Mesh::Ptr& remnants)
 {
   // Save the original mesh with the segments
   segment_list_.resize(1);
@@ -227,4 +223,4 @@ void SurfaceSelectionComboWidget::publishTargetMesh()
   return;
 }
 
-} // end namespace opp_gui
+}  // end namespace opp_gui

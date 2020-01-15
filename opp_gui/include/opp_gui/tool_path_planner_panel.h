@@ -22,7 +22,6 @@
 
 namespace opp_gui
 {
-
 class ToolPathPlannerWidget;
 
 /**
@@ -31,9 +30,8 @@ class ToolPathPlannerWidget;
  */
 class ToolPathPlannerPanel : public rviz::Panel
 {
-Q_OBJECT
+  Q_OBJECT
 public:
-
   /**
    * @brief ToolPathPlannerPanel
    *
@@ -51,12 +49,11 @@ public:
   virtual void onInitialize() override;
 
 private:
-
   ToolPathPlannerWidget* tpp_widget_;
 
   ros::NodeHandle nh_;
 };
 
-} // namespace opp_gui
+}  // namespace opp_gui
 
-#endif // OPP_GUI_TOOL_PATH_PLANNER_PANEL_H
+#endif  // OPP_GUI_TOOL_PATH_PLANNER_PANEL_H

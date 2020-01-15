@@ -1,12 +1,12 @@
-/* 
+/*
  * Copyright 2018 Southwest Research Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,11 +24,10 @@
 
 namespace opp_msgs_serialization
 {
-
 template <class T>
-bool serialize(const std::string &file, const T& val)
+bool serialize(const std::string& file, const T& val)
 {
-  std::ofstream ofh (file);
+  std::ofstream ofh(file);
   if (!ofh)
   {
     return false;
@@ -40,7 +39,7 @@ bool serialize(const std::string &file, const T& val)
 }
 
 template <class T>
-bool deserialize(const std::string &file, T& val)
+bool deserialize(const std::string& file, T& val)
 {
   try
   {
@@ -57,6 +56,6 @@ bool deserialize(const std::string &file, T& val)
   }
 }
 
-} // namespace opp_msgs_serialization
+}  // namespace opp_msgs_serialization
 
-#endif // OPP_MSGS_SERIALIZATION_SERIALIZE_H
+#endif  // OPP_MSGS_SERIALIZATION_SERIALIZE_H

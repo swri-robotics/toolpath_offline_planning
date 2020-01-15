@@ -23,8 +23,7 @@
 
 namespace YAML
 {
-
-template<>
+template <>
 struct convert<sensor_msgs::RegionOfInterest>
 {
   static Node encode(const sensor_msgs::RegionOfInterest& rhs)
@@ -42,19 +41,20 @@ struct convert<sensor_msgs::RegionOfInterest>
 
   static bool decode(const Node& node, sensor_msgs::RegionOfInterest& rhs)
   {
-    if (node.size() != 5) return false;
+    if (node.size() != 5)
+      return false;
 
-    rhs.x_offset = node["x_offset"].as<decltype (rhs.x_offset)>();
-    rhs.y_offset = node["y_offset"].as<decltype (rhs.y_offset)>();
-    rhs.height = node["height"].as<decltype (rhs.height)>();
-    rhs.width = node["width"].as<decltype (rhs.width)>();
-    rhs.do_rectify = node["do_rectify"].as<decltype (rhs.do_rectify)>() ;
+    rhs.x_offset = node["x_offset"].as<decltype(rhs.x_offset)>();
+    rhs.y_offset = node["y_offset"].as<decltype(rhs.y_offset)>();
+    rhs.height = node["height"].as<decltype(rhs.height)>();
+    rhs.width = node["width"].as<decltype(rhs.width)>();
+    rhs.do_rectify = node["do_rectify"].as<decltype(rhs.do_rectify)>();
 
     return true;
   }
 };
 
-template<>
+template <>
 struct convert<sensor_msgs::CameraInfo>
 {
   static Node encode(const sensor_msgs::CameraInfo& rhs)
@@ -85,7 +85,8 @@ struct convert<sensor_msgs::CameraInfo>
 
   static bool decode(const Node& node, sensor_msgs::CameraInfo& rhs)
   {
-    if (node.size() != 11) return false;
+    if (node.size() != 11)
+      return false;
 
     rhs.header = node["header"].as<decltype(rhs.header)>();
     rhs.height = node["height"].as<decltype(rhs.height)>();
@@ -110,7 +111,7 @@ struct convert<sensor_msgs::CameraInfo>
   }
 };
 
-template<>
+template <>
 struct convert<sensor_msgs::JointState>
 {
   static Node encode(const sensor_msgs::JointState& rhs)
@@ -128,18 +129,19 @@ struct convert<sensor_msgs::JointState>
 
   static bool decode(const Node& node, sensor_msgs::JointState& rhs)
   {
-    if (node.size() != 5) return false;
+    if (node.size() != 5)
+      return false;
 
-    rhs.header = node["header"].as<decltype (rhs.header)>();
-    rhs.name = node["name"].as<decltype (rhs.name)>();
-    rhs.position = node["position"].as<decltype (rhs.position)>();
-    rhs.velocity = node["velocity"].as<decltype (rhs.velocity)>();
-    rhs.effort = node["effort"].as<decltype (rhs.effort)>() ;
+    rhs.header = node["header"].as<decltype(rhs.header)>();
+    rhs.name = node["name"].as<decltype(rhs.name)>();
+    rhs.position = node["position"].as<decltype(rhs.position)>();
+    rhs.velocity = node["velocity"].as<decltype(rhs.velocity)>();
+    rhs.effort = node["effort"].as<decltype(rhs.effort)>();
 
     return true;
   }
 };
 
-} // namespace YAML
+}  // namespace YAML
 
-#endif // OPP_MSGS_SERIALIZATION_SENSOR_MSGS_YAML
+#endif  // OPP_MSGS_SERIALIZATION_SENSOR_MSGS_YAML

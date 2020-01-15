@@ -18,6 +18,18 @@ env:
 jobs:
   include:
     - os: linux
+      dist: bionic
+      language: cpp
+      env:
+      - ROS_DISTRO="melodic"
+      - CLANG_FORMAT_CHECK=file
+      - CLANG_FORMAT_VERSION=8
+      - AFTER_SCRIPT=""
+      - BADGE=clang-format
+      cache:
+        directories:
+          - $HOME/.ccache
+    - os: linux
       dist: xenial
       language: cpp
       env:

@@ -18,7 +18,7 @@
 #define OPP_GUI_WIDGETS_TOOLPATH_EDITOR_WIDGET_H
 
 #include <map>
-#include <utility> // pair
+#include <utility>  // pair
 
 #include <noether_msgs/ToolPathConfig.h>
 #include <ros/node_handle.h>
@@ -32,7 +32,6 @@
 
 namespace opp_gui
 {
-
 typedef typename std::map<std::string, opp_msgs::ToolPath> ToolPathDataMap;
 
 class ToolPathParametersEditorWidget;
@@ -43,16 +42,13 @@ class ToolPathParametersEditorWidget;
  */
 class ToolPathEditorWidget : public ListEditorWidgetBase
 {
-Q_OBJECT
+  Q_OBJECT
 public:
-
-  ToolPathEditorWidget(
-      QWidget* parent = nullptr,
-      const ros::NodeHandle& nh = ros::NodeHandle("~"),
-      const std::string& marker_frame = "map",
-      const std::string& selection_world_frame = "map",
-      const std::string& selection_sensor_frame = "map"
-  );
+  ToolPathEditorWidget(QWidget* parent = nullptr,
+                       const ros::NodeHandle& nh = ros::NodeHandle("~"),
+                       const std::string& marker_frame = "map",
+                       const std::string& selection_world_frame = "map",
+                       const std::string& selection_sensor_frame = "map");
 
   inline virtual void clear() override
   {
@@ -63,17 +59,11 @@ public:
 
   void init(const shape_msgs::Mesh& mesh);
 
-  inline ToolPathDataMap getToolPathData() const
-  {
-    return data_;
-  }
+  inline ToolPathDataMap getToolPathData() const { return data_; }
 
   void addToolPathData(const std::vector<opp_msgs::ToolPath>& tool_path_list);
 
-  inline void setMarkerFrame(const std::string& frame)
-  {
-    marker_frame_ = frame;
-  }
+  inline void setMarkerFrame(const std::string& frame) { marker_frame_ = frame; }
 
 protected Q_SLOTS:
 
@@ -88,7 +78,6 @@ protected Q_SLOTS:
   virtual void onDataChanged() override;
 
 private:
-
   void publishToolPathDisplay(const opp_msgs::ToolPath& tool_path);
 
   SurfaceSelectionComboWidget* surface_selector_;
@@ -104,6 +93,6 @@ private:
   std::string marker_frame_;
 };
 
-} // namespace opp_gui
+}  // namespace opp_gui
 
-#endif // OPP_GUI_WIDGETS_TOOLPATH_EDITOR_WIDGET_H
+#endif  // OPP_GUI_WIDGETS_TOOLPATH_EDITOR_WIDGET_H

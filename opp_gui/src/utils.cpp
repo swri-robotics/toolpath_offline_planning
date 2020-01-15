@@ -25,26 +25,23 @@
 #include <pcl/PolygonMesh.h>
 #include <pcl_conversions/pcl_conversions.h>
 
-
 namespace opp_gui
 {
 namespace utils
 {
-
 namespace vm = visualization_msgs;
 
-bool getMeshMsgFromResource(const std::string& resource,
-                            shape_msgs::Mesh& mesh_msg)
+bool getMeshMsgFromResource(const std::string& resource, shape_msgs::Mesh& mesh_msg)
 {
   shapes::Mesh* mesh = shapes::createMeshFromResource(resource);
-  if(!mesh)
+  if (!mesh)
   {
     ROS_ERROR_STREAM("Failed to load mesh from resource: '" << resource << "'");
     return false;
   }
 
   shapes::ShapeMsg shape_msg;
-  if(!shapes::constructMsgFromShape(mesh, shape_msg))
+  if (!shapes::constructMsgFromShape(mesh, shape_msg))
   {
     ROS_ERROR_STREAM(__func__ << ": Failed to create shape message from mesh");
     return false;
@@ -55,10 +52,7 @@ bool getMeshMsgFromResource(const std::string& resource,
   return true;
 }
 
-std_msgs::ColorRGBA createColor(const float r,
-                                const float g,
-                                const float b,
-                                const float a)
+std_msgs::ColorRGBA createColor(const float r, const float g, const float b, const float a)
 {
   std_msgs::ColorRGBA color;
   color.r = r;
@@ -135,13 +129,12 @@ QStringList toQStringList(const std::vector<std::string>& in)
 {
   QStringList out;
   out.reserve(in.size());
-  for(const std::string& str : in)
+  for (const std::string& str : in)
   {
     out.push_back(QString::fromStdString(str));
   }
   return out;
 }
-
 
 bool pclMsgToShapeMsg(const pcl_msgs::PolygonMesh& pcl_mesh_msg, shape_msgs::Mesh& mesh_msg)
 {
@@ -238,5 +231,5 @@ bool pclMsgFromShapeMsg(const shape_msgs::Mesh& mesh_msg, pcl_msgs::PolygonMesh&
   return true;
 }
 
-} // namespace utils
-} // namespace opp_gui
+}  // namespace utils
+}  // namespace opp_gui

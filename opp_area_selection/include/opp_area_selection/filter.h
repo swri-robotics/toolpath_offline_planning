@@ -21,10 +21,8 @@
 
 namespace opp_area_selection
 {
-
 namespace data_filtering
 {
-
 template <typename PointT>
 using Cloud = typename pcl::PointCloud<PointT>;
 
@@ -32,16 +30,15 @@ template <typename PointT>
 using CloudPtr = typename Cloud<PointT>::Ptr;
 
 template <typename PointT>
-bool planeFit(
-    const CloudPtr<PointT> input_cloud,
-    Cloud<PointT>& output_cloud,
-    pcl::ModelCoefficients::Ptr plane_coefficients,
-    const double threshold = 0.025);
+bool planeFit(const CloudPtr<PointT> input_cloud,
+              Cloud<PointT>& output_cloud,
+              pcl::ModelCoefficients::Ptr plane_coefficients,
+              const double threshold = 0.025);
 
-} // end namespace data_filtering
+}  // end namespace data_filtering
 
-} // end namespace opp_area_selection
+}  // end namespace opp_area_selection
 
 #include "opp_area_selection/filter_impl.h"
 
-#endif // OPP_AREA_SELECTION_FILTER_H
+#endif  // OPP_AREA_SELECTION_FILTER_H

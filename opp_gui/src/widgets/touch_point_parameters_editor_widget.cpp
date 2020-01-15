@@ -21,15 +21,14 @@ const std::string CLICKED_POINT_TOPIC = "/selection_point";
 
 namespace opp_gui
 {
-
 TouchPointParametersEditorWidget::TouchPointParametersEditorWidget(QWidget* parent)
-  : QWidget(parent)
-  , accept_mouse_input_(false)
+  : QWidget(parent), accept_mouse_input_(false)
 {
   ui_ = new Ui::TouchPointParametersEditor();
   ui_->setupUi(this);
 
-  sub_ = nh_.subscribe<geometry_msgs::PoseStamped>(CLICKED_POINT_TOPIC, 1, &TouchPointParametersEditorWidget::callback, this);
+  sub_ = nh_.subscribe<geometry_msgs::PoseStamped>(
+      CLICKED_POINT_TOPIC, 1, &TouchPointParametersEditorWidget::callback, this);
 
   // Make the position line edits only accept numbers
   ui_->double_spin_box_x->setRange(-std::numeric_limits<double>::max(), std::numeric_limits<double>::max());
@@ -45,13 +44,16 @@ TouchPointParametersEditorWidget::TouchPointParametersEditorWidget(QWidget* pare
   ui_->double_spin_box_threshold->setRange(0.0, std::numeric_limits<double>::max());
 
   // Connect signals and slots
-  connect(ui_->push_button_select_with_mouse, &QPushButton::clicked, this, &TouchPointParametersEditorWidget::onSelectWithMouse);
+  connect(ui_->push_button_select_with_mouse,
+          &QPushButton::clicked,
+          this,
+          &TouchPointParametersEditorWidget::onSelectWithMouse);
   connect(ui_->push_button_update, &QPushButton::clicked, this, &TouchPointParametersEditorWidget::dataChanged);
 }
 
 void TouchPointParametersEditorWidget::onSelectWithMouse()
 {
-  if(!accept_mouse_input_)
+  if (!accept_mouse_input_)
   {
     // Keep the push button flat until we have received a message back
     ui_->push_button_select_with_mouse->setStyleSheet("background-color: red");
@@ -72,7 +74,7 @@ void TouchPointParametersEditorWidget::onSelectWithMouse()
 
 void TouchPointParametersEditorWidget::callback(const geometry_msgs::PoseStampedConstPtr& msg)
 {
-  if(accept_mouse_input_)
+  if (accept_mouse_input_)
   {
     // Reset the button visualization
     ui_->push_button_select_with_mouse->setStyleSheet("");
@@ -134,4 +136,4 @@ opp_msgs::TouchPoint TouchPointParametersEditorWidget::getTouchPoint() const
   return out;
 }
 
-} // namespace opp_gui
+}  // namespace opp_gui

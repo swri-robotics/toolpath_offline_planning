@@ -34,13 +34,14 @@ int main(int argc, char** argv)
 
   QApplication app(argc, argv);
 
-  opp_gui::TouchPointEditorWidget* touch_point_editor_widget = new opp_gui::TouchPointEditorWidget(nullptr, nh, {fixed_frame});
+  opp_gui::TouchPointEditorWidget* touch_point_editor_widget =
+      new opp_gui::TouchPointEditorWidget(nullptr, nh, { fixed_frame });
   touch_point_editor_widget->show();
 
   app.exec();
 
   std::map<std::string, opp_msgs::TouchPoint> tps = touch_point_editor_widget->getPoints();
-  for(const std::pair<const std::string, opp_msgs::TouchPoint>& pair : tps)
+  for (const std::pair<const std::string, opp_msgs::TouchPoint>& pair : tps)
   {
     ROS_INFO_STREAM("Touch Point: " << pair.first << "\nInfo:\n" << pair.second);
   }

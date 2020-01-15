@@ -1,4 +1,8 @@
 # 10-24228
+
+[![Build Status](https://travis-ci.com/swri-robotics/Toolpath-Offline-Planning.svg?branch=master)](https://travis-ci.com/swri-robotics/Toolpath-Offline-Planning)
+[![Github Issues](https://img.shields.io/github/issues/swri-robotics/Toolpath-Offline-Planning.svg)](http://github.com/swri-robotics/Toolpath-Offline-Planning/issues)
+
 ROS packages for generating offline toolpaths from CAD.  Built to run on Ubuntu 16.04 or 18.04.
 
 ## TODO

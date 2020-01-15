@@ -6,11 +6,4 @@
       A panel for creating registration and tool path data for new models
     </description>
   </class>
-  <class name="opp_gui/ChemicalDepaintApplicationPanel"
-         type="opp_gui::ChemicalDepaintApplicationPanel"
-         base_class_type="rviz::Panel">
-    <description>
-      A panel for operating the chemical depaint process
-    </description>
-  </class>
 </library>

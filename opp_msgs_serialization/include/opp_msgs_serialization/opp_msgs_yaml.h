@@ -19,6 +19,7 @@
 
 #include <noether_msgs/ToolPathConfig.h>
 
+#include <opp_msgs/Job.h>
 #include <opp_msgs/ToolPath.h>
 #include <opp_msgs/TouchPoint.h>
 #include "opp_msgs_serialization/geometry_msgs_yaml.h"

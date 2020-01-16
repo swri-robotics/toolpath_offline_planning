@@ -72,7 +72,7 @@ TEST(opp_serialization, tool_path)
   std::string file = "tool_path.yaml";
   opp_msgs::ToolPath orig_msg;
 
-  orig_msg.process_type.val = opp_msgs::ProcessType::SAND_STRIP;
+  orig_msg.process_type.val = opp_msgs::ProcessType::PROCESS_DEPAINT;
 
   for(unsigned segment_idx = 0; segment_idx < 3; ++segment_idx)
   {

@@ -64,5 +64,6 @@ if(CATKIN_ENABLE_TESTING)
   )
   target_link_libraries(${PROJECT_NAME}_test
     ${catkin_LIBRARIES}
+    yaml-cpp
   )
 endif()

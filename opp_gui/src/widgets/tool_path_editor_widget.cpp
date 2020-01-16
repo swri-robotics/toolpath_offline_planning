@@ -21,17 +21,12 @@ const static std::string TOOL_PATH_TOPIC = "tool_path";
 
 namespace opp_gui
 {
-
-ToolPathEditorWidget::ToolPathEditorWidget(
-    QWidget* parent,
-    const ros::NodeHandle& nh,
-    const std::string& marker_frame,
-    const std::string& selection_world_frame,
-    const std::string& selection_sensor_frame
-)
-  : ListEditorWidgetBase(parent)
-  , nh_(nh)
-  , marker_frame_(marker_frame)
+ToolPathEditorWidget::ToolPathEditorWidget(QWidget* parent,
+                                           const ros::NodeHandle& nh,
+                                           const std::string& marker_frame,
+                                           const std::string& selection_world_frame,
+                                           const std::string& selection_sensor_frame)
+  : ListEditorWidgetBase(parent), nh_(nh), marker_frame_(marker_frame)
 {
   surface_selector_ = new SurfaceSelectionComboWidget(nh_, selection_world_frame, selection_sensor_frame, this);
   editor_ = new ToolPathParametersEditorWidget(nh_, this);
@@ -52,8 +47,10 @@ ToolPathEditorWidget::ToolPathEditorWidget(
 
   connect(editor_, &ToolPathParametersEditorWidget::dataChanged, this, &ToolPathEditorWidget::onDataChanged);
 
-  connect(surface_selector_, &SurfaceSelectionComboWidget::newTargetMesh,
-          this, &ToolPathEditorWidget::newTargetMeshSelected);
+  connect(surface_selector_,
+          &SurfaceSelectionComboWidget::newTargetMesh,
+          this,
+          &ToolPathEditorWidget::newTargetMeshSelected);
 
   // Create a publisher for the tool path marker
   pub_ = nh_.advertise<geometry_msgs::PoseArray>(TOOL_PATH_TOPIC, 1, true);
@@ -102,7 +99,8 @@ void ToolPathEditorWidget::addToolPathData(const std::vector<opp_msgs::ToolPath>
     while (data_.find(key) != data_.end())
     {
       ++i;
-      if (i > 2000) break; // can't be too careful
+      if (i > 2000)
+        break;  // can't be too careful
       key = key_base + std::to_string(i);
     }
     data_.emplace(key, val);
@@ -123,7 +121,7 @@ void ToolPathEditorWidget::onAddPressed()
 {
   bool ok;
   QString key = QInputDialog::getText(this, "Add New", "Name", QLineEdit::Normal, "", &ok);
-  if(ok && !key.isEmpty())
+  if (ok && !key.isEmpty())
   {
     opp_msgs::ToolPath val;
     val.params.config.line_spacing = 0.2;
@@ -137,7 +135,7 @@ void ToolPathEditorWidget::onAddPressed()
     val.process_type.val = opp_msgs::ProcessType::NONE;
 
     // Make sure the key doesn't already exist in the map
-    if(data_.find(key.toStdString()) == data_.end())
+    if (data_.find(key.toStdString()) == data_.end())
     {
       // Add the entry to the map of points
       data_.emplace(key.toStdString(), val);
@@ -153,11 +151,11 @@ void ToolPathEditorWidget::onRemovePressed()
   // Get the selection from the list widget
   QList<QListWidgetItem*> current_items = ui_->list_widget->selectedItems();
 
-  for(QListWidgetItem* item : current_items)
+  for (QListWidgetItem* item : current_items)
   {
     std::string key = item->text().toStdString();
     auto it = data_.find(key);
-    if(it != data_.end())
+    if (it != data_.end())
     {
       data_.erase(it);
     }
@@ -172,14 +170,13 @@ void ToolPathEditorWidget::onRemovePressed()
   }
 
   // Disable the parameters frame if there are no tool paths left
-  if(data_.empty())
+  if (data_.empty())
   {
     ui_->frame_parameters->setEnabled(false);
   }
 }
 
-void ToolPathEditorWidget::onListSelectionChanged(QListWidgetItem* current,
-                                                  QListWidgetItem* previous)
+void ToolPathEditorWidget::onListSelectionChanged(QListWidgetItem* current, QListWidgetItem* previous)
 {
   if (previous)
   {
@@ -246,7 +243,7 @@ void ToolPathEditorWidget::publishToolPathDisplay(const opp_msgs::ToolPath& tool
 {
   // Concatenate all of the tool path pose arrays (representing tool path segments) into one array for display
   geometry_msgs::PoseArray tool_path_display;
-  for(const geometry_msgs::PoseArray& pose_arr : tool_path.paths)
+  for (const geometry_msgs::PoseArray& pose_arr : tool_path.paths)
   {
     tool_path_display.poses.insert(tool_path_display.poses.end(), pose_arr.poses.begin(), pose_arr.poses.end());
   }
@@ -260,19 +257,18 @@ void ToolPathEditorWidget::publishToolPathDisplay(const opp_msgs::ToolPath& tool
 
 void ToolPathEditorWidget::onDataChanged()
 {
-
   QListWidgetItem* current = ui_->list_widget->currentItem();
-  if(current)
+  if (current)
   {
     std::string key = current->text().toStdString();
 
-    if(!key.empty())
+    if (!key.empty())
     {
       auto it = data_.find(key);
-      if(it != data_.end())
+      if (it != data_.end())
       {
         opp_msgs::ToolPath tool_path;
-        if(editor_->getToolPath(tool_path))
+        if (editor_->getToolPath(tool_path))
         {
           if (surface_selector_ == nullptr)
           {
@@ -295,4 +291,4 @@ void ToolPathEditorWidget::onDataChanged()
   }
 }
 
-} // namespace opp_gui
+}  // namespace opp_gui

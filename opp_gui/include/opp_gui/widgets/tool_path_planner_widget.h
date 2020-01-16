@@ -36,7 +36,6 @@ class ToolPathPlanner;
 
 namespace opp_gui
 {
-
 class TouchPointEditorWidget;
 class ToolPathEditorWidget;
 
@@ -48,12 +47,11 @@ class ToolPathEditorWidget;
  */
 class ToolPathPlannerWidget : public QWidget
 {
-Q_OBJECT
+  Q_OBJECT
 public:
-
   ToolPathPlannerWidget(QWidget* parent = nullptr,
                         const ros::NodeHandle& nh = ros::NodeHandle("~"),
-                        const std::vector<std::string>& frames = {"map"});
+                        const std::vector<std::string>& frames = { "map" });
 
 protected Q_SLOTS:
 
@@ -82,7 +80,6 @@ protected Q_SLOTS:
   void refresh();
 
 private:
-
   void clear();
 
   bool loadMesh();
@@ -112,11 +109,10 @@ private:
   uint32_t generated_model_id_;
 
   opp_db::ROSDatabaseInterface database_;
-  QSqlTableModel *model_parts_;
-  QSqlTableModel *model_jobs_;
+  QSqlTableModel* model_parts_;
+  QSqlTableModel* model_jobs_;
 };
 
-} // namespace opp_gui
+}  // namespace opp_gui
 
-
-#endif // OPP_GUI_WIDGETS_TOOL_PATH_PLANNER_WIDGET_H
+#endif  // OPP_GUI_WIDGETS_TOOL_PATH_PLANNER_WIDGET_H

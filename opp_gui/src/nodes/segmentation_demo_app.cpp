@@ -49,7 +49,8 @@ int main(int argc, char** argv)
   QApplication app(argc, argv);
 
   // Start the widget
-  opp_gui::SegmentationParametersEditorWidget* segmentation_widget = new opp_gui::SegmentationParametersEditorWidget(nullptr);
+  opp_gui::SegmentationParametersEditorWidget* segmentation_widget =
+      new opp_gui::SegmentationParametersEditorWidget(nullptr);
   segmentation_widget->show();
   segmentation_widget->init(pcl_mesh_msg);
 
@@ -65,7 +66,8 @@ int main(int argc, char** argv)
 
       std::ostringstream ss;
       ss << ind;
-      std::string filename = ros::package::getPath("opp_demos") + "/support/outputs/segmentation_output_" + ss.str() + ".stl";
+      std::string filename =
+          ros::package::getPath("opp_demos") + "/support/outputs/segmentation_output_" + ss.str() + ".stl";
 
       pcl_msgs::PolygonMesh pcl_msg_mesh;
       opp_gui::utils::pclMsgFromShapeMsg(*segmented_meshes[ind], pcl_mesh_msg);

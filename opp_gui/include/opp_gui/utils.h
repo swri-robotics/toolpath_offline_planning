@@ -28,36 +28,33 @@ namespace opp_gui
 {
 namespace utils
 {
-
 /**
  * @brief Method for loading a mesh from a resource file location
- * @param resource: the file location of the mesh in the format `package://<package_name>/.../<filename>.stl` or `file:///<path>/<to>/<filename>.stl`
+ * @param resource: the file location of the mesh in the format `package://<package_name>/.../<filename>.stl` or
+ * `file:///<path>/<to>/<filename>.stl`
  * @param mesh_msg: the loaded mesh
  * @return
  */
-bool getMeshMsgFromResource(const std::string& resource,
-                            shape_msgs::Mesh& mesh_msg);
+bool getMeshMsgFromResource(const std::string& resource, shape_msgs::Mesh& mesh_msg);
 
-std_msgs::ColorRGBA createColor(const float r,
-                                const float g,
-                                const float b,
-                                const float a = 1.0f);
+std_msgs::ColorRGBA createColor(const float r, const float g, const float b, const float a = 1.0f);
 
-visualization_msgs::Marker createArrowMarker(const int id,
-                                             const std::string& ns,
-                                             const Eigen::Isometry3d& pose,
-                                             const std::string& frame,
-                                             const std_msgs::ColorRGBA& color = createColor(0.0f, 1.0f, 0.0f),
-                                             const visualization_msgs::Marker::_action_type& action = visualization_msgs::Marker::ADD);
+visualization_msgs::Marker
+createArrowMarker(const int id,
+                  const std::string& ns,
+                  const Eigen::Isometry3d& pose,
+                  const std::string& frame,
+                  const std_msgs::ColorRGBA& color = createColor(0.0f, 1.0f, 0.0f),
+                  const visualization_msgs::Marker::_action_type& action = visualization_msgs::Marker::ADD);
 
-visualization_msgs::Marker createMeshMarker(const int id,
-                                            const std::string& ns,
-                                            const Eigen::Isometry3d& pose,
-                                            const std::string& frame,
-                                            const std::string& mesh_resource,
-                                            const std_msgs::ColorRGBA& color = createColor(0.0f, 0.75f, 0.0f, 0.25f),
-                                            const visualization_msgs::Marker::_action_type& action = visualization_msgs::Marker::ADD);
-
+visualization_msgs::Marker
+createMeshMarker(const int id,
+                 const std::string& ns,
+                 const Eigen::Isometry3d& pose,
+                 const std::string& frame,
+                 const std::string& mesh_resource,
+                 const std_msgs::ColorRGBA& color = createColor(0.0f, 0.75f, 0.0f, 0.25f),
+                 const visualization_msgs::Marker::_action_type& action = visualization_msgs::Marker::ADD);
 
 QStringList toQStringList(const std::vector<std::string>& in);
 
@@ -65,7 +62,7 @@ bool pclMsgToShapeMsg(const pcl_msgs::PolygonMesh& pcl_mesh, shape_msgs::Mesh& m
 
 bool pclMsgFromShapeMsg(const shape_msgs::Mesh& mesh_msg, pcl_msgs::PolygonMesh& pcl_mesh);
 
-} // namespace utils
-} // namespace opp_gui
+}  // namespace utils
+}  // namespace opp_gui
 
-#endif // OPP_GUI_UTILS_H
+#endif  // OPP_GUI_UTILS_H

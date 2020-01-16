@@ -28,7 +28,6 @@
 
 namespace opp_db
 {
-
 const static std::string JOBS_TABLE_NAME = "jobs";
 const static std::string PARTS_TABLE_NAME = "parts";
 
@@ -41,33 +40,23 @@ public:
   QSqlDatabase& getDatabase();
   bool isConnected() const;
 
-  long int addJobToDatabase(const opp_msgs::Job& job,
-                            std::string& message);
+  long int addJobToDatabase(const opp_msgs::Job& job, std::string& message);
 
+  long int addPartToDatabase(const opp_msgs::Part& part, std::string& message);
 
-  long int addPartToDatabase(const opp_msgs::Part& part,
-                             std::string& message);
-
-  bool getJobFromDatabase(const unsigned int part_id,
-                          std::string& message,
-                          opp_msgs::Job& job);
+  bool getJobFromDatabase(const unsigned int part_id, std::string& message, opp_msgs::Job& job);
 
   bool getAllJobsFromDatabase(const unsigned int part_id,
                               std::string& message,
                               std::map<unsigned int, opp_msgs::Job>& jobs);
 
-  bool getPartFromDatabase(const unsigned int part_id,
-                           std::string& message,
-                           opp_msgs::Part& part);
+  bool getPartFromDatabase(const unsigned int part_id, std::string& message, opp_msgs::Part& part);
 
-  bool getAllPartsFromDatabase(std::string& message,
-                               std::map<unsigned int, opp_msgs::Part>& parts);
+  bool getAllPartsFromDatabase(std::string& message, std::map<unsigned int, opp_msgs::Part>& parts);
 
-  bool suppressJob(const unsigned int job_id,
-                   std::string& message);
+  bool suppressJob(const unsigned int job_id, std::string& message);
 
-  bool suppressPart(const unsigned int part_id,
-                    std::string& message);
+  bool suppressPart(const unsigned int part_id, std::string& message);
 
   long int getLastEntryId(const std::string& table_name);
 
@@ -77,15 +66,17 @@ protected:
   QSqlDatabase database_;
   std::string save_dir_;
 
-  long int insert(const std::string& table_name, const std::vector<std::string>& columns, const std::vector<std::string>& values, std::string& message);
+  long int insert(const std::string& table_name,
+                  const std::vector<std::string>& columns,
+                  const std::vector<std::string>& values,
+                  std::string& message);
 
   bool createJobsTable();
 
   bool createPartsTable();
 
-  bool createTableHelper(const QString &table_name, const QString& script);
-
+  bool createTableHelper(const QString& table_name, const QString& script);
 };
 
-}
-#endif // OPP_DATABASE_INTERAFACE_CPP_H
+}  // namespace opp_db
+#endif  // OPP_DATABASE_INTERAFACE_CPP_H

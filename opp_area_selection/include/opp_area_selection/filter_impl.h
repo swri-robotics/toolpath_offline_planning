@@ -28,18 +28,16 @@
 
 namespace opp_area_selection
 {
-
 namespace data_filtering
 {
-
-template<typename PointT>
+template <typename PointT>
 bool planeFit(const CloudPtr<PointT> input_cloud,
               Cloud<PointT>& output_cloud,
               pcl::ModelCoefficients::Ptr plane_coefficients,
               const double threshold)
 {
   pcl::ExtractIndices<PointT> extract;
-  pcl::PointIndices::Ptr plane_inliers (new pcl::PointIndices);
+  pcl::PointIndices::Ptr plane_inliers(new pcl::PointIndices);
   pcl::SACSegmentation<PointT> seg;
 
   // Set segmentation parameters
@@ -52,12 +50,15 @@ bool planeFit(const CloudPtr<PointT> input_cloud,
   // Extract best fit cylinder inliers and calculate cylinder coefficients
   seg.segment(*plane_inliers, *plane_coefficients);
 
-  if(plane_inliers->indices.size() == 0)
+  if (plane_inliers->indices.size() == 0)
   {
     ROS_ERROR("Unable to fit a plane to the data");
     return false;
   }
-  ROS_DEBUG_NAMED("[a5::data_filtering]", "Plane fit: %lu input points, %lu output points", input_cloud->points.size(), plane_inliers->indices.size());
+  ROS_DEBUG_NAMED("[a5::data_filtering]",
+                  "Plane fit: %lu input points, %lu output points",
+                  input_cloud->points.size(),
+                  plane_inliers->indices.size());
 
   // Create new point cloud from
   extract.setInputCloud(input_cloud);
@@ -68,8 +69,8 @@ bool planeFit(const CloudPtr<PointT> input_cloud,
   return true;
 }
 
-} // end namespace data_filtering
+}  // end namespace data_filtering
 
-} // end namespace opp_area_selection
+}  // end namespace opp_area_selection
 
-#endif // OPP_AREA_SELECTION_FILTER_IMPL_H
+#endif  // OPP_AREA_SELECTION_FILTER_IMPL_H

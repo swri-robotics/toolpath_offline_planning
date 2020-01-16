@@ -34,7 +34,6 @@ class TouchPointParametersEditor;
 
 namespace opp_gui
 {
-
 class TouchPointParametersEditorWidget;
 
 /**
@@ -43,24 +42,17 @@ class TouchPointParametersEditorWidget;
  */
 class TouchPointEditorWidget : public ListEditorWidgetBase
 {
-Q_OBJECT
+  Q_OBJECT
 public:
-
   TouchPointEditorWidget(QWidget* parent = nullptr,
                          const ros::NodeHandle& nh = ros::NodeHandle("~"),
                          const std::string& marker_frame = "map");
 
   void setPoints(const std::vector<opp_msgs::TouchPoint>& points);
 
-  inline std::map<std::string, opp_msgs::TouchPoint> getPoints() const
-  {
-    return data_;
-  }
+  inline std::map<std::string, opp_msgs::TouchPoint> getPoints() const { return data_; }
 
-  inline void setMarkerFrame(const std::string& frame)
-  {
-    marker_frame_ = frame;
-  }
+  inline void setMarkerFrame(const std::string& frame) { marker_frame_ = frame; }
 
   inline virtual void clear() override
   {
@@ -69,14 +61,13 @@ public:
     data_.clear();
   }
 
-  void setMarkerColor(const double r,
-                      const double g,
-                      const double b,
-                      const double a = 1.0);
+  void setMarkerColor(const double r, const double g, const double b, const double a = 1.0);
 
-protected Q_SLOT:
+protected
+  Q_SLOT :
 
-  virtual void onAddPressed() override;
+    virtual void
+    onAddPressed() override;
 
   virtual void onRemovePressed() override;
 
@@ -85,7 +76,6 @@ protected Q_SLOT:
   virtual void onDataChanged() override;
 
 private:
-
   TouchPointParametersEditorWidget* point_editor_;
 
   std::map<std::string, opp_msgs::TouchPoint> data_;
@@ -99,6 +89,6 @@ private:
   ros::Publisher marker_pub_;
 };
 
-} // namespace opp_gui
+}  // namespace opp_gui
 
-#endif // OPP_GUI_WIDGETS_TOUCH_POINT_EDITOR_WIDGET_H
+#endif  // OPP_GUI_WIDGETS_TOUCH_POINT_EDITOR_WIDGET_H

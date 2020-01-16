@@ -74,20 +74,26 @@ TEST(opp_serialization, tool_path)
 
   orig_msg.process_type.val = opp_msgs::ProcessType::PROCESS_DEPAINT;
 
-  for(unsigned segment_idx = 0; segment_idx < 3; ++segment_idx)
+  for (unsigned segment_idx = 0; segment_idx < 3; ++segment_idx)
   {
     geometry_msgs::PoseArray segment;
 
-    for(unsigned point_idx = 0; point_idx < 10; ++point_idx)
+    for (unsigned point_idx = 0; point_idx < 10; ++point_idx)
     {
       geometry_msgs::Pose pose;
       pose.position.x = static_cast<double>(point_idx);
-      pose.position.y = static_cast<double>(point_idx);;
-      pose.position.z = static_cast<double>(point_idx);;
-      pose.orientation.w = static_cast<double>(point_idx);;
-      pose.orientation.x = static_cast<double>(point_idx);;
-      pose.orientation.y = static_cast<double>(point_idx);;
-      pose.orientation.z = static_cast<double>(point_idx);;
+      pose.position.y = static_cast<double>(point_idx);
+      ;
+      pose.position.z = static_cast<double>(point_idx);
+      ;
+      pose.orientation.w = static_cast<double>(point_idx);
+      ;
+      pose.orientation.x = static_cast<double>(point_idx);
+      ;
+      pose.orientation.y = static_cast<double>(point_idx);
+      ;
+      pose.orientation.z = static_cast<double>(point_idx);
+      ;
 
       segment.poses.push_back(std::move(pose));
     }
@@ -113,13 +119,13 @@ TEST(opp_serialization, tool_path)
   EXPECT_EQ(new_msg.tool_offset.orientation.y, orig_msg.tool_offset.orientation.y);
   EXPECT_EQ(new_msg.tool_offset.orientation.z, orig_msg.tool_offset.orientation.z);
 
-  for(unsigned segment_idx = 0; segment_idx < new_msg.paths.size(); ++segment_idx)
+  for (unsigned segment_idx = 0; segment_idx < new_msg.paths.size(); ++segment_idx)
   {
     const geometry_msgs::PoseArray& new_segment = new_msg.paths[segment_idx];
     const geometry_msgs::PoseArray& orig_segment = orig_msg.paths[segment_idx];
     EXPECT_EQ(new_segment.poses.size(), orig_segment.poses.size());
 
-    for(unsigned point_idx = 0; point_idx < new_segment.poses.size(); ++point_idx)
+    for (unsigned point_idx = 0; point_idx < new_segment.poses.size(); ++point_idx)
     {
       const geometry_msgs::Pose& new_pose = new_msg.paths[segment_idx].poses[point_idx];
       const geometry_msgs::Pose& orig_pose = orig_msg.paths[segment_idx].poses[point_idx];
@@ -135,7 +141,7 @@ TEST(opp_serialization, tool_path)
   }
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
 

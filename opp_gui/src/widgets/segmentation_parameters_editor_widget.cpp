@@ -81,7 +81,7 @@ noether_msgs::SegmentationConfig SegmentationParametersEditorWidget::getSegmenta
   // TODO: Advanced setting
   config.use_mesh_normals = true;
   // If false enable box
-//  config.neighborhood_radius;
+  //  config.neighborhood_radius;
 
   return config;
 }

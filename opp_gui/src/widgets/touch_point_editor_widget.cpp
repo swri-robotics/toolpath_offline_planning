@@ -26,14 +26,10 @@
 
 namespace opp_gui
 {
-
 TouchPointEditorWidget::TouchPointEditorWidget(QWidget* parent,
                                                const ros::NodeHandle& nh,
                                                const std::string& marker_frame)
-  : ListEditorWidgetBase(parent)
-  , marker_frame_(marker_frame)
-  , marker_color_(utils::createColor(0.0, 0.0, 1.0))
-  , nh_(nh)
+  : ListEditorWidgetBase(parent), marker_frame_(marker_frame), marker_color_(utils::createColor(0.0, 0.0, 1.0)), nh_(nh)
 {
   point_editor_ = new TouchPointParametersEditorWidget(this);
 
@@ -63,11 +59,10 @@ void TouchPointEditorWidget::onAddPressed()
 {
   bool ok;
   QString key = QInputDialog::getText(this, "Add New", "Name", QLineEdit::Normal, "", &ok);
-  if(ok && !key.isEmpty())
+  if (ok && !key.isEmpty())
   {
-
     // Make sure the key doesn't already exist in the map
-    if(data_.find(key.toStdString()) == data_.end())
+    if (data_.find(key.toStdString()) == data_.end())
     {
       // Set the default value of the touch point
       opp_msgs::TouchPoint tp;
@@ -82,8 +77,7 @@ void TouchPointEditorWidget::onAddPressed()
 
       // Add and publish an arrow marker for this point
       visualization_msgs::Marker marker =
-          utils::createArrowMarker(0, key.toStdString(), Eigen::Isometry3d::Identity(),
-                                   marker_frame_, marker_color_);
+          utils::createArrowMarker(0, key.toStdString(), Eigen::Isometry3d::Identity(), marker_frame_, marker_color_);
       marker_pub_.publish(marker);
     }
   }
@@ -94,11 +88,11 @@ void TouchPointEditorWidget::onRemovePressed()
   // Get the selection from the list widget
   QList<QListWidgetItem*> current_items = ui_->list_widget->selectedItems();
 
-  for(QListWidgetItem* item : current_items)
+  for (QListWidgetItem* item : current_items)
   {
     std::string key = item->text().toStdString();
     auto it = data_.find(key);
-    if(it != data_.end())
+    if (it != data_.end())
     {
       data_.erase(it);
     }
@@ -112,29 +106,26 @@ void TouchPointEditorWidget::onRemovePressed()
     delete item;
 
     // Remove the marker from the visualization
-    visualization_msgs::Marker marker =
-        utils::createArrowMarker(0, key, Eigen::Isometry3d::Identity(),
-                                 marker_frame_, marker_color_,
-                                 visualization_msgs::Marker::DELETE);
+    visualization_msgs::Marker marker = utils::createArrowMarker(
+        0, key, Eigen::Isometry3d::Identity(), marker_frame_, marker_color_, visualization_msgs::Marker::DELETE);
     marker_pub_.publish(marker);
   }
 
   // Disable the parameters frame if there are no touch points left
-  if(data_.empty())
+  if (data_.empty())
   {
     ui_->frame_parameters->setEnabled(false);
   }
 }
 
-void TouchPointEditorWidget::onListSelectionChanged(QListWidgetItem* current,
-                                                    QListWidgetItem* previous)
+void TouchPointEditorWidget::onListSelectionChanged(QListWidgetItem* current, QListWidgetItem* previous)
 {
-  if(previous)
+  if (previous)
   {
     std::string prev_name = previous->text().toStdString();
 
     auto prev_it = data_.find(prev_name);
-    if(prev_it != data_.end())
+    if (prev_it != data_.end())
     {
       // Get the current data from the point editor widget and save it for the "previous" point
       opp_msgs::TouchPoint tp = point_editor_->getTouchPoint();
@@ -150,7 +141,7 @@ void TouchPointEditorWidget::onListSelectionChanged(QListWidgetItem* current,
     }
   }
 
-  if(current)
+  if (current)
   {
     // Enable the parameters frame if the selection is valid
     ui_->frame_parameters->setEnabled(true);
@@ -158,7 +149,7 @@ void TouchPointEditorWidget::onListSelectionChanged(QListWidgetItem* current,
     // Load the data for the "current" point into the point editor widget
     std::string curr_name = current->text().toStdString();
     auto curr_it = data_.find(curr_name);
-    if(curr_it != data_.end())
+    if (curr_it != data_.end())
     {
       point_editor_->setTouchPoint(curr_it->second);
     }
@@ -172,14 +163,14 @@ void TouchPointEditorWidget::onListSelectionChanged(QListWidgetItem* current,
 void TouchPointEditorWidget::onDataChanged()
 {
   QListWidgetItem* item = ui_->list_widget->currentItem();
-  if(item)
+  if (item)
   {
     std::string key = item->text().toStdString();
-    if(!key.empty())
+    if (!key.empty())
     {
       // Save the updated information
       auto it = data_.find(key);
-      if(it != data_.end())
+      if (it != data_.end())
       {
         // Get the current point from the editor
         opp_msgs::TouchPoint tp = point_editor_->getTouchPoint();
@@ -194,9 +185,7 @@ void TouchPointEditorWidget::onDataChanged()
         tf::poseMsgToEigen(tp.transform.pose, pose);
 
         visualization_msgs::Marker marker =
-            utils::createArrowMarker(0, key, pose, marker_frame_,
-                                     marker_color_,
-                                     visualization_msgs::Marker::MODIFY);
+            utils::createArrowMarker(0, key, pose, marker_frame_, marker_color_, visualization_msgs::Marker::MODIFY);
         marker_pub_.publish(marker);
       }
     }
@@ -207,7 +196,7 @@ void TouchPointEditorWidget::setPoints(const std::vector<opp_msgs::TouchPoint>& 
 {
   clear();
 
-  for(const opp_msgs::TouchPoint& point : points)
+  for (const opp_msgs::TouchPoint& point : points)
   {
     // Add the entry to the map of points
     data_.emplace(point.name, point);
@@ -217,12 +206,9 @@ void TouchPointEditorWidget::setPoints(const std::vector<opp_msgs::TouchPoint>& 
   }
 }
 
-void TouchPointEditorWidget::setMarkerColor(const double r,
-                                            const double g,
-                                            const double b,
-                                            const double a)
+void TouchPointEditorWidget::setMarkerColor(const double r, const double g, const double b, const double a)
 {
   marker_color_ = utils::createColor(r, g, b, a);
 }
 
-} // namespace opp_gui
+}  // namespace opp_gui

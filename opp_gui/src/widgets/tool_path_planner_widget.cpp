@@ -39,12 +39,10 @@ const static std::string MESH_MARKER_TOPIC = "mesh_marker";
 
 namespace opp_gui
 {
-
 ToolPathPlannerWidget::ToolPathPlannerWidget(QWidget* parent,
                                              const ros::NodeHandle& nh,
                                              const std::vector<std::string>& frames)
-  : QWidget(parent)
-  , nh_(nh)
+  : QWidget(parent), nh_(nh)
 {
   ui_ = new Ui::ToolPathPlanner();
   ui_->setupUi(this);
@@ -95,15 +93,22 @@ ToolPathPlannerWidget::ToolPathPlannerWidget(QWidget* parent,
 
   // Connect the signals and slots
   connect(ui_->push_button_find_model_file, &QPushButton::clicked, this, &ToolPathPlannerWidget::browseForMeshResource);
-  connect(ui_->push_button_load_parts_from_database, &QPushButton::clicked, this, &ToolPathPlannerWidget::loadModelsFromDatabase);
+  connect(ui_->push_button_load_parts_from_database,
+          &QPushButton::clicked,
+          this,
+          &ToolPathPlannerWidget::loadModelsFromDatabase);
   loadModelsFromDatabase();
-  connect(ui_->list_widget_parts, &QListWidget::currentItemChanged, this, &ToolPathPlannerWidget::onModelSelectionChanged);
+  connect(
+      ui_->list_widget_parts, &QListWidget::currentItemChanged, this, &ToolPathPlannerWidget::onModelSelectionChanged);
   connect(ui_->push_button_load_selected_part, &QPushButton::clicked, this, &ToolPathPlannerWidget::loadSelectedModel);
   connect(ui_->push_button_save_entry, &QPushButton::clicked, this, &ToolPathPlannerWidget::saveModel);
 
   // Signals & slots for the buttons on job definition page
   connect(ui_->push_button_new_job, &QPushButton::clicked, this, &ToolPathPlannerWidget::newJob);
-  connect(ui_->push_button_load_jobs_from_database, &QPushButton::clicked, this, &ToolPathPlannerWidget::loadJobsFromDatabase);
+  connect(ui_->push_button_load_jobs_from_database,
+          &QPushButton::clicked,
+          this,
+          &ToolPathPlannerWidget::loadJobsFromDatabase);
   connect(ui_->list_widget_jobs, &QListWidget::currentItemChanged, this, &ToolPathPlannerWidget::onJobSelectionChanged);
   connect(ui_->push_button_load_selected_job, &QPushButton::clicked, this, &ToolPathPlannerWidget::loadSelectedJob);
   connect(ui_->push_button_save_job, &QPushButton::clicked, this, &ToolPathPlannerWidget::saveJob);
@@ -125,19 +130,19 @@ ToolPathPlannerWidget::ToolPathPlannerWidget(QWidget* parent,
   model_parts_->setEditStrategy(QSqlTableModel::OnManualSubmit);
   model_parts_->select();
   model_parts_->setFilter(QString::fromStdString(query));
-  model_parts_->removeColumn(model_parts_->columnCount() - 1); // don't show the 'suppressed' column
+  model_parts_->removeColumn(model_parts_->columnCount() - 1);  // don't show the 'suppressed' column
   model_jobs_ = new QSqlTableModel(this, database_.getDatabase());
   model_jobs_->setTable(QString::fromStdString(opp_db::JOBS_TABLE_NAME));
   model_jobs_->setEditStrategy(QSqlTableModel::OnManualSubmit);
   model_jobs_->select();
   model_jobs_->setFilter(QString::fromStdString(query));
-  model_jobs_->removeColumn(model_jobs_->columnCount() - 1); // don't show the 'suppressed' column
+  model_jobs_->removeColumn(model_jobs_->columnCount() - 1);  // don't show the 'suppressed' column
   // Attach them to the views
   ui_->table_view_parts->setModel(model_parts_);
-  ui_->table_view_parts->setEditTriggers(QTableView::NoEditTriggers); // Make read only
+  ui_->table_view_parts->setEditTriggers(QTableView::NoEditTriggers);  // Make read only
   ui_->table_view_parts->show();
   ui_->table_view_jobs->setModel(model_jobs_);
-  ui_->table_view_jobs->setEditTriggers(QTableView::NoEditTriggers); // Make read only
+  ui_->table_view_jobs->setEditTriggers(QTableView::NoEditTriggers);  // Make read only
   ui_->table_view_jobs->show();
 }
 
@@ -153,7 +158,7 @@ void ToolPathPlannerWidget::setVisualizationFrame(const QString& text)
 void ToolPathPlannerWidget::browseForMeshResource()
 {
   QString filename = QFileDialog::getOpenFileName(this, "Load Model", "", "Mesh Files (*.stl *.ply *.obj)");
-  if(filename.isEmpty())
+  if (filename.isEmpty())
   {
     ROS_WARN_STREAM(__func__ << ": Empty filename");
     return;
@@ -168,31 +173,31 @@ void ToolPathPlannerWidget::loadMeshFromResource()
 {
   // Get the filename and package of the model
   std::string filename = ui_->line_edit_model_filename->text().toStdString();
-  if(filename.empty())
+  if (filename.empty())
   {
     QMessageBox::warning(this, "Input Error", "Model filename or package name not specified");
     return;
   }
 
   // Construct the mesh resource name using the package and filename
-  std::vector<std::string> file_extensions = {".stl", ".ply", ".obj"};
+  std::vector<std::string> file_extensions = { ".stl", ".ply", ".obj" };
 
   mesh_resource_.clear();
-  for(const std::string& ext : file_extensions)
+  for (const std::string& ext : file_extensions)
   {
     std::regex rgx(".*" + ext + "$");
     std::smatch match;
-    if(std::regex_search(filename, match, rgx))
+    if (std::regex_search(filename, match, rgx))
     {
       mesh_resource_ = "file://" + filename;
       break;
     }
   }
 
-  if(mesh_resource_.empty())
+  if (mesh_resource_.empty())
   {
     std::string message = "Invalid mesh resource file extension. Acceptable inputs are: ";
-    for(const std::string& ext : file_extensions)
+    for (const std::string& ext : file_extensions)
       message += ext + " ";
 
     QMessageBox::warning(this, "Input Error", QString(message.c_str()));
@@ -200,7 +205,8 @@ void ToolPathPlannerWidget::loadMeshFromResource()
   }
   ROS_INFO_STREAM("Attempting to load mesh from resource: '" << mesh_resource_ << "'");
 
-  if(!loadMesh()) return;
+  if (!loadMesh())
+    return;
 }
 
 void ToolPathPlannerWidget::loadModelsFromDatabase()
@@ -237,11 +243,10 @@ void ToolPathPlannerWidget::loadModelsFromDatabase()
   return;
 }
 
-void ToolPathPlannerWidget::onModelSelectionChanged(QListWidgetItem* current,
-                                                    QListWidgetItem*)
+void ToolPathPlannerWidget::onModelSelectionChanged(QListWidgetItem* current, QListWidgetItem*)
 {
   // Change the description display
-  if(current != nullptr)
+  if (current != nullptr)
   {
     ui_->text_edit_part_description->setText(current->data(Qt::ItemDataRole::UserRole).toString());
   }
@@ -250,14 +255,15 @@ void ToolPathPlannerWidget::onModelSelectionChanged(QListWidgetItem* current,
 void ToolPathPlannerWidget::loadSelectedModel()
 {
   int row = ui_->list_widget_parts->currentRow();
-  if(row >= 0 && row < static_cast<int>(existing_parts_.size()))
+  if (row >= 0 && row < static_cast<int>(existing_parts_.size()))
   {
     // Get the selected part information
     const opp_msgs::Part& part = existing_parts_[static_cast<std::size_t>(row)];
     generated_model_id_ = part.id;
     mesh_resource_ = part.mesh_resource;
 
-    if(!loadMesh()) return;
+    if (!loadMesh())
+      return;
 
     // Update the UI and widgets with all part information
     ui_->line_edit_model_name->setText(QString::fromStdString(part.name));
@@ -278,13 +284,15 @@ void ToolPathPlannerWidget::loadSelectedModel()
 void ToolPathPlannerWidget::saveModel()
 {
   // Verify that the user intended to save the part
-  QMessageBox::StandardButton button = QMessageBox::question(this, "Save Part to Database", "Proceed with adding the defined part to the database?");
-  if(button == QMessageBox::StandardButton::No) return;
+  QMessageBox::StandardButton button =
+      QMessageBox::question(this, "Save Part to Database", "Proceed with adding the defined part to the database?");
+  if (button == QMessageBox::StandardButton::No)
+    return;
 
   // Get the relevant model information to save and verify it exists
   std::string model_name = ui_->line_edit_model_name->text().toStdString();
   std::string model_description = ui_->plain_text_edit_model_description->toPlainText().toStdString();
-  if(model_name.empty() || model_description.empty())
+  if (model_name.empty() || model_description.empty())
   {
     QMessageBox::warning(this, "Input Error", "Model ID or description field(s) is empty");
     return;
@@ -295,9 +303,10 @@ void ToolPathPlannerWidget::saveModel()
   using TouchPointMap = std::map<std::string, opp_msgs::TouchPoint>;
   TouchPointMap touch_points = touch_point_editor_->getPoints();
   TouchPointMap verification_points = verification_point_editor_->getPoints();
-  if(touch_points.size() < 3 || verification_points.size() < 3)
+  if (touch_points.size() < 3 || verification_points.size() < 3)
   {
-    QMessageBox::warning(this, "Invalid Model Definition", "Ensure at least 3 touch points and 3 verification points have been defined");
+    QMessageBox::warning(
+        this, "Invalid Model Definition", "Ensure at least 3 touch points and 3 verification points have been defined");
     return;
   }
 
@@ -309,14 +318,14 @@ void ToolPathPlannerWidget::saveModel()
 
   // Copy the touch points
   part.touch_points.reserve(touch_points.size());
-  for(const std::pair<const std::string, opp_msgs::TouchPoint>& pair : touch_points)
+  for (const std::pair<const std::string, opp_msgs::TouchPoint>& pair : touch_points)
   {
     part.touch_points.push_back(pair.second);
   }
 
   // Copy the verification points
   part.verification_points.reserve(verification_points.size());
-  for(const std::pair<const std::string, opp_msgs::TouchPoint>& pair : verification_points)
+  for (const std::pair<const std::string, opp_msgs::TouchPoint>& pair : verification_points)
   {
     part.verification_points.push_back(pair.second);
   }
@@ -379,10 +388,10 @@ void ToolPathPlannerWidget::loadJobsFromDatabase()
 
 void ToolPathPlannerWidget::onJobSelectionChanged(QListWidgetItem* current, QListWidgetItem* previous)
 {
-  (void) previous;
+  (void)previous;
 
   // Change the description display
-  if(current != nullptr)
+  if (current != nullptr)
   {
     ui_->text_edit_jobs->setText(current->data(Qt::ItemDataRole::UserRole).toString());
   }
@@ -396,7 +405,7 @@ void ToolPathPlannerWidget::onJobSelectionChanged(QListWidgetItem* current, QLis
 void ToolPathPlannerWidget::loadSelectedJob()
 {
   int row = ui_->list_widget_jobs->currentRow();
-  if(row >= 0 && row < static_cast<int>(existing_jobs_.size()))
+  if (row >= 0 && row < static_cast<int>(existing_jobs_.size()))
   {
     // Get the selected part information
     const opp_msgs::Job& job = existing_jobs_[static_cast<std::size_t>(row)];
@@ -420,8 +429,9 @@ void ToolPathPlannerWidget::loadSelectedJob()
 void ToolPathPlannerWidget::saveJob()
 {
   // Verify that the user intended to press this button
-  QMessageBox::StandardButton button = QMessageBox::question(this, "Save Job to Database", "Proceed with adding the defined job to the database?");
-  if(button == QMessageBox::StandardButton::No)
+  QMessageBox::StandardButton button =
+      QMessageBox::question(this, "Save Job to Database", "Proceed with adding the defined job to the database?");
+  if (button == QMessageBox::StandardButton::No)
   {
     return;
   }
@@ -429,7 +439,7 @@ void ToolPathPlannerWidget::saveJob()
   // Get the relevant job information to save, and ensure it is non-empty
   std::string job_name = ui_->line_edit_job_name->text().toStdString();
   std::string job_description = ui_->plain_text_edit_job_description->toPlainText().toStdString();
-  if(job_name.empty() || job_description.empty())
+  if (job_name.empty() || job_description.empty())
   {
     QMessageBox::warning(this, "Input Error", "Job ID or description is invalid");
     return;
@@ -445,7 +455,7 @@ void ToolPathPlannerWidget::saveJob()
   // Get the tool paths and add them to the job
   ToolPathDataMap tool_paths = tool_path_editor_->getToolPathData();
   job.paths.reserve(tool_paths.size());
-  for(const std::pair<const std::string, opp_msgs::ToolPath>& pair : tool_paths)
+  for (const std::pair<const std::string, opp_msgs::ToolPath>& pair : tool_paths)
   {
     job.paths.push_back(pair.second);
   }
@@ -492,7 +502,8 @@ void ToolPathPlannerWidget::showPartFromDatabase()
   generated_model_id_ = part.id;
   mesh_resource_ = part.mesh_resource;
 
-  if(!loadMesh()) return;
+  if (!loadMesh())
+    return;
 
   // Update the UI and widgets with all part information
   ui_->line_edit_model_name->setText(QString::fromStdString(part.name));
@@ -587,7 +598,7 @@ bool ToolPathPlannerWidget::loadMesh()
 {
   // Attempt to load this file into a shape_msgs/Mesh type
   shape_msgs::Mesh mesh;
-  if(!utils::getMeshMsgFromResource(mesh_resource_, mesh))
+  if (!utils::getMeshMsgFromResource(mesh_resource_, mesh))
   {
     std::string message = "Failed to load mesh from resource: '" + mesh_resource_ + "'";
     QMessageBox::warning(this, "Input Error", message.c_str());
@@ -606,8 +617,7 @@ bool ToolPathPlannerWidget::loadMesh()
 
   // Publish the mesh marker
   visualization_msgs::Marker mesh_marker =
-      utils::createMeshMarker(0, "mesh", Eigen::Isometry3d::Identity(),
-                              marker_frame_, mesh_resource_);
+      utils::createMeshMarker(0, "mesh", Eigen::Isometry3d::Identity(), marker_frame_, mesh_resource_);
 
   pub_.publish(mesh_marker);
 
@@ -616,7 +626,7 @@ bool ToolPathPlannerWidget::loadMesh()
 
 void ToolPathPlannerWidget::setModelTabsEnabled(bool enabled)
 {
-  for(int i = 1; i < ui_->tool_box_model_editor->count(); ++i)
+  for (int i = 1; i < ui_->tool_box_model_editor->count(); ++i)
   {
     ui_->tool_box_model_editor->setItemEnabled(i, enabled);
   }
@@ -627,7 +637,7 @@ void ToolPathPlannerWidget::setModelTabsEnabled(bool enabled)
 
 void ToolPathPlannerWidget::setJobTabsEnabled(bool enabled, bool first_enabled)
 {
-  for(int i = 1; i < ui_->tool_box_job_editor->count(); ++i)
+  for (int i = 1; i < ui_->tool_box_job_editor->count(); ++i)
   {
     ui_->tool_box_job_editor->setItemEnabled(i, enabled);
   }
@@ -641,4 +651,4 @@ void ToolPathPlannerWidget::setJobTabsEnabled(bool enabled, bool first_enabled)
   ui_->frame_define_toolpaths->setEnabled(enabled);
 }
 
-} // namespace opp_gui
+}  // namespace opp_gui

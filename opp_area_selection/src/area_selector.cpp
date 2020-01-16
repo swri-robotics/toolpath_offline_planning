@@ -1,12 +1,12 @@
-/* 
+/*
  * Copyright 2018 Southwest Research Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,25 +29,22 @@
 
 namespace
 {
-
-bool determinantComparator(
-    const std::pair<Eigen::MatrixXd, Eigen::VectorXd>& a,
-    const std::pair<Eigen::MatrixXd, Eigen::VectorXd>& b)
+bool determinantComparator(const std::pair<Eigen::MatrixXd, Eigen::VectorXd>& a,
+                           const std::pair<Eigen::MatrixXd, Eigen::VectorXd>& b)
 {
   return std::abs(a.first.determinant()) < std::abs(b.first.determinant());
 }
 
 float sqrDistance(const pcl::PointXYZ& a, const pcl::PointXYZ& b)
 {
-  float d = static_cast<float>(std::pow((a.x-b.x), 2) + std::pow((a.y-b.y), 2) + std::pow((a.z-b.z), 2));
+  float d = static_cast<float>(std::pow((a.x - b.x), 2) + std::pow((a.y - b.y), 2) + std::pow((a.z - b.z), 2));
   return d;
 }
 
-bool clusterComparator(
-    const pcl::PointIndices& a,
-    const pcl::PointIndices& b,
-    const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud,
-    const pcl::PointXYZ& origin)
+bool clusterComparator(const pcl::PointIndices& a,
+                       const pcl::PointIndices& b,
+                       const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud,
+                       const pcl::PointXYZ& origin)
 {
   // Add cluster indices to vector
   std::vector<pcl::PointIndices> cluster_indices;
@@ -56,11 +53,11 @@ bool clusterComparator(
 
   // Find the distance between the selection polygon origin and the centroid of each cluster
   std::vector<float> dist;
-  for(auto cluster_it = cluster_indices.begin(); cluster_it != cluster_indices.end(); ++cluster_it)
+  for (auto cluster_it = cluster_indices.begin(); cluster_it != cluster_indices.end(); ++cluster_it)
   {
     // Get the centroid of the cluster
     pcl::CentroidPoint<pcl::PointXYZ> centroid;
-    for(auto it = cluster_it->indices.begin(); it != cluster_it->indices.end(); ++it)
+    for (auto it = cluster_it->indices.begin(); it != cluster_it->indices.end(); ++it)
     {
       centroid.add(cloud->points[static_cast<std::size_t>(*it)]);
     }
@@ -72,19 +69,17 @@ bool clusterComparator(
   return dist.front() < dist.back();
 }
 
-} // namespace anonymous
+}  // namespace
 
 namespace opp_area_selection
 {
-
-boost::optional<FittedPlane> AreaSelector::fitPlaneToPoints(
-    const std::vector<Eigen::Vector3d>& points,
-    const AreaSelectorParameters& params)
+boost::optional<FittedPlane> AreaSelector::fitPlaneToPoints(const std::vector<Eigen::Vector3d>& points,
+                                                            const AreaSelectorParameters& params)
 {
   // Create a point cloud from the selection points
-  pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud (new pcl::PointCloud<pcl::PointXYZ> ());
+  pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud(new pcl::PointCloud<pcl::PointXYZ>());
   pcl::CentroidPoint<pcl::PointXYZ> centroid;
-  for(auto it = points.begin(); it != points.end(); ++it)
+  for (auto it = points.begin(); it != points.end(); ++it)
   {
     pcl::PointXYZ pt;
     pt.x = static_cast<float>((*it)(0));
@@ -98,9 +93,10 @@ boost::optional<FittedPlane> AreaSelector::fitPlaneToPoints(
   pcl::PointXYZ origin;
   centroid.get(origin);
 
-  pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients);
-  pcl::PointCloud<pcl::PointXYZ>::Ptr output_cloud (new pcl::PointCloud<pcl::PointXYZ> ());
-  if(!opp_area_selection::data_filtering::planeFit<pcl::PointXYZ>(input_cloud, *output_cloud, coefficients, params.plane_distance_threshold))
+  pcl::ModelCoefficients::Ptr coefficients(new pcl::ModelCoefficients);
+  pcl::PointCloud<pcl::PointXYZ>::Ptr output_cloud(new pcl::PointCloud<pcl::PointXYZ>());
+  if (!opp_area_selection::data_filtering::planeFit<pcl::PointXYZ>(
+          input_cloud, *output_cloud, coefficients, params.plane_distance_threshold))
   {
     ROS_ERROR("Unable to fit points to plane model");
     return {};
@@ -119,21 +115,21 @@ boost::optional<FittedPlane> AreaSelector::fitPlaneToPoints(
   return boost::make_optional(plane);
 }
 
-pcl::PointCloud<pcl::PointXYZ>::Ptr AreaSelector::projectPointsOntoPlane(
-    const std::vector<Eigen::Vector3d>& points,
-    const FittedPlane& plane)
+pcl::PointCloud<pcl::PointXYZ>::Ptr AreaSelector::projectPointsOntoPlane(const std::vector<Eigen::Vector3d>& points,
+                                                                         const FittedPlane& plane)
 {
   pcl::PointCloud<pcl::PointXYZ> projected_points;
-  for(const Eigen::Vector3d& current_pt : points)
+  for (const Eigen::Vector3d& current_pt : points)
   {
     // Create a vector from plane origin to point
-    Eigen::Vector3d vec (current_pt - plane.origin);
+    Eigen::Vector3d vec(current_pt - plane.origin);
 
-    // Project the vector connecting the origin and point onto the plane normal to get the distance that the point is from the plane
+    // Project the vector connecting the origin and point onto the plane normal to get the distance that the point is
+    // from the plane
     double dp = plane.normal.dot(vec);
 
     // Move the point from its current location along the plane's normal by its distance from the plane
-    Eigen::Vector3d proj_pt = current_pt - dp*plane.normal;
+    Eigen::Vector3d proj_pt = current_pt - dp * plane.normal;
 
     // Convert each point to PCL format
     pcl::PointXYZ pt;
@@ -147,11 +143,10 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr AreaSelector::projectPointsOntoPlane(
   return projected_points.makeShared();
 }
 
-std::vector<int> AreaSelector::getPointsInROI(
-    const pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
-    const pcl::PointCloud<pcl::PointXYZ>::Ptr proj_sel_points,
-    const FittedPlane& plane,
-    const AreaSelectorParameters& params)
+std::vector<int> AreaSelector::getPointsInROI(const pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
+                                              const pcl::PointCloud<pcl::PointXYZ>::Ptr proj_sel_points,
+                                              const FittedPlane& plane,
+                                              const AreaSelectorParameters& params)
 {
   // Calculate the diagonal of search_points_ cloud
   pcl::PointXYZ min_pt, max_pt;
@@ -160,20 +155,20 @@ std::vector<int> AreaSelector::getPointsInROI(
 
   // Extrude the convex hull by half the max distance
   pcl::ExtractPolygonalPrismData<pcl::PointXYZ> prism;
-  pcl::PointIndicesPtr selection_indices (new pcl::PointIndices {});
+  pcl::PointIndicesPtr selection_indices(new pcl::PointIndices{});
   prism.setInputCloud(cloud);
   prism.setInputPlanarHull(proj_sel_points);
   prism.setHeightLimits(-half_dist, half_dist);
   prism.segment(*selection_indices);
 
-  if(selection_indices->indices.empty())
+  if (selection_indices->indices.empty())
   {
     ROS_ERROR("No points found within selection area");
     return {};
   }
 
   // Pull out the points that are inside the user selected prism
-  pcl::PointCloud<pcl::PointXYZ>::Ptr prism_cloud (new pcl::PointCloud<pcl::PointXYZ>);
+  pcl::PointCloud<pcl::PointXYZ>::Ptr prism_cloud(new pcl::PointCloud<pcl::PointXYZ>);
   pcl::ExtractIndices<pcl::PointXYZ> extract;
   extract.setInputCloud(cloud);
   extract.setIndices(selection_indices);
@@ -183,23 +178,23 @@ std::vector<int> AreaSelector::getPointsInROI(
   // Estimate the normals for each point in the user selection
   pcl::search::Search<pcl::PointXYZ>::Ptr tree =
       boost::shared_ptr<pcl::search::Search<pcl::PointXYZ>>(new pcl::search::KdTree<pcl::PointXYZ>);
-  pcl::PointCloud <pcl::Normal>::Ptr normals (new pcl::PointCloud <pcl::Normal>);
+  pcl::PointCloud<pcl::Normal>::Ptr normals(new pcl::PointCloud<pcl::Normal>);
   pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> normal_estimator;
-  normal_estimator.setSearchMethod (tree);
-  normal_estimator.setInputCloud (prism_cloud);
-  normal_estimator.setRadiusSearch (params.normal_est_radius);
-  normal_estimator.compute (*normals);
+  normal_estimator.setSearchMethod(tree);
+  normal_estimator.setInputCloud(prism_cloud);
+  normal_estimator.setRadiusSearch(params.normal_est_radius);
+  normal_estimator.compute(*normals);
 
   // Perform region growing using euclidian distance and normals to estimate connectedness
   pcl::RegionGrowing<pcl::PointXYZ, pcl::Normal> reg;
-  reg.setMinClusterSize (params.min_cluster_size);
-  reg.setMaxClusterSize (params.max_cluster_size);
-  reg.setSearchMethod (tree);
-  reg.setNumberOfNeighbours (static_cast<unsigned int>(params.region_growing_nneighbors));
-  reg.setInputCloud (prism_cloud);
-  reg.setInputNormals (normals);
-  reg.setSmoothnessThreshold (static_cast<float>(params.region_growing_smoothness / 180.0 * M_PI));
-  reg.setCurvatureThreshold (static_cast<float>(params.region_growing_curvature));
+  reg.setMinClusterSize(params.min_cluster_size);
+  reg.setMaxClusterSize(params.max_cluster_size);
+  reg.setSearchMethod(tree);
+  reg.setNumberOfNeighbours(static_cast<unsigned int>(params.region_growing_nneighbors));
+  reg.setInputCloud(prism_cloud);
+  reg.setInputNormals(normals);
+  reg.setSmoothnessThreshold(static_cast<float>(params.region_growing_smoothness / 180.0 * M_PI));
+  reg.setCurvatureThreshold(static_cast<float>(params.region_growing_curvature));
 
   std::vector<pcl::PointIndices> int_indices;
   reg.extract(int_indices);
@@ -218,9 +213,10 @@ std::vector<int> AreaSelector::getPointsInROI(
     cluster_indices.push_back(output_set);
   }
 
-  if(cluster_indices.size() > 1)
+  if (cluster_indices.size() > 1)
   {
-    ROS_INFO("%lu clusters found in ROI selection; choosing closest cluster to ROI selection centroid", cluster_indices.size());
+    ROS_INFO("%lu clusters found in ROI selection; choosing closest cluster to ROI selection centroid",
+             cluster_indices.size());
 
     // Multiple clusters of points found, so find the cluster closest to the centroid of the selection polygon
     pcl::PointXYZ polygon_centroid;
@@ -241,20 +237,19 @@ std::vector<int> AreaSelector::getPointsInROI(
   }
 }
 
-std::vector<int> AreaSelector::getRegionOfInterest(
-    const pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud,
-    const std::vector<Eigen::Vector3d>& points,
-    const AreaSelectorParameters& params)
+std::vector<int> AreaSelector::getRegionOfInterest(const pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud,
+                                                   const std::vector<Eigen::Vector3d>& points,
+                                                   const AreaSelectorParameters& params)
 {
   // Check size of selection points vector
-  if(points.size() < 3)
+  if (points.size() < 3)
   {
     ROS_ERROR("Not enough points to create a closed loop");
     return {};
   }
 
   // Check the size of the input point cloud
-  if(input_cloud->points.size() == 0)
+  if (input_cloud->points.size() == 0)
   {
     ROS_ERROR("No points to search for inside the selection polygon");
     return {};
@@ -262,7 +257,7 @@ std::vector<int> AreaSelector::getRegionOfInterest(
 
   // Take selection points (points_) and fit a plane to them using RANSAC
   boost::optional<FittedPlane> plane = fitPlaneToPoints(points, params);
-  if(!plane)
+  if (!plane)
   {
     ROS_ERROR("Failed to fit plane to selection points");
     return {};
@@ -274,7 +269,7 @@ std::vector<int> AreaSelector::getRegionOfInterest(
   /* Find all of the sensor data points inside a volume whose perimeter is defined by the projected selection points
    * and whose depth is defined by the largest length of the bounding box of the input point cloud */
   std::vector<int> roi_cloud_indices = getPointsInROI(input_cloud, proj_sel_points, plane.get(), params);
-  if(roi_cloud_indices.empty())
+  if (roi_cloud_indices.empty())
   {
     ROS_ERROR("Unable to identify points in the region of interest");
     return {};
@@ -283,5 +278,4 @@ std::vector<int> AreaSelector::getRegionOfInterest(
   return roi_cloud_indices;
 }
 
-} // namespace opp_area_selection
-
+}  // namespace opp_area_selection

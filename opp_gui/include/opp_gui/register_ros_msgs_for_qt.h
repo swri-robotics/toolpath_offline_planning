@@ -26,4 +26,4 @@ Q_DECLARE_METATYPE(shape_msgs::Mesh::Ptr);
 Q_DECLARE_METATYPE(std::vector<shape_msgs::Mesh>);
 Q_DECLARE_METATYPE(std::vector<shape_msgs::Mesh::Ptr>);
 
-#endif // OPP_GUI_REGISTER_ROS_MSGS_FOR_QT_H
+#endif  // OPP_GUI_REGISTER_ROS_MSGS_FOR_QT_H

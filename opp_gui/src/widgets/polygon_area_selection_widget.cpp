@@ -25,33 +25,21 @@
 
 namespace opp_gui
 {
-
-PolygonAreaSelectionWidget::PolygonAreaSelectionWidget(
-    ros::NodeHandle& nh,
-    const std::string& selection_world_frame,
-    const std::string& selection_sensor_frame,
-    QWidget *parent)
+PolygonAreaSelectionWidget::PolygonAreaSelectionWidget(ros::NodeHandle& nh,
+                                                       const std::string& selection_world_frame,
+                                                       const std::string& selection_sensor_frame,
+                                                       QWidget* parent)
   : QWidget(parent)
   , ui_(new Ui::PolygonAreaSelectionWidget)
   , selector_(nh, selection_world_frame, selection_sensor_frame)
 {
   ui_->setupUi(this);
   connect(
-      ui_->push_button_clear_selection,
-      &QPushButton::clicked,
-      this,
-      &PolygonAreaSelectionWidget::clearROISelection);
-  connect(
-      ui_->push_button_apply_selection,
-      &QPushButton::clicked,
-      this,
-      &PolygonAreaSelectionWidget::applySelection);
+      ui_->push_button_clear_selection, &QPushButton::clicked, this, &PolygonAreaSelectionWidget::clearROISelection);
+  connect(ui_->push_button_apply_selection, &QPushButton::clicked, this, &PolygonAreaSelectionWidget::applySelection);
 }
 
-PolygonAreaSelectionWidget::~PolygonAreaSelectionWidget()
-{
-  delete ui_;
-}
+PolygonAreaSelectionWidget::~PolygonAreaSelectionWidget() { delete ui_; }
 
 void PolygonAreaSelectionWidget::init(const shape_msgs::Mesh& mesh)
 {
@@ -73,7 +61,7 @@ void PolygonAreaSelectionWidget::clearROISelection()
   {
     ROS_ERROR_STREAM("Tool Path Parameter Editor Widget: Area Selection error:" << srv.response.message);
   }
-  submesh_.reset(new shape_msgs::Mesh (*mesh_));
+  submesh_.reset(new shape_msgs::Mesh(*mesh_));
 
   emit(selectedSubmesh(submesh_));
   return;
@@ -91,15 +79,16 @@ void PolygonAreaSelectionWidget::applySelection()
   bool success = selector_.collectROIMesh(*mesh_, *submesh_, error_message);
   if (!success)
   {
-    ROS_ERROR_STREAM("Tool Path Parameter Editor Widget: Area Selection error: could not compute submesh: " << error_message);
+    ROS_ERROR_STREAM(
+        "Tool Path Parameter Editor Widget: Area Selection error: could not compute submesh: " << error_message);
   }
   if (submesh_->vertices.size() < 3 || submesh_->triangles.size() < 1)
   {
-    submesh_.reset(new shape_msgs::Mesh (*mesh_));
+    submesh_.reset(new shape_msgs::Mesh(*mesh_));
   }
 
   emit(selectedSubmesh(submesh_));
   return;
 }
 
-} // end namespace opp_gui
+}  // end namespace opp_gui

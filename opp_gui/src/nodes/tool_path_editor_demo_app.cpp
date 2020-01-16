@@ -21,12 +21,10 @@
 #include "opp_gui/utils.h"
 #include "opp_gui/widgets/tool_path_editor_widget.h"
 
-template<typename T>
-bool get(const ros::NodeHandle& nh,
-         const std::string& key,
-         T& val)
+template <typename T>
+bool get(const ros::NodeHandle& nh, const std::string& key, T& val)
 {
-  if(!nh.getParam(key, val))
+  if (!nh.getParam(key, val))
   {
     ROS_ERROR_STREAM("Failed to get '" << key << "' parameter");
     return false;
@@ -43,7 +41,8 @@ int main(int argc, char** argv)
   spinner.start();
 
   std::string mesh_resource;
-  if(!get(pnh, "mesh_resource", mesh_resource)) return -1;
+  if (!get(pnh, "mesh_resource", mesh_resource))
+    return -1;
 
   double intersecting_plane_height;
   pnh.param<double>("intersecting_plane_height", intersecting_plane_height, 0.1);
@@ -54,12 +53,14 @@ int main(int argc, char** argv)
 
   // Create the mesh message from the input resource
   shape_msgs::Mesh mesh_msg;
-  if(!opp_gui::utils::getMeshMsgFromResource(mesh_resource, mesh_msg)) return -1;
+  if (!opp_gui::utils::getMeshMsgFromResource(mesh_resource, mesh_msg))
+    return -1;
 
   // Create and start the Qt application
   QApplication app(argc, argv);
 
-  opp_gui::ToolPathEditorWidget* tool_path_editor_widget = new opp_gui::ToolPathEditorWidget(nullptr, nh, fixed_frame, fixed_frame, fixed_frame);
+  opp_gui::ToolPathEditorWidget* tool_path_editor_widget =
+      new opp_gui::ToolPathEditorWidget(nullptr, nh, fixed_frame, fixed_frame, fixed_frame);
   tool_path_editor_widget->init(mesh_msg);
   tool_path_editor_widget->show();
 
@@ -67,7 +68,7 @@ int main(int argc, char** argv)
 
   // Get the tool path data after the application is done running
   opp_gui::ToolPathDataMap data = tool_path_editor_widget->getToolPathData();
-  for(const std::pair<const std::string, opp_msgs::ToolPath>& pair : data)
+  for (const std::pair<const std::string, opp_msgs::ToolPath>& pair : data)
   {
     ROS_INFO_STREAM("Tool Path: " << pair.first << "\nTool Path (including config):\n" << pair.second);
   }

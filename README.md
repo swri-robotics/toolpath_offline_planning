@@ -1,4 +1,4 @@
-# 10-24228
+# Toolpath Offline Planner
 
 [![Build Status](https://travis-ci.com/swri-robotics/Toolpath-Offline-Planning.svg?branch=master)](https://travis-ci.com/swri-robotics/Toolpath-Offline-Planning)
 [![Github Issues](https://img.shields.io/github/issues/swri-robotics/Toolpath-Offline-Planning.svg)](http://github.com/swri-robotics/Toolpath-Offline-Planning/issues)
@@ -24,7 +24,7 @@ ROS packages for generating offline toolpaths from CAD.  Built to run on Ubuntu 
 
 3) Follow the instructions at the [noether repository](https://github.com/ros-industrial/noether) for installing the correct versions of PCL (1.9+) and VTK (1.7+).
 
-    - Noether requires at least PCL 1.9 and VTK 1.7
+    - Noether requires at least PCL 1.9 and VTK 7.1
 
 
 4) Build the workspace `catkin build`

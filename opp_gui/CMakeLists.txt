@@ -69,7 +69,7 @@ include_directories(
   ${PCL_INCLUDE_DIRS}
 )
 
-set(rpg_gui_UIS
+set(opp_gui_UIS
   ui/list_editor.ui
   ui/polygon_area_selection_widget.ui
   ui/segmentation_parameters_editor.ui
@@ -79,7 +79,7 @@ set(rpg_gui_UIS
   ui/touch_point_parameters_editor.ui
 )
 
-set(rpg_gui_widget_HEADERS
+set(opp_gui_widget_HEADERS
   include/${PROJECT_NAME}/widgets/list_editor_widget_base.h
   include/${PROJECT_NAME}/widgets/polygon_area_selection_widget.h
   include/${PROJECT_NAME}/widgets/segmentation_parameters_editor_widget.h
@@ -91,7 +91,7 @@ set(rpg_gui_widget_HEADERS
   include/${PROJECT_NAME}/widgets/touch_point_parameters_editor_widget.h
 )
 
-set(rpg_gui_widget_SOURCES
+set(opp_gui_widget_SOURCES
   src/widgets/polygon_area_selection_widget.cpp
   src/widgets/segmentation_parameters_editor_widget.cpp
   src/widgets/surface_selection_combo_widget.cpp
@@ -102,23 +102,23 @@ set(rpg_gui_widget_SOURCES
   src/widgets/touch_point_parameters_editor_widget.cpp
 )
 
-set(rpg_gui_panel_HEADERS
+set(opp_gui_panel_HEADERS
   include/${PROJECT_NAME}/tool_path_planner_panel.h
 )
 
-set(rpg_gui_panel_SOURCES
+set(opp_gui_panel_SOURCES
   src/tool_path_planner_panel.cpp
 )
 
 # Run the MOC on the Qt-related UIs and headers
-qt5_wrap_ui(rpg_gui_UIS_H
-  ${rpg_gui_UIS}
+qt5_wrap_ui(opp_gui_UIS_H
+  ${opp_gui_UIS}
 )
-qt5_wrap_cpp(rpg_gui_widget_MOCS
-  ${rpg_gui_widget_HEADERS}
+qt5_wrap_cpp(opp_gui_widget_MOCS
+  ${opp_gui_widget_HEADERS}
 )
-qt5_wrap_cpp(rpg_gui_panel_MOCS
-  ${rpg_gui_panel_HEADERS}
+qt5_wrap_cpp(opp_gui_panel_MOCS
+  ${opp_gui_panel_HEADERS}
 )
 
 # Utilities library
@@ -134,9 +134,9 @@ target_link_libraries(${PROJECT_NAME}_utils
 
 # Qt Widgets
 add_library(${PROJECT_NAME}_widgets
-  ${rpg_gui_UIS_H}
-  ${rpg_gui_widget_MOCS}
-  ${rpg_gui_widget_SOURCES}
+  ${opp_gui_UIS_H}
+  ${opp_gui_widget_MOCS}
+  ${opp_gui_widget_SOURCES}
 )
 target_link_libraries(${PROJECT_NAME}_widgets
   ${catkin_LIBRARIES}
@@ -147,8 +147,8 @@ target_link_libraries(${PROJECT_NAME}_widgets
 
 # Rviz Panel
 add_library(${PROJECT_NAME}_panels
-  ${rpg_gui_panel_MOCS}
-  ${rpg_gui_panel_SOURCES}
+  ${opp_gui_panel_MOCS}
+  ${opp_gui_panel_SOURCES}
 )
 target_link_libraries(${PROJECT_NAME}_panels
   ${PROJECT_NAME}_widgets

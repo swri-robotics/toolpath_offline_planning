@@ -29,7 +29,8 @@ add_message_files(
 add_service_files(
   DIRECTORY srv
   FILES
-    GetROISelection.srv
+      GetROISelection.srv
+      GetPathSelection.srv
 )
 
 generate_messages(

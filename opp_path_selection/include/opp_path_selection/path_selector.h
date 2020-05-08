@@ -1,0 +1,72 @@
+/*
+ * Copyright 2019 Southwest Research Institute
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#ifndef OPP_PATH_SELECTION_PATH_SELECTOR_H
+#define OPP_PATH_SELECTION_PATH_SELECTOR_H
+
+#include <boost/optional.hpp>
+#include <eigen3/Eigen/Core>
+
+#include <geometry_msgs/Point.h>
+#include <geometry_msgs/PoseStamped.h>
+#include <pcl_ros/point_cloud.h>
+#include <sensor_msgs/PointCloud2.h>
+
+#include "opp_path_selection/path_selector_parameters.h"
+
+namespace opp_path_selection
+{
+
+/**
+ * @brief The PathSelector class takes a set of 3D points defining path segments and attempts to identify which
+ * points in a published point cloud lie along those segements. 
+ */
+class PathSelector
+{
+public:
+  /**
+   * @brief PathSelector class constructor
+   */
+  PathSelector() {}
+
+  /**
+   * @brief Finds the points that lie along the segments defined by the points
+   * @param input_cloud point cloud of mesh on which the path is created
+   * @return Returns false if there are less than 2 points in segment, or if less than 2 vertices are found
+   * otherwise returns true.
+   */
+  std::vector<int>  findPointsAlongSegments(const pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud,
+					      const std::vector<Eigen::Vector3d>& points,
+					      const PathSelectorParameters& params);
+protected:
+  /** @brief Finds distance between a line segment defined by segStart and segEnd 
+   *  @param segStart one end point of segment
+   *  @param segEnd other end point of segment
+   *  @param pt     point in question
+   *  @output distance distance between line segment and point, could be off ends
+   *  @returns true if not off either end 0 if beyond segStart, -1 if point is beyond segEnd 
+   */
+  int pointToLineSegmentDistance(const Eigen::Vector3d& segStart,
+				 const Eigen::Vector3d& segEnd,
+				 const Eigen::Vector3d& pt,
+				 double& distance_to_seg,
+				 double& distance_along_seg);
+
+};
+
+}  // namespace opp_path_selection
+
+#endif  // OPP_PATH_SELECTION_PATH_SELECTOR_H

@@ -29,6 +29,7 @@
   <depend>pluginlib</depend>
   <depend>roscpp</depend>
   <depend>opp_area_selection</depend>
+  <depend>opp_path_selection</depend>
   <depend>opp_msgs</depend>
   <depend>opp_database</depend>
   <depend>rviz</depend>

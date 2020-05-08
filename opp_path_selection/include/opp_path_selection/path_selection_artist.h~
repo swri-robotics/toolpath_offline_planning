@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef OPP_AREA_SELECTION_SELECTION_AREA_ARTIST_H
-#define OPP_AREA_SELECTION_SELECTION_AREA_ARTIST_H
+#ifndef OPP_PATH_SELECTION_SELECTION_PATH_ARTIST_H
+#define OPP_PATH_SELECTION_SELECTION_PATH_ARTIST_H
 
 #include <pcl/PolygonMesh.h>
 
@@ -29,7 +29,7 @@
 
 #include <opp_msgs/GetROISelection.h>
 
-namespace opp_area_selection
+namespace opp_path_selection
 {
 /**
  * @brief The SelectionArtist class uses the Publish Points plugin in Rviz to allow the user to drop points on a mesh or
@@ -56,13 +56,13 @@ public:
   bool collectROIMesh(const shape_msgs::Mesh& mesh_msg, shape_msgs::Mesh& submesh_msg, std::string& message);
 
 protected:
-  //  void getSensorData(const sensor_msgs::PointCloud2::ConstPtr& msg); NOT IMPLEMENTED AND UNUSED
+  void getSensorData(const sensor_msgs::PointCloud2::ConstPtr& msg);
 
   void addSelectionPoint(const geometry_msgs::PointStamped::ConstPtr pt_stamped);
 
   bool transformPoint(const geometry_msgs::PointStamped::ConstPtr pt_stamped, geometry_msgs::Point& transformed_pt);
 
-  bool collectROIPointsCb(opp_msgs::GetROISelection::Request& req, opp_msgs::GetROISelection::Response& res);
+  bool collectPathPointsCb(opp_msgs::GetROISelection::Request& req, opp_msgs::GetROISelection::Response& res);
 
   void filterMesh(const pcl::PolygonMesh& input_mesh,
                   const std::vector<int>& inlying_indices,
@@ -87,6 +87,6 @@ protected:
   visualization_msgs::MarkerArray marker_array_;
 };
 
-}  // namespace opp_area_selection
+}  // namespace opp_path_selection
 
-#endif  // OPP_AREA_SELECTION_SELECTION_AREA_ARTIST_H
+#endif  // OPP_PATH_SELECTION_SELECTION_PATH_ARTIST_H

@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   pluginlib
   roscpp
   opp_area_selection
+  opp_path_selection
   opp_msgs
   opp_database
   rviz
@@ -47,6 +48,7 @@ catkin_package(
     pluginlib
     roscpp
     opp_area_selection
+    opp_path_selection
     opp_msgs
     opp_database
     rviz
@@ -72,6 +74,7 @@ include_directories(
 set(opp_gui_UIS
   ui/list_editor.ui
   ui/polygon_area_selection_widget.ui
+  ui/polyline_path_selection_widget.ui
   ui/segmentation_parameters_editor.ui
   ui/surface_selection_combo_widget.ui
   ui/tool_path_parameters_editor.ui
@@ -82,6 +85,7 @@ set(opp_gui_UIS
 set(opp_gui_widget_HEADERS
   include/${PROJECT_NAME}/widgets/list_editor_widget_base.h
   include/${PROJECT_NAME}/widgets/polygon_area_selection_widget.h
+  include/${PROJECT_NAME}/widgets/polyline_path_selection_widget.h
   include/${PROJECT_NAME}/widgets/segmentation_parameters_editor_widget.h
   include/${PROJECT_NAME}/widgets/surface_selection_combo_widget.h
   include/${PROJECT_NAME}/widgets/tool_path_editor_widget.h
@@ -93,6 +97,7 @@ set(opp_gui_widget_HEADERS
 
 set(opp_gui_widget_SOURCES
   src/widgets/polygon_area_selection_widget.cpp
+  src/widgets/polyline_path_selection_widget.cpp
   src/widgets/segmentation_parameters_editor_widget.cpp
   src/widgets/surface_selection_combo_widget.cpp
   src/widgets/tool_path_editor_widget.cpp

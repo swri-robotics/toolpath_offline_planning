@@ -1,0 +1,8 @@
+cluster_tolerance: 0.25
+min_cluster_size: 100
+max_cluster_size: 500000
+plane_distance_threshold: 1.0
+normal_est_radius: 0.17
+region_growing_nneighbors: 10
+region_growing_smoothness: 5.0
+region_growing_curvature: 1.0

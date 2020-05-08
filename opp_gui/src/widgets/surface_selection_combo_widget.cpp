@@ -60,6 +60,9 @@ SurfaceSelectionComboWidget::SurfaceSelectionComboWidget(ros::NodeHandle& nh,
   area_selector_ = new opp_gui::PolygonAreaSelectionWidget(nh, selection_world_frame, selection_sensor_frame, this);
   ui_->layout_for_selector_widget->addWidget(area_selector_);
 
+  path_selector_ = new opp::PolylinePathSelectionWidget(nh, selection_world_frame, selection_sensor_frame, this);
+  ui_->layout_for_selector_widget->addWidget(path_selector_);
+
   // Connect the inputs and outputs of sub-widgets
   connect(segmenter_,
           &opp_gui::SegmentationParametersEditorWidget::segmentationFinished,

@@ -25,6 +25,7 @@
 
 #include "opp_gui/register_ros_msgs_for_qt.h"
 #include "opp_gui/widgets/polygon_area_selection_widget.h"
+#include "opp_gui/widgets/polyline_path_selection_widget.h"
 #include "opp_gui/widgets/segmentation_parameters_editor_widget.h"
 
 namespace Ui
@@ -71,6 +72,8 @@ private:
   SegmentationParametersEditorWidget* segmenter_;
 
   PolygonAreaSelectionWidget* area_selector_;
+
+  PolylinePathSelectionWidget* path_selector_;
 
   ros::Publisher selected_area_marker_publisher_;
 

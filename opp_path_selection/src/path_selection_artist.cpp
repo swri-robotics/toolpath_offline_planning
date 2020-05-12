@@ -232,11 +232,11 @@ bool PathSelectionArtist::clearPathPointsCb(std_srvs::TriggerRequest& req, std_s
   return true;
 }
 
-  /*
-bool PathSelectionArtist::collectPathMesh(const shape_msgs::Mesh& mesh_msg,
-                                     shape_msgs::Mesh& submesh_msg,
-                                     std::string& message)
+bool PathSelectionArtist::collectPath(const shape_msgs::Mesh& mesh_msg,
+				      std::vector<int>& points_idx,
+				      std::string& message)
 {
+  // first get the mesh
   pcl::PolygonMesh mesh;
   pclFromShapeMsg(mesh_msg, mesh);
   pcl::PointCloud<pcl::PointXYZ> mesh_cloud;
@@ -244,21 +244,27 @@ bool PathSelectionArtist::collectPathMesh(const shape_msgs::Mesh& mesh_msg,
   opp_msgs::GetPathSelection srv;
   pcl::toROSMsg(mesh_cloud, srv.request.input_cloud);
 
+  // now get the path segments from markers and find point indices from mesh along each segment
   bool success = collectPathPointsCb(srv.request, srv.response);
   if (!success || !srv.response.success)
   {
-    submesh_msg = mesh_msg;
     message = srv.response.message;
     return false;
   }
-
-  pcl::PolygonMesh submesh;
-  filterMesh(mesh, srv.response.cloud_indices, submesh);
-  pclToShapeMsg(submesh, submesh_msg);
-
-  return true;
+  
+  // the response includes res.cloud_indices which represent the path of vertices between each segment of markers/points
+  points_idx.clear();
+  for(int i=0; i<srv.response.cloud_indices.size(); i++)
+    {
+      int idx = srv.response.cloud_indices[i];
+      points_idx.push_back(idx);
+    }
+  
+  if(points_idx.size()>2) return true;
+  ROS_ERROR("No path points found");
+  return false;
 }
-  */
+
   
 bool PathSelectionArtist::collectPathPointsCb(opp_msgs::GetPathSelectionRequest& req, opp_msgs::GetPathSelectionResponse& res)
 {
@@ -367,20 +373,7 @@ void PathSelectionArtist::addSelectionPoint(const geometry_msgs::PointStampedCon
   else
   {
     points_it->points.push_back(pt);
-
-    // Add the point to the front and back of the lines' points array if it is the first entry
-    // Lines connect adjacent points, so first point must be entered twice to close the polygon
-    if (lines_it->points.empty())
-    {
-      lines_it->points.push_back(pt);
-      lines_it->points.push_back(pt);
-    }
-    // Insert the new point in the second to last position if points already exist in the array
-    else
-    {
-      const auto it = lines_it->points.end() - 1;
-      lines_it->points.insert(it, pt);
-    }
+    lines_it->points.push_back(pt);
   }
 
   marker_pub_.publish(marker_array_);

@@ -53,7 +53,7 @@ public:
 
   bool clearPathPointsCb(std_srvs::TriggerRequest& req, std_srvs::TriggerResponse& res);
 
-  //  bool collectPathMesh(const shape_msgs::Mesh& mesh_msg, shape_msgs::Mesh& submesh_msg, std::string& message);
+  bool collectPath(const shape_msgs::Mesh& mesh_msg, std::vector<int>& points_idx, std::string& message);
 
 protected:
   void getSensorData(const sensor_msgs::PointCloud2::ConstPtr& msg);

@@ -24,6 +24,7 @@
 #include <std_srvs/Trigger.h>
 
 #include <opp_area_selection/selection_artist.h>
+#include <opp_path_selection/path_selection_artist.h>
 #include "opp_gui/utils.h"
 #include "ui_tool_path_parameters_editor.h"
 
@@ -54,6 +55,7 @@ ToolPathParametersEditorWidget::ToolPathParametersEditorWidget(ros::NodeHandle& 
 
   // Connect the button press to the function that calls the toolpath generation action
   connect(ui_->push_button_generate, &QPushButton::clicked, this, &ToolPathParametersEditorWidget::generateToolPath);
+  connect(ui_->push_button_generate, &QPushButton::clicked, this, &ToolPathParametersEditorWidget::generateToolPath);
   connect(ui_->combo_box_process_type,
           &QComboBox::currentTextChanged,
           this,
@@ -62,6 +64,10 @@ ToolPathParametersEditorWidget::ToolPathParametersEditorWidget(ros::NodeHandle& 
           static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
           this,
           &ToolPathParametersEditorWidget::updateDwellTime);
+  connect(this,
+	  &ToolPathParametersEditorWidget::polylinePathGen,
+          this,
+          &ToolPathParametersEditorWidget::onPolylinePathGen);
 }
 
 void ToolPathParametersEditorWidget::init(const shape_msgs::Mesh& mesh) { mesh_.reset(new shape_msgs::Mesh(mesh)); }
@@ -149,6 +155,13 @@ void ToolPathParametersEditorWidget::generateToolPath()
 
   progress_dialog_->setValue(progress_dialog_->minimum());
   progress_dialog_->show();
+}
+
+void ToolPathParametersEditorWidget::onPolylinePathGen(const std::vector<int> pnt_indices)
+{
+  ROS_ERROR("onPolylinePathGen in ToolPathParametersEditorWidget path has %ld pnts", pnt_indices.size());
+  // TODO call heat method server with mesh and pnt_indices to generate a new set of paths.
+  
 }
 
 void ToolPathParametersEditorWidget::onGenerateToolPathsComplete(

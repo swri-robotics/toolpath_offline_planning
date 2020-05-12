@@ -67,6 +67,8 @@ Q_SIGNALS:
    */
   void dataChanged();
 
+  void polylinePathGen(const std::vector<int> pnt_indices);
+
 private Q_SLOTS:
 
   void updateProcessType(const QString&);
@@ -75,11 +77,15 @@ private Q_SLOTS:
 
   void generateToolPath();
 
+public Q_SLOTS:
+  void onPolylinePathGen(const std::vector<int> pnt_indices);
+
 private:
   void onGenerateToolPathsComplete(const actionlib::SimpleClientGoalState& state,
                                    const noether_msgs::GenerateToolPathsResultConstPtr& res);
 
   actionlib::SimpleActionClient<noether_msgs::GenerateToolPathsAction> client_;
+  actionlib::SimpleActionClient<heat_msgs::GenerateToolPathsAction> heat_client_;
 
   Ui::ToolPathParametersEditor* ui_;
 

@@ -65,6 +65,11 @@ public:
 
   inline void setMarkerFrame(const std::string& frame) { marker_frame_ = frame; }
 
+ Q_SIGNALS:
+
+  void polylinePathGen(const std::vector<int> pnt_indices);
+  
+
 protected Q_SLOTS:
 
   void newTargetMeshSelected(const shape_msgs::Mesh::Ptr& target_mesh);
@@ -76,6 +81,10 @@ protected Q_SLOTS:
   virtual void onListSelectionChanged(QListWidgetItem* current, QListWidgetItem* previous) override;
 
   virtual void onDataChanged() override;
+
+  void onPolylinePath(const std::vector<int> pnt_indices);
+  
+  void onPolylinePathGen(const std::vector<int> pnt_indices);
 
 private:
   void publishToolPathDisplay(const opp_msgs::ToolPath& tool_path);

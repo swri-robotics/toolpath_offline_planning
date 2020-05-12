@@ -6,8 +6,9 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /MarkerArray1
       Splitter Ratio: 0.5
-    Tree Height: 242
+    Tree Height: 1519
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -88,7 +89,7 @@ Visualization Manager:
       Value: true
     - Class: rviz/MarkerArray
       Enabled: true
-      Marker Topic: /roi_markers
+      Marker Topic: /path_markers
       Name: MarkerArray
       Namespaces:
         {}

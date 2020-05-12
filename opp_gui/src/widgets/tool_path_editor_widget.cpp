@@ -47,10 +47,10 @@ ToolPathEditorWidget::ToolPathEditorWidget(QWidget* parent,
 
   connect(editor_, &ToolPathParametersEditorWidget::dataChanged, this, &ToolPathEditorWidget::onDataChanged);
 
-  connect(surface_selector_,
-          &SurfaceSelectionComboWidget::newTargetMesh,
-          this,
-          &ToolPathEditorWidget::newTargetMeshSelected);
+  connect(surface_selector_, &SurfaceSelectionComboWidget::newTargetMesh,   this, &ToolPathEditorWidget::newTargetMeshSelected);
+  // TODO what to do with a polyline created path
+  //  connect(surface_selector_, &SurfaceSelectionComboWidget::polylinePath,    this, &ToolPathEditorWidget::onPolylinePath);
+  connect(surface_selector_, &SurfaceSelectionComboWidget::polylinePathGen, editor_, &ToolPathParametersEditorWidget::onPolylinePathGen);
 
   // Create a publisher for the tool path marker
   pub_ = nh_.advertise<geometry_msgs::PoseArray>(TOOL_PATH_TOPIC, 1, true);
@@ -255,6 +255,14 @@ void ToolPathEditorWidget::publishToolPathDisplay(const opp_msgs::ToolPath& tool
   pub_.publish(tool_path_display);
 }
 
+void ToolPathEditorWidget::onPolylinePath(const std::vector<int> pnt_indices)
+{
+  ROS_ERROR("new polyline path in ToolPathEditor has %ld pnts", pnt_indices.size());
+}
+void ToolPathEditorWidget::onPolylinePathGen(const std::vector<int> pnt_indices)
+{
+  emit(editor_->polylinePathGen(pnt_indices));
+}
 void ToolPathEditorWidget::onDataChanged()
 {
   QListWidgetItem* current = ui_->list_widget->currentItem();

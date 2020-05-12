@@ -22,6 +22,7 @@
 #include <visualization_msgs/Marker.h>
 
 #include "opp_gui/widgets/polygon_area_selection_widget.h"
+#include "opp_gui/widgets/polyline_path_selection_widget.h"
 #include "opp_gui/widgets/segmentation_parameters_editor_widget.h"
 #include "ui_surface_selection_combo_widget.h"
 
@@ -60,7 +61,7 @@ SurfaceSelectionComboWidget::SurfaceSelectionComboWidget(ros::NodeHandle& nh,
   area_selector_ = new opp_gui::PolygonAreaSelectionWidget(nh, selection_world_frame, selection_sensor_frame, this);
   ui_->layout_for_selector_widget->addWidget(area_selector_);
 
-  path_selector_ = new opp::PolylinePathSelectionWidget(nh, selection_world_frame, selection_sensor_frame, this);
+  path_selector_ = new opp_gui::PolylinePathSelectionWidget(nh, selection_world_frame, selection_sensor_frame, this);
   ui_->layout_for_selector_widget->addWidget(path_selector_);
 
   // Connect the inputs and outputs of sub-widgets
@@ -78,6 +79,16 @@ SurfaceSelectionComboWidget::SurfaceSelectionComboWidget(ros::NodeHandle& nh,
           &PolygonAreaSelectionWidget::selectedSubmesh,
           this,
           &SurfaceSelectionComboWidget::newSelectedSubmesh);
+
+  connect(path_selector_,
+          &PolylinePathSelectionWidget::polylinePath,
+          this,
+          &SurfaceSelectionComboWidget::onPolylinePath);
+
+  connect(path_selector_,
+          &PolylinePathSelectionWidget::polylinePathGen,
+          this,
+          &SurfaceSelectionComboWidget::onPolylinePathGen);
 }
 
 SurfaceSelectionComboWidget::~SurfaceSelectionComboWidget()
@@ -85,6 +96,7 @@ SurfaceSelectionComboWidget::~SurfaceSelectionComboWidget()
   delete ui_;
   delete segmenter_;
   delete area_selector_;
+  delete path_selector_;
 }
 
 noether_msgs::SegmentationConfig SurfaceSelectionComboWidget::getSegmentationConfig()
@@ -179,7 +191,7 @@ void SurfaceSelectionComboWidget::newSelectedSegment()
   // selected segment.
   selected_area_.reset(new shape_msgs::Mesh(*(segment_list_[selection_index])));
   area_selector_->init(*(segment_list_[selection_index]));
-
+  path_selector_->init(*(segment_list_[selection_index]));
   return;
 }
 
@@ -190,6 +202,24 @@ void SurfaceSelectionComboWidget::newSelectedSubmesh(const shape_msgs::Mesh::Ptr
   publishTargetMesh();
   emit newTargetMesh(selected_area_);
 
+  return;
+}
+
+void SurfaceSelectionComboWidget::onPolylinePath(const std::vector<int>& path_indices, const shape_msgs::Mesh::Ptr& mesh)
+{
+
+  ROS_ERROR("new path has %ld vertices", path_indices.size());
+  if(path_indices.size()>0)
+    emit polylinePath(path_indices); // send signal to parent with new path points
+  return;
+}
+
+void SurfaceSelectionComboWidget::onPolylinePathGen(const std::vector<int>& path_indices)
+{
+
+  ROS_ERROR("new path gen in surfaceselectioncw has %ld vertices", path_indices.size());
+  if(path_indices.size()>0)
+    emit polylinePathGen(path_indices);
   return;
 }
 

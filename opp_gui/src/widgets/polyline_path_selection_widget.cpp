@@ -19,23 +19,26 @@
 #include <QMessageBox>
 #include <QPushButton>
 
+#include "opp_gui/widgets/polyline_path_selection_widget.h"
+
 #include <std_srvs/Trigger.h>
 
 #include "ui_polyline_path_selection_widget.h"
 
 namespace opp_gui
 {
-PolylinPathSelectionWidget::PolylinPathSelectionWidget(ros::NodeHandle& nh,
+PolylinePathSelectionWidget::PolylinePathSelectionWidget(ros::NodeHandle& nh,
                                                        const std::string& selection_world_frame,
                                                        const std::string& selection_sensor_frame,
                                                        QWidget* parent)
   : QWidget(parent)
-  , ui_(new Ui::PolygonAreaSelectionWidget)
+  , ui_(new Ui::PolylinePathSelectionWidget)
   , selector_(nh, selection_world_frame, selection_sensor_frame)
 {
   ui_->setupUi(this);
-  connect(ui_->push_button_clear_polyline, &QPushButton::clicked, this, &PolygonAreaSelectionWidget::clearPolyline);
-  connect(ui_->push_button_apply_polyline, &QPushButton::clicked, this, &PolygonAreaSelectionWidget::applyPolyline);
+  connect(ui_->push_button_clear_polyline, &QPushButton::clicked, this, &PolylinePathSelectionWidget::clearPolyline);
+  connect(ui_->push_button_apply_polyline, &QPushButton::clicked, this, &PolylinePathSelectionWidget::applyPolylineAsPath);
+  connect(ui_->push_button_htgen_polyline, &QPushButton::clicked, this, &PolylinePathSelectionWidget::applyPolyline4PathGen);
 }
 
 PolylinePathSelectionWidget::~PolylinePathSelectionWidget() { delete ui_; }
@@ -60,33 +63,54 @@ void PolylinePathSelectionWidget::clearPolyline()
   {
     ROS_ERROR_STREAM("Tool Path Parameter Editor Widget: Area Selection error:" << srv.response.message);
   }
-  submesh_.reset(new shape_msgs::Mesh(*mesh_));
 
-  emit(selectedPath(submesh_));
+  std::vector<int> bogus_pnts;
+  emit(polylinePath(bogus_pnts, mesh_));
+  emit(polylinePathGen(bogus_pnts));
   return;
 }
 
-void PolylinePathSelectionWidget::applyPolyline()
+void PolylinePathSelectionWidget::applyPolylineAsPath()
 {
   if (!mesh_)
   {
     QMessageBox::warning(this, "Tool Path Planning Error", "No mesh available to crop");
     return;
   }
-  submesh_.reset(new shape_msgs::Mesh());
+
   std::string error_message;
-  bool success = selector_.collectROIMesh(*mesh_, *submesh_, error_message);
+  std::vector<int> path_indices;
+  bool success = selector_.collectPath(*mesh_, path_indices, error_message);
   if (!success)
   {
     ROS_ERROR_STREAM(
-        "Tool Path Parameter Editor Widget: Area Selection error: could not compute submesh: " << error_message);
-  }
-  if (submesh_->vertices.size() < 3 || submesh_->triangles.size() < 1)
-  {
-    submesh_.reset(new shape_msgs::Mesh(*mesh_));
+        "Tool Path Parameter Editor Widget: Path Selection error: could not compute path: " << error_message);
   }
 
-  emit(selectedSubmesh(submesh_));
+  emit(polylinePath(path_indices, mesh_));
+  return;
+}
+
+void PolylinePathSelectionWidget::applyPolyline4PathGen()
+{
+  if (!mesh_)
+  {
+    QMessageBox::warning(this, "Tool Path Planning Error", "No mesh available to crop");
+    return;
+  }
+
+  std::string error_message;
+  std::vector<int> path_indices;
+  bool success = selector_.collectPath(*mesh_, path_indices, error_message);
+  if (!success)
+  {
+    ROS_ERROR_STREAM(
+        "Tool Path Parameter Editor Widget: Path Selection error: could not compute path: " << error_message);
+  }
+
+  // TODO perhaps we should send the mesh too, It seems like the other widget already knows which mesh has been selected. 
+  emit(polylinePathGen(path_indices));
+
   return;
 }
 

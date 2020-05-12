@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>409</width>
-    <height>114</height>
+    <height>185</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLabel" name="label_area_selection">
+    <widget class="QLabel" name="label_polyline_selection">
      <property name="text">
       <string>Polyline Selection
 (Use Publish Point tool, selection is automatically applied)</string>
@@ -23,16 +23,23 @@
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="push_button_clear_selection">
+    <widget class="QPushButton" name="push_button_clear_polyline">
      <property name="text">
-      <string>Clear Selection</string>
+      <string>Clear Polyline</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="push_button_apply_selection">
+    <widget class="QPushButton" name="push_button_apply_polyline">
      <property name="text">
-      <string>Apply Selection</string>
+      <string>Apply Polyline as Path</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="push_button_htgen_polyline">
+     <property name="text">
+      <string>Apply Polyline To Generate Tool Path</string>
      </property>
     </widget>
    </item>

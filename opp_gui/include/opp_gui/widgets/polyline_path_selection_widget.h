@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef OPP_GUI_WIDGETS_POLYGON_AREA_SELECTION_WIDGET_H
-#define OPP_GUI_WIDGETS_POLYGON_AREA_SELECTION_WIDGET_H
+#ifndef OPP_GUI_WIDGETS_POLYLINE_PATH_SELECTION_WIDGET_H
+#define OPP_GUI_WIDGETS_POLYLINE_PATH_SELECTION_WIDGET_H
 
 #include <QWidget>
 
@@ -47,12 +47,17 @@ public Q_SLOTS:
   void init(const shape_msgs::Mesh& mesh);
 
 Q_SIGNALS:
-  void selectedPath(const shape_msgs::Mesh::Ptr& selected_submesh);
+  void polylinePath(const std::vector<int>& path_indices, const shape_msgs::Mesh::Ptr& mesh);
+
+  void polylinePathGen(std::vector<int> pt_indices);
 
 private Q_SLOTS:
+
   void clearPolyline();
 
-  void applyPolyline();
+  void applyPolylineAsPath();
+
+  void applyPolyline4PathGen();
 
 private:
   Ui::PolylinePathSelectionWidget* ui_;
@@ -64,4 +69,4 @@ private:
 
 }  // end namespace opp_gui
 
-#endif  // OPP_GUI_WIDGETS_POLYGON_AREA_SELECTION_WIDGET_H
+#endif  // OPP_GUI_WIDGETS_POLYLINE_PATH_SELECTION_WIDGET_H

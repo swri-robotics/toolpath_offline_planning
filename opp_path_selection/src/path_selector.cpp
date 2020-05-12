@@ -85,20 +85,22 @@ std::vector<int>  PathSelector::findPointsAlongSegments(const pcl::PointCloud<pc
     Eigen::Vector3d seg_start = *(it-1);
     Eigen::Vector3d seg_end = *it;
 
+    std::list<std::pair<double,int> > seg_list;
     for (int i = 0; i < (int) input_cloud->points.size(); i++)
       {
+
 	double distance_to_seg, distance_along_seg;
 	Eigen::Vector3d pt(input_cloud->points[i].x, input_cloud->points[i].y, input_cloud->points[i].z);
 	int rtn = pointToLineSegmentDistance(seg_start, seg_end, pt, distance_to_seg, distance_along_seg);
 	if(rtn == 1 && distance_to_seg < params.line_threshold)
 	  {
-	    id_list.push_back(std::pair<double,int>(distance_along_seg,i));
+	    seg_list.push_back(std::pair<double, int>(distance_along_seg, i));
 	  }	
       }// end for each point in cloud
+    seg_list.sort();
+    id_list.splice(id_list.end(),seg_list);
   }// for each path segment
   
-  id_list.sort();
-
   std::vector<int> path_indices;
   for(auto a = id_list.begin(); a!=id_list.end(); a++)
     {

@@ -21,6 +21,7 @@
 
 #include <actionlib/client/simple_action_client.h>
 #include <noether_msgs/GenerateToolPathsAction.h>
+#include <heat_msgs/GenerateHeatToolPathsAction.h>
 #include <ros/ros.h>
 
 #include <opp_msgs/ToolPath.h>
@@ -85,7 +86,7 @@ private:
                                    const noether_msgs::GenerateToolPathsResultConstPtr& res);
 
   actionlib::SimpleActionClient<noether_msgs::GenerateToolPathsAction> client_;
-  actionlib::SimpleActionClient<heat_msgs::GenerateToolPathsAction> heat_client_;
+  actionlib::SimpleActionClient<heat_msgs::GenerateHeatToolPathsAction> heat_client_;
 
   Ui::ToolPathParametersEditor* ui_;
 

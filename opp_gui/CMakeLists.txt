@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   geometric_shapes
   geometry_msgs
   noether_msgs
+  heat_msgs
   pluginlib
   roscpp
   opp_area_selection
@@ -45,6 +46,7 @@ catkin_package(
     geometric_shapes
     geometry_msgs
     noether_msgs
+    heat_msgs
     pluginlib
     roscpp
     opp_area_selection

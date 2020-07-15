@@ -51,6 +51,7 @@ Q_SIGNALS:
 
   void polylinePathGen(std::vector<int> pt_indices);
 
+
 private Q_SLOTS:
 
   void clearPolyline();
@@ -59,12 +60,20 @@ private Q_SLOTS:
 
   void applyPolyline4PathGen();
 
+  void applyPolylineAsSource();
+  
 private:
   Ui::PolylinePathSelectionWidget* ui_;
 
   shape_msgs::Mesh::Ptr mesh_;
 
   opp_path_selection::PathSelectionArtist selector_;
+
+  void writeMeshAsObj(const std::string& filename);
+
+  void writePolylineAsSource(const std::string& filename, const std::vector<int>& path_indices);
+
+
 };  // end class PolylinePathSelectionWidget
 
 }  // end namespace opp_gui

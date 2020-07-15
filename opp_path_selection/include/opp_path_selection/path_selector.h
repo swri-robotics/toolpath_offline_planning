@@ -24,8 +24,17 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <pcl_ros/point_cloud.h>
 #include <sensor_msgs/PointCloud2.h>
-
+#include <shape_msgs/Mesh.h>
 #include "opp_path_selection/path_selector_parameters.h"
+
+#include <boost/property_map/property_map.hpp>
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <boost/graph/breadth_first_search.hpp>
+#include <boost/graph/graph_utility.hpp>
+#include <boost/pending/indirect_cmp.hpp>
+#include <boost/range/irange.hpp>
 
 namespace opp_path_selection
 {
@@ -37,10 +46,34 @@ namespace opp_path_selection
 class PathSelector
 {
 public:
+  typedef boost::property<boost::edge_weight_t, double> EdgeWeightProperty;
+  typedef boost::property<boost::vertex_color_t, boost::default_color_type> VertexColorProperty;
+  typedef boost::adjacency_list<boost::listS,
+				boost::vecS, boost::undirectedS,
+				boost::disallow_parallel_edge_tag,
+				EdgeWeightProperty,
+				VertexColorProperty> MeshGraph;
+  typedef boost::property_map<MeshGraph, boost::vertex_index_t>::type IndexMap;
+  typedef boost::graph_traits<MeshGraph>::edge_iterator edge_itr;
+  typedef boost::graph_traits<MeshGraph>::edge_descriptor edge_desc;
+  typedef boost::graph_traits<MeshGraph>::vertex_descriptor vertex_des;
+  typedef boost::property_map<MeshGraph, boost::vertex_index_t> Vertex_id;
+
+
   /**
    * @brief PathSelector class constructor
    */
   PathSelector() {}
+
+  /**
+   * @brief Finds the points that lie along the segments defined by the points
+   * @param input_mesh
+   * @return Returns false if there are less than 2 points in segment, or if less than 2 vertices are found
+   * otherwise returns true.
+   */
+  std::vector<int>  findPointsAlongSegments(const shape_msgs::Mesh& input_mesh,
+					    const std::vector<Eigen::Vector3d>& points,
+					    const PathSelectorParameters& params);
 
   /**
    * @brief Finds the points that lie along the segments defined by the points

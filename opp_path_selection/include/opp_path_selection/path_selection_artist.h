@@ -27,7 +27,8 @@
 #include <tf/transform_listener.h>
 #include <visualization_msgs/MarkerArray.h>
 
-#include <opp_msgs/GetPathSelection.h>
+#include <opp_msgs/GetPathSelectionMesh.h>
+#include <opp_msgs/GetPathSelectionCloud.h>
 
 namespace opp_path_selection
 {
@@ -55,6 +56,8 @@ public:
 
   bool collectPath(const shape_msgs::Mesh& mesh_msg, std::vector<int>& points_idx, std::string& message);
 
+  bool collectPathMesh(const shape_msgs::Mesh& mesh_msg, std::vector<int>& points_idx, std::string& message);
+
 protected:
   void getSensorData(const sensor_msgs::PointCloud2::ConstPtr& msg);
 
@@ -62,7 +65,9 @@ protected:
 
   bool transformPoint(const geometry_msgs::PointStamped::ConstPtr pt_stamped, geometry_msgs::Point& transformed_pt);
 
-  bool collectPathPointsCb(opp_msgs::GetPathSelection::Request& req, opp_msgs::GetPathSelection::Response& res);
+  bool collectPathPointsCloudCb(opp_msgs::GetPathSelectionCloud::Request& req, opp_msgs::GetPathSelectionCloud::Response& res);
+
+  bool collectPathPointsMeshCb(opp_msgs::GetPathSelectionMesh::Request& req, opp_msgs::GetPathSelectionMesh::Response& res);
 
   void filterMesh(const pcl::PolygonMesh& input_mesh,
                   const std::vector<int>& inlying_indices,

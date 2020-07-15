@@ -16,6 +16,7 @@
 
   <depend>eigen_conversions</depend>
   <depend>geometry_msgs</depend>
+  <depend>shape_msgs</depend>
   <depend>opp_msgs_serialization</depend>
   <depend>pcl_ros</depend>
   <depend>roscpp</depend>

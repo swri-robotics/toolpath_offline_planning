@@ -39,6 +39,7 @@ PolylinePathSelectionWidget::PolylinePathSelectionWidget(ros::NodeHandle& nh,
   connect(ui_->push_button_clear_polyline, &QPushButton::clicked, this, &PolylinePathSelectionWidget::clearPolyline);
   connect(ui_->push_button_apply_polyline, &QPushButton::clicked, this, &PolylinePathSelectionWidget::applyPolylineAsPath);
   connect(ui_->push_button_htgen_polyline, &QPushButton::clicked, this, &PolylinePathSelectionWidget::applyPolyline4PathGen);
+  connect(ui_->push_button_sourc_polyline, &QPushButton::clicked, this, &PolylinePathSelectionWidget::applyPolylineAsSource);
 }
 
 PolylinePathSelectionWidget::~PolylinePathSelectionWidget() { delete ui_; }
@@ -80,7 +81,7 @@ void PolylinePathSelectionWidget::applyPolylineAsPath()
 
   std::string error_message;
   std::vector<int> path_indices;
-  bool success = selector_.collectPath(*mesh_, path_indices, error_message);
+  bool success = selector_.collectPathMesh(*mesh_, path_indices, error_message);
   if (!success)
   {
     ROS_ERROR_STREAM(
@@ -111,6 +112,74 @@ void PolylinePathSelectionWidget::applyPolyline4PathGen()
   // TODO perhaps we should send the mesh too, It seems like the other widget already knows which mesh has been selected. 
   emit(polylinePathGen(path_indices));
 
+  return;
+}
+
+void PolylinePathSelectionWidget::writeMeshAsObj(const std::string& filename)
+{
+  ROS_ERROR("writing mesh to %s", filename.c_str());
+  FILE *fp = fopen(filename.c_str(),"w");
+  if(!fp)
+    {
+      ROS_ERROR("couldn't open file: %s", filename.c_str());
+    }
+  else
+    {
+      for(int i=0; i<mesh_->vertices.size(); i++)
+	{
+	  fprintf(fp, "v %lf %lf %lf\n", mesh_->vertices[i].x, mesh_->vertices[i].y, mesh_->vertices[i].z);
+	}
+      for(int i=0; i<mesh_->triangles.size(); i++)
+	{
+	  fprintf(fp, "f %ld %ld %ld\n",
+		  mesh_->triangles[i].vertex_indices[0]+1,   // for some reason, .obj files are 1 referenced, not zero referenced
+		  mesh_->triangles[i].vertex_indices[1]+1,
+		  mesh_->triangles[i].vertex_indices[2]+1);
+	}
+    }
+  fclose(fp);
+}
+void PolylinePathSelectionWidget::writePolylineAsSource(const std::string& filename, const std::vector<int>& path_indices)
+{
+  FILE *fp = fopen(filename.c_str(),"w");
+  if(!fp)
+    {
+      ROS_ERROR("couldn't open file: %s", filename.c_str());
+    }
+  else
+    {
+      ROS_ERROR("source to %s", filename.c_str());
+      fprintf(fp,"1\n%ld ", path_indices.size());
+      for(int i=0; i<path_indices.size(); i++)
+	{
+	  fprintf(fp, "%ld ", path_indices[i]+1);
+	}
+      fprintf(fp,"\n");
+    }
+  fclose(fp);
+
+}
+
+void PolylinePathSelectionWidget::applyPolylineAsSource()
+{
+  if (!mesh_)
+  {
+    QMessageBox::warning(this, "Tool Path Planning Error", "No mesh available to crop");
+    return;
+  }
+
+  std::string error_message;
+  std::vector<int> path_indices;
+  bool success = selector_.collectPathMesh(*mesh_, path_indices, error_message);
+  if (!success)
+  {
+    ROS_ERROR_STREAM(
+        "Tool Path Parameter Editor Widget: Path Selection error: could not compute path: " << error_message);
+  }
+
+  // write mesh as object and path as source file
+  writeMeshAsObj("/home/clewis/heat_ws/src/heat/libgeodesic/data/offline.obj");
+  writePolylineAsSource("/home/clewis/heat_ws/src/heat/libgeodesic/data/offline.source", path_indices);
   return;
 }
 

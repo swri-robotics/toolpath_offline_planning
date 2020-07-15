@@ -89,6 +89,7 @@ SurfaceSelectionComboWidget::SurfaceSelectionComboWidget(ros::NodeHandle& nh,
           &PolylinePathSelectionWidget::polylinePathGen,
           this,
           &SurfaceSelectionComboWidget::onPolylinePathGen);
+
 }
 
 SurfaceSelectionComboWidget::~SurfaceSelectionComboWidget()
@@ -208,7 +209,6 @@ void SurfaceSelectionComboWidget::newSelectedSubmesh(const shape_msgs::Mesh::Ptr
 void SurfaceSelectionComboWidget::onPolylinePath(const std::vector<int>& path_indices, const shape_msgs::Mesh::Ptr& mesh)
 {
 
-  ROS_ERROR("new path has %ld vertices", path_indices.size());
   if(path_indices.size()>0)
     emit polylinePath(path_indices); // send signal to parent with new path points
   return;
@@ -217,7 +217,6 @@ void SurfaceSelectionComboWidget::onPolylinePath(const std::vector<int>& path_in
 void SurfaceSelectionComboWidget::onPolylinePathGen(const std::vector<int>& path_indices)
 {
 
-  ROS_ERROR("new path gen in surfaceselectioncw has %ld vertices", path_indices.size());
   if(path_indices.size()>0)
     emit polylinePathGen(path_indices);
   return;

@@ -6,6 +6,7 @@ add_compile_options(-std=c++14)
 find_package(catkin REQUIRED COMPONENTS
   eigen_conversions
   geometry_msgs
+  shape_msgs
   opp_msgs_serialization
   roscpp
   roslib
@@ -30,6 +31,7 @@ catkin_package(
   CATKIN_DEPENDS
     eigen_conversions
     geometry_msgs
+    shape_msgs
     opp_msgs_serialization
     roscpp
     roslib

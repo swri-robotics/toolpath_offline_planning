@@ -253,6 +253,7 @@ void ToolPathEditorWidget::publishToolPathDisplay(const opp_msgs::ToolPath& tool
   tool_path_display.header.frame_id = marker_frame_;
 
   // Publish the display
+  ROS_ERROR("publishing now");
   pub_.publish(tool_path_display);
 }
 
@@ -260,6 +261,7 @@ void ToolPathEditorWidget::onPolylinePath(const std::vector<int> pnt_indices)
 {
   ROS_ERROR("new polyline path in ToolPathEditor has %ld pnts", pnt_indices.size());
 }
+
 void ToolPathEditorWidget::onPolylinePathGen(const std::vector<int> pnt_indices)
 {
   emit(editor_->polylinePathGen(pnt_indices));
@@ -293,6 +295,7 @@ void ToolPathEditorWidget::onDataChanged()
           it->second = tool_path;
 
           // Publish an updated tool path display
+	  ROS_ERROR("publishing tool path");
           publishToolPathDisplay(tool_path);
         }
       }

@@ -58,12 +58,112 @@ int PathSelector::pointToLineSegmentDistance(const Eigen::Vector3d& segStart,
     return rtn;
   }
 
+std::vector<int>  PathSelector::findPointsAlongSegments(const shape_msgs::Mesh& input_mesh,
+							const std::vector<Eigen::Vector3d>& points,
+							const PathSelectorParameters& params)
+{
+  ROS_ERROR("it should be me");
+
+  // Check size of selection points vector
+  if (points.size() < 2)
+  {
+    ROS_ERROR("Must have at least 2 points in Path");
+    return {};
+  }
+  // find id of every point from marker array, needed for Dijkstras
+  std::vector<int> point_seg_indices;
+  for(int i=0; i<points.size(); i++)
+    {
+      double mind = 2000.0;
+      int minj = -1;
+      // TODO figure out why dmin is not equal to zero 
+      for(int j=0; j<input_mesh.vertices.size(); j++)
+	{
+	  Eigen::Vector3d pt2(input_mesh.vertices[j].x, input_mesh.vertices[j].y, input_mesh.vertices[j].z);
+	  Eigen::Vector3d D = pt2 - points[i];
+	  if(D.norm()<mind)
+	    {
+	      mind = D.norm();
+	      minj = j;
+	    }
+	}
+      point_seg_indices.push_back(minj);
+    }
+
+  // create a graph with the mesh (triangles and vertices)
+  MeshGraph G;
+  for(int i=0; i<input_mesh.triangles.size(); i++) // for each triangle in mesh, add each edge to graph
+    {
+      int v1 = input_mesh.triangles[i].vertex_indices[0];
+      int v2 = input_mesh.triangles[i].vertex_indices[1];
+      int v3 = input_mesh.triangles[i].vertex_indices[2];
+      Eigen::Vector3d p1(input_mesh.vertices[v1].x, input_mesh.vertices[v1].y, input_mesh.vertices[v1].z);
+      Eigen::Vector3d p2(input_mesh.vertices[v2].x, input_mesh.vertices[v2].y, input_mesh.vertices[v2].z);
+      Eigen::Vector3d p3(input_mesh.vertices[v3].x, input_mesh.vertices[v3].y, input_mesh.vertices[v3].z);
+      double d1 = (p1-p2).norm();
+      double d2 = (p2-p3).norm();
+      double d3 = (p3-p1).norm();
+      bool rtn;
+      MeshGraph::edge_descriptor e1;
+      boost::tie(e1,rtn) = boost::add_edge(v1,v2,d1,G);
+      boost::tie(e1,rtn) = boost::add_edge(v2,v3,d2,G);
+      boost::tie(e1,rtn) = boost::add_edge(v3,v1,d3,G);
+    }// end of for each triangle in mesh
+  std::vector<int> path_indices;
+  for(int i=1; i<point_seg_indices.size(); i++)  // for each source path segment
+    {
+      // use dijkstras to find shortest connected path between every line segement defined by points
+      std::vector<double> d;
+      std::vector<vertex_des> p;
+      size_t num_verts = num_vertices(G);
+      size_t num_edges = boost::num_edges(G);
+      p.resize(num_verts);
+      d.resize(num_verts);
+      boost::property_map<MeshGraph, boost::edge_weight_t>::type weightmap = boost::get(boost::edge_weight, G);
+      boost::property_map<MeshGraph, boost::vertex_index_t>::type index_map = get(boost::vertex_index, G);
+      vertex_des start_vertex = vertex(point_seg_indices[i-1],G);
+      boost::dijkstra_shortest_paths(G,                           // const Graph& g
+				     start_vertex,	          // vertex_descriptor s, source, all shortest path distances computed from here
+				     &p[0],                       // predecessorMap each vertex p[i] points the next closer one p[p[i]] the next after
+				     &d[0],                       // distanceMap result providing the distance to each vertex from s
+				     weightmap,                   // weightMap accesses the weight of each edge
+				     index_map,		          // takes a vertex descriptor and finds the index of the vertex
+				     std::less<double>(),
+				     boost::closed_plus<double>(), 
+				     1000.0,
+				     //			      (std::numeric_limits<double>::max)(),
+				     0.0,
+				     boost::default_dijkstra_visitor());
+      
+      int V = point_seg_indices[i];
+      int start_index = point_seg_indices[i-1];
+      int q=0;
+      // follow predicesor chain from end endex to start index, pushing each one onto the 
+      std::vector<int> seg_indices;
+      while(V != start_index && q<p.size())
+	{
+	  seg_indices.push_back(V);
+	  V = p[V];
+	  q++;
+	}
+      // TODO check that q != p.size(), in this case, there is no path between the two points in the graph
+      seg_indices.push_back(V);
+
+      ROS_ERROR("seg %d has %ld vertices",i,seg_indices.size());
+
+      // reverse order of each segment
+      for(int j=seg_indices.size()-1; j>=0; j--)
+	{
+	  path_indices.push_back(seg_indices[j]);
+	}
+    }  // end of for each source path segment
+  return path_indices;
+}
 
 std::vector<int>  PathSelector::findPointsAlongSegments(const pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud,
 							  const std::vector<Eigen::Vector3d>& points,
 							  const PathSelectorParameters& params)
 {
-
   // Check size of selection points vector
   if (points.size() < 2)
   {
@@ -78,35 +178,114 @@ std::vector<int>  PathSelector::findPointsAlongSegments(const pcl::PointCloud<pc
     return {};
   }
 
-  // Create a list of vertices and their distances
-  std::list<std::pair<double, int> > id_list;
-  for (auto it = points.begin() + 1; it != points.end(); ++it)
-  {
-    Eigen::Vector3d seg_start = *(it-1);
-    Eigen::Vector3d seg_end = *it;
+  // create a kdtree to find nearest neighbors in cloud
+  // use 8 nearest neighbors of each point to create a connected graph
+  // use dijkstras on that graph to find shortest path on the surface between each segment end-poing
 
-    std::list<std::pair<double,int> > seg_list;
-    for (int i = 0; i < (int) input_cloud->points.size(); i++)
-      {
-
-	double distance_to_seg, distance_along_seg;
-	Eigen::Vector3d pt(input_cloud->points[i].x, input_cloud->points[i].y, input_cloud->points[i].z);
-	int rtn = pointToLineSegmentDistance(seg_start, seg_end, pt, distance_to_seg, distance_along_seg);
-	if(rtn == 1 && distance_to_seg < params.line_threshold)
-	  {
-	    seg_list.push_back(std::pair<double, int>(distance_along_seg, i));
-	  }	
-      }// end for each point in cloud
-    seg_list.sort();
-    id_list.splice(id_list.end(),seg_list);
-  }// for each path segment
+  pcl::KdTreeFLANN<pcl::PointXYZ> kdtree;
+  kdtree.setInputCloud(input_cloud->makeShared());
+  int K = 8;
+  MeshGraph G;
   
-  std::vector<int> path_indices;
-  for(auto a = id_list.begin(); a!=id_list.end(); a++)
+  // for each point in the point cloud, find its neighbors and create a graph with edges to every neighbor
+  for(size_t p_index = 0; p_index < input_cloud->points.size(); p_index++) 
     {
-      path_indices.push_back(a->second);
+      std::vector<int> n_indices; // neighbor indices
+      std::vector<float> n_distances; // distance from vertex to neighbor
+      pcl::PointXYZ P;
+      P.x = input_cloud->points[p_index].x;
+      P.y = input_cloud->points[p_index].y;
+      P.z = input_cloud->points[p_index].z;
+      kdtree.nearestKSearch(P, K, n_indices, n_distances);
+      for(size_t i=0; i<n_indices.size(); i++) // for each triangle in mesh, add each edge to graph
+	{
+	  if(n_indices[i] > p_index) // only add edge if index of neighbor is greater than current point's index
+	    {
+	      pcl::PointXYZ P2;
+	      P2.x = input_cloud->points[n_indices[i]].x;
+	      P2.x = input_cloud->points[n_indices[i]].y;
+	      P2.x = input_cloud->points[n_indices[i]].z;
+	      Eigen::Vector3d p1(P.x,P.y,P.z);
+	      Eigen::Vector3d p2(input_cloud->points[n_indices[i]].x, input_cloud->points[n_indices[i]].y, input_cloud->points[n_indices[i]].z);
+	      double distance = (p1-p2).norm();
+
+	      bool rtn;
+	      MeshGraph::edge_descriptor e1;
+	      boost::tie(e1,rtn) = boost::add_edge(p_index,n_indices[i],distance,G);
+	    }// end only add edge if index of neighbor is greater than current point's index
+	}// end of for each neighbor
+    }// end for each point in cloud
+  // graph G has now been created.
+
+  std::vector<int> point_seg_indices;
+  for(int i=0; i<points.size(); i++)
+    {
+      double mind = 2000.0;
+      int minj = -1;
+      // TODO figure out why dmin is not equal to zero 
+      for(int j=0; j<input_cloud->points.size(); j++)
+	{
+	  Eigen::Vector3d pt2(input_cloud->points[j].x, input_cloud->points[j].y, input_cloud->points[j].z);
+	  Eigen::Vector3d D = pt2 - points[i];
+	  if(D.norm()<mind)
+	    {
+	      mind = D.norm();
+	      minj = j;
+	    }
+	}
+      point_seg_indices.push_back(minj);
     }
-  
+
+  // find id of every point from marker array, needed for Dijkstras
+  // TODO this is the exact same code as above in other implementation, it should be a subroutine
+  std::vector<int> path_indices;
+  for(int i=1; i<point_seg_indices.size(); i++)  // for each source path segment
+    {
+      // use dijkstras to find shortest connected path between every line segement defined by points
+      std::vector<double> d;
+      std::vector<vertex_des> p;
+      size_t num_verts = num_vertices(G);
+      size_t num_edges = boost::num_edges(G);
+      p.resize(num_verts);
+      d.resize(num_verts);
+      boost::property_map<MeshGraph, boost::edge_weight_t>::type weightmap = boost::get(boost::edge_weight, G);
+      boost::property_map<MeshGraph, boost::vertex_index_t>::type index_map = get(boost::vertex_index, G);
+      vertex_des start_vertex = vertex(point_seg_indices[i-1],G);
+      boost::dijkstra_shortest_paths(G,                           // const Graph& g
+				     start_vertex,	          // vertex_descriptor s, source, all shortest path distances computed from here
+				     &p[0],                       // predecessorMap each vertex p[i] points the next closer one p[p[i]] the next after
+				     &d[0],                       // distanceMap result providing the distance to each vertex from s
+				     weightmap,                   // weightMap accesses the weight of each edge
+				     index_map,		          // takes a vertex descriptor and finds the index of the vertex
+				     std::less<double>(),
+				     boost::closed_plus<double>(), 
+				     1000.0,
+				     //			      (std::numeric_limits<double>::max)(),
+				     0.0,
+				     boost::default_dijkstra_visitor());
+      
+      int V = point_seg_indices[i];
+      int start_index = point_seg_indices[i-1];
+      int q=0;
+      // follow predicesor chain from end endex to start index, pushing each one onto the 
+      std::vector<int> seg_indices;
+      while(V != start_index && q<p.size())
+	{
+	  seg_indices.push_back(V);
+	  V = p[V];
+	  q++;
+	}
+      // TODO check that q != p.size(), in this case, there is no path between the two points in the graph
+      seg_indices.push_back(V);
+
+      ROS_ERROR("seg %d has %ld vertices",i,seg_indices.size());
+
+      // reverse order of each segment
+      for(int j=seg_indices.size()-1; j>=0; j--)
+	{
+	  path_indices.push_back(seg_indices[j]);
+	}
+    }  // end of for each source path segment
   return path_indices;
 }
 

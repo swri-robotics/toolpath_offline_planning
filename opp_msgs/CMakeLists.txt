@@ -30,7 +30,8 @@ add_service_files(
   DIRECTORY srv
   FILES
       GetROISelection.srv
-      GetPathSelection.srv
+      GetPathSelectionMesh.srv
+      GetPathSelectionCloud.srv
 )
 
 generate_messages(

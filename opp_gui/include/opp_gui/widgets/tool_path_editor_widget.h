@@ -68,7 +68,6 @@ public:
  Q_SIGNALS:
 
   void polylinePathGen(const std::vector<int> pnt_indices);
-  
 
 protected Q_SLOTS:
 

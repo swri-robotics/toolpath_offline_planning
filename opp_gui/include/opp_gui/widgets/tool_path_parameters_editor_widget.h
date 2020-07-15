@@ -22,6 +22,7 @@
 #include <actionlib/client/simple_action_client.h>
 #include <noether_msgs/GenerateToolPathsAction.h>
 #include <heat_msgs/GenerateHeatToolPathsAction.h>
+#include <heat_msgs/HeatToolPathConfig.h>
 #include <ros/ros.h>
 
 #include <opp_msgs/ToolPath.h>
@@ -42,7 +43,12 @@ namespace opp_gui
 class ToolPathParametersEditorWidget : public QWidget
 {
   Q_OBJECT
+
 public:
+
+  /**
+   * @brief constructor
+   **/
   ToolPathParametersEditorWidget(ros::NodeHandle& nh, QWidget* parent = nullptr);
 
   /**
@@ -60,6 +66,8 @@ public:
   void setToolPathConfig(const noether_msgs::ToolPathConfig& config);
 
   noether_msgs::ToolPathConfig getToolPathConfig() const;
+
+  heat_msgs::HeatToolPathConfig getHeatToolPathConfig() const;
 
 Q_SIGNALS:
 
@@ -84,6 +92,9 @@ public Q_SLOTS:
 private:
   void onGenerateToolPathsComplete(const actionlib::SimpleClientGoalState& state,
                                    const noether_msgs::GenerateToolPathsResultConstPtr& res);
+
+  void onGenerateHeatToolPathsComplete(const actionlib::SimpleClientGoalState& state,
+				       const heat_msgs::GenerateHeatToolPathsResultConstPtr& res);
 
   actionlib::SimpleActionClient<noether_msgs::GenerateToolPathsAction> client_;
   actionlib::SimpleActionClient<heat_msgs::GenerateHeatToolPathsAction> heat_client_;

@@ -31,7 +31,7 @@
 
 #include "opp_path_selection/path_selector.h"
 #include "opp_path_selection/path_selector_parameters.h"
-#include <opp_msgs/GetPathSelection.h>
+#include <opp_msgs/GetPathSelectionMesh.h>
 
 namespace opp_path_selection
 {
@@ -206,7 +206,7 @@ PathSelectionArtist::PathSelectionArtist(const ros::NodeHandle& nh,
 
   clear_path_points_srv_ = nh_.advertiseService(CLEAR_PATH_POINTS_SERVICE, &PathSelectionArtist::clearPathPointsCb, this);
   collect_path_points_srv_ =
-      nh_.advertiseService(COLLECT_PATH_POINTS_SERVICE, &PathSelectionArtist::collectPathPointsCb, this);
+      nh_.advertiseService(COLLECT_PATH_POINTS_SERVICE, &PathSelectionArtist::collectPathPointsMeshCb, this);
 
   // Initialize subscribers and callbacks
   boost::function<void(const geometry_msgs::PointStampedConstPtr&)> drawn_points_cb;
@@ -241,11 +241,11 @@ bool PathSelectionArtist::collectPath(const shape_msgs::Mesh& mesh_msg,
   pclFromShapeMsg(mesh_msg, mesh);
   pcl::PointCloud<pcl::PointXYZ> mesh_cloud;
   pcl::fromPCLPointCloud2(mesh.cloud, mesh_cloud);
-  opp_msgs::GetPathSelection srv;
+  opp_msgs::GetPathSelectionCloud srv;
   pcl::toROSMsg(mesh_cloud, srv.request.input_cloud);
 
   // now get the path segments from markers and find point indices from mesh along each segment
-  bool success = collectPathPointsCb(srv.request, srv.response);
+  bool success = collectPathPointsCloudCb(srv.request, srv.response);
   if (!success || !srv.response.success)
   {
     message = srv.response.message;
@@ -265,8 +265,37 @@ bool PathSelectionArtist::collectPath(const shape_msgs::Mesh& mesh_msg,
   return false;
 }
 
+bool PathSelectionArtist::collectPathMesh(const shape_msgs::Mesh& mesh_msg,
+				      std::vector<int>& points_idx,
+				      std::string& message)
+{
+  // first get the mesh
+  opp_msgs::GetPathSelectionMesh srv;
+  srv.request.input_mesh = mesh_msg;
+
+  // now get the path segments from markers and find point indices from mesh along each segment
+  bool success = collectPathPointsMeshCb(srv.request, srv.response);
+  if (!success || !srv.response.success)
+  {
+    message = srv.response.message;
+    return false;
+  }
   
-bool PathSelectionArtist::collectPathPointsCb(opp_msgs::GetPathSelectionRequest& req, opp_msgs::GetPathSelectionResponse& res)
+  // the response includes res.cloud_indices which represent the path of vertices between each segment of markers/points
+  points_idx.clear();
+  for(int i=0; i<srv.response.mesh_indices.size(); i++)
+    {
+      int idx = srv.response.mesh_indices[i];
+      points_idx.push_back(idx);
+    }
+  
+  if(points_idx.size()>2) return true;
+  ROS_ERROR("No path points found");
+  return false;
+}
+
+  
+bool PathSelectionArtist::collectPathPointsCloudCb(opp_msgs::GetPathSelectionCloudRequest& req, opp_msgs::GetPathSelectionCloudResponse& res)
 {
   // get points from existing marker_array_
   auto points_it = std::find_if(marker_array_.markers.begin(),
@@ -301,6 +330,50 @@ bool PathSelectionArtist::collectPathPointsCb(opp_msgs::GetPathSelectionRequest&
   res.cloud_indices = sel.findPointsAlongSegments(cloud, points, params);
 
   if (!res.cloud_indices.empty())
+  {
+    res.success = true;
+    res.message = "Selection complete";
+  }
+  else
+  {
+    res.success = false;
+    res.message = "Unable to identify points along selected path";
+  }
+
+  return true;
+}
+
+bool PathSelectionArtist::collectPathPointsMeshCb(opp_msgs::GetPathSelectionMeshRequest& req, opp_msgs::GetPathSelectionMeshResponse& res)
+{
+  // get points from existing marker_array_
+  auto points_it = std::find_if(marker_array_.markers.begin(),
+                                marker_array_.markers.end(),
+                                [](const visualization_msgs::Marker& marker) { return marker.id == 0; });
+
+  // Convert the selection points to Eigen vectors
+  std::vector<Eigen::Vector3d> points;
+  for (const geometry_msgs::Point& pt : points_it->points)
+  {
+    Eigen::Vector3d e;
+    tf::pointMsgToEigen(pt, e);
+    points.push_back(std::move(e));
+  }
+
+  // get parameters from file. Note: This file is specified on construction, re-read allows dynamic changes 
+  PathSelectorParameters params;
+  bool success = opp_msgs_serialization::deserialize(path_selection_config_file, params);
+  if (!success)
+  {
+    ROS_ERROR_STREAM("Could not load path selection config from: " << path_selection_config_file);
+    return false;
+  }
+
+  // get all indices from provided mesh vertices along path
+  // TODO replace getRegionOfInterest with a path equivalent
+  PathSelector sel;
+  res.mesh_indices = sel.findPointsAlongSegments(req.input_mesh, points, params);
+
+  if (!res.mesh_indices.empty())
   {
     res.success = true;
     res.message = "Selection complete";

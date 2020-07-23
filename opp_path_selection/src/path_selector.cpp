@@ -62,7 +62,6 @@ std::vector<int>  PathSelector::findPointsAlongSegments(const shape_msgs::Mesh& 
 							const std::vector<Eigen::Vector3d>& points,
 							const PathSelectorParameters& params)
 {
-  ROS_ERROR("it should be me");
 
   // Check size of selection points vector
   if (points.size() < 2)
@@ -148,8 +147,6 @@ std::vector<int>  PathSelector::findPointsAlongSegments(const shape_msgs::Mesh& 
 	}
       // TODO check that q != p.size(), in this case, there is no path between the two points in the graph
       seg_indices.push_back(V);
-
-      ROS_ERROR("seg %d has %ld vertices",i,seg_indices.size());
 
       // reverse order of each segment
       for(int j=seg_indices.size()-1; j>=0; j--)
@@ -277,8 +274,6 @@ std::vector<int>  PathSelector::findPointsAlongSegments(const pcl::PointCloud<pc
 	}
       // TODO check that q != p.size(), in this case, there is no path between the two points in the graph
       seg_indices.push_back(V);
-
-      ROS_ERROR("seg %d has %ld vertices",i,seg_indices.size());
 
       // reverse order of each segment
       for(int j=seg_indices.size()-1; j>=0; j--)

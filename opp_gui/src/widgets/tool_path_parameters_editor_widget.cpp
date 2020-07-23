@@ -298,7 +298,7 @@ void ToolPathParametersEditorWidget::onGenerateHeatToolPathsComplete(
     }
     else
     {
-      ROS_INFO("Successfully generated heat tool path %ld %ld",res->tool_raster_paths.size(), res->tool_raster_paths[0].paths[0].poses.size());
+      ROS_INFO("Successfully generated heat tool path");
 
       opp_msgs::ToolPath tp;
       tp.header.stamp = ros::Time::now();

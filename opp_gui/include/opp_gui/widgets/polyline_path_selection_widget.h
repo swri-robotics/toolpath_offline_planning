@@ -60,8 +60,6 @@ private Q_SLOTS:
 
   void applyPolyline4PathGen();
 
-  void applyPolylineAsSource();
-  
 private:
   Ui::PolylinePathSelectionWidget* ui_;
 

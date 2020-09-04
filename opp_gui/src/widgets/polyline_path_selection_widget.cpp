@@ -15,15 +15,13 @@
  */
 
 #include "opp_gui/widgets/polygon_area_selection_widget.h"
+#include "opp_gui/widgets/polyline_path_selection_widget.h"
+#include "ui_polyline_path_selection_widget.h"
 
 #include <QMessageBox>
 #include <QPushButton>
 
-#include "opp_gui/widgets/polyline_path_selection_widget.h"
-
 #include <std_srvs/Trigger.h>
-
-#include "ui_polyline_path_selection_widget.h"
 
 namespace opp_gui
 {
@@ -39,7 +37,6 @@ PolylinePathSelectionWidget::PolylinePathSelectionWidget(ros::NodeHandle& nh,
   connect(ui_->push_button_clear_polyline, &QPushButton::clicked, this, &PolylinePathSelectionWidget::clearPolyline);
   connect(ui_->push_button_apply_polyline, &QPushButton::clicked, this, &PolylinePathSelectionWidget::applyPolylineAsPath);
   connect(ui_->push_button_htgen_polyline, &QPushButton::clicked, this, &PolylinePathSelectionWidget::applyPolyline4PathGen);
-  connect(ui_->push_button_sourc_polyline, &QPushButton::clicked, this, &PolylinePathSelectionWidget::applyPolylineAsSource);
 }
 
 PolylinePathSelectionWidget::~PolylinePathSelectionWidget() { delete ui_; }
@@ -158,29 +155,6 @@ void PolylinePathSelectionWidget::writePolylineAsSource(const std::string& filen
     }
   fclose(fp);
 
-}
-
-void PolylinePathSelectionWidget::applyPolylineAsSource()
-{
-  if (!mesh_)
-  {
-    QMessageBox::warning(this, "Tool Path Planning Error", "No mesh available to crop");
-    return;
-  }
-
-  std::string error_message;
-  std::vector<int> path_indices;
-  bool success = selector_.collectPathMesh(*mesh_, path_indices, error_message);
-  if (!success)
-  {
-    ROS_ERROR_STREAM(
-        "Tool Path Parameter Editor Widget: Path Selection error: could not compute path: " << error_message);
-  }
-
-  // write mesh as object and path as source file
-  writeMeshAsObj("/home/clewis/heat_ws/src/heat/libgeodesic/data/offline.obj");
-  writePolylineAsSource("/home/clewis/heat_ws/src/heat/libgeodesic/data/offline.source", path_indices);
-  return;
 }
 
 }  // end namespace opp_gui

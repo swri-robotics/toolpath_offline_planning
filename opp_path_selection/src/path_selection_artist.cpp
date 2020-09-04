@@ -59,14 +59,14 @@ std::vector<visualization_msgs::Marker> makeVisual(const std::string& frame_id)
   points.id = 0;
   points.type = visualization_msgs::Marker::SPHERE_LIST;
   points.scale.x = points.scale.y = 0.1;
-  points.color.r = points.color.a = 1.0;
+  points.color.b = points.color.a = 1.0;
   points.pose.orientation.w = 1.0;
 
   // Line specific properties
   lines.id = 1;
   lines.type = visualization_msgs::Marker::LINE_STRIP;
   lines.scale.x = lines.scale.y = 0.05;
-  lines.color.r = lines.color.a = 1.0;
+  lines.color.b = lines.color.a = 1.0;
   lines.pose.orientation.w = 1.0;
 
   std::vector<visualization_msgs::Marker> visuals;

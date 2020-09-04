@@ -76,8 +76,12 @@ Q_SIGNALS:
    */
   void dataChanged();
 
-  void polylinePathGen(const std::vector<int> pnt_indices);
+  // signal emitted when user selects a polyline they want as a path
+  void polylinePath(const std::vector<int> pnt_indices);
 
+  // signal emitted when user selects a polyline they want to use as a heat source to generate a path
+  void polylinePathGen(const std::vector<int> pnt_indices);
+  
 private Q_SLOTS:
 
   void updateProcessType(const QString&);
@@ -87,6 +91,9 @@ private Q_SLOTS:
   void generateToolPath();
 
 public Q_SLOTS:
+
+  void onPolylinePath(const std::vector<int> pnt_indices);
+
   void onPolylinePathGen(const std::vector<int> pnt_indices);
 
 private:

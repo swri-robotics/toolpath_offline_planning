@@ -49,7 +49,7 @@ ToolPathEditorWidget::ToolPathEditorWidget(QWidget* parent,
 
   connect(surface_selector_, &SurfaceSelectionComboWidget::newTargetMesh,   this, &ToolPathEditorWidget::newTargetMeshSelected);
   // TODO what to do with a polyline created path
-  //  connect(surface_selector_, &SurfaceSelectionComboWidget::polylinePath,    this, &ToolPathEditorWidget::onPolylinePath);
+  connect(surface_selector_, &SurfaceSelectionComboWidget::polylinePath,    this, &ToolPathEditorWidget::onPolylinePath);
   connect(surface_selector_, &SurfaceSelectionComboWidget::polylinePathGen, editor_, &ToolPathParametersEditorWidget::onPolylinePathGen);
 
   // Create a publisher for the tool path marker
@@ -258,6 +258,7 @@ void ToolPathEditorWidget::publishToolPathDisplay(const opp_msgs::ToolPath& tool
 
 void ToolPathEditorWidget::onPolylinePath(const std::vector<int> pnt_indices)
 {
+  // First find shortest path on surface between each segments same as with pathGen
   ROS_ERROR("new polyline path in ToolPathEditor has %ld pnts", pnt_indices.size());
 }
 

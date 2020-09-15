@@ -43,7 +43,6 @@ PolygonAreaSelectionWidget::~PolygonAreaSelectionWidget() { delete ui_; }
 
 void PolygonAreaSelectionWidget::init(const shape_msgs::Mesh& mesh)
 {
-  //  submesh_.reset(new shape_msgs::Mesh(*mesh_)); is also called inside clearROISelection(), is it needed here?
   mesh_.reset(new shape_msgs::Mesh(mesh));
   clearROISelection();
   return;

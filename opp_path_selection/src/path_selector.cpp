@@ -15,7 +15,18 @@
  */
 
 #include "opp_path_selection/path_selector.h"
+#include "opp_path_selection/filter.h"
 
+#include <geometry_msgs/Point.h>
+#include <geometry_msgs/PoseStamped.h>
+#include <sensor_msgs/PointCloud2.h>
+
+#include <boost/optional.hpp>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <boost/graph/breadth_first_search.hpp>
+#include <boost/graph/graph_utility.hpp>
+#include <boost/pending/indirect_cmp.hpp>
+#include <boost/range/irange.hpp>
 #include <eigen_conversions/eigen_msg.h>
 #include <pcl/common/centroid.h>
 #include <pcl/common/common.h>
@@ -24,8 +35,6 @@
 #include <pcl/search/kdtree.h>
 #include <pcl/segmentation/extract_polygonal_prism_data.h>
 #include <pcl/segmentation/region_growing.h>
-
-#include "opp_path_selection/filter.h"
 
 namespace opp_path_selection
 {

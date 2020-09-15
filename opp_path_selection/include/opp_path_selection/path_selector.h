@@ -17,24 +17,15 @@
 #ifndef OPP_PATH_SELECTION_PATH_SELECTOR_H
 #define OPP_PATH_SELECTION_PATH_SELECTOR_H
 
-#include <boost/optional.hpp>
 #include <eigen3/Eigen/Core>
 
-#include <geometry_msgs/Point.h>
-#include <geometry_msgs/PoseStamped.h>
 #include <pcl_ros/point_cloud.h>
-#include <sensor_msgs/PointCloud2.h>
 #include <shape_msgs/Mesh.h>
 #include "opp_path_selection/path_selector_parameters.h"
 
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/dijkstra_shortest_paths.hpp>
-#include <boost/graph/breadth_first_search.hpp>
-#include <boost/graph/graph_utility.hpp>
-#include <boost/pending/indirect_cmp.hpp>
-#include <boost/range/irange.hpp>
 
 namespace opp_path_selection
 {

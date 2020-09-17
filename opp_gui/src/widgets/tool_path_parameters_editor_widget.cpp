@@ -72,10 +72,6 @@ ToolPathParametersEditorWidget::ToolPathParametersEditorWidget(ros::NodeHandle& 
 	  &ToolPathParametersEditorWidget::QWarningBox,
           this,
           &ToolPathParametersEditorWidget::onQWarningBox);
-  connect(this,
-	  &ToolPathParametersEditorWidget::QErrorBox,
-          this,
-          &ToolPathParametersEditorWidget::onQErrorBox);
 }
 
 void ToolPathParametersEditorWidget::init(const shape_msgs::Mesh& mesh) { mesh_.reset(new shape_msgs::Mesh(mesh)); }
@@ -323,11 +319,6 @@ void ToolPathParametersEditorWidget::onGenerateToolPathsComplete(
 void ToolPathParametersEditorWidget::onQWarningBox(std::string warn_string)
 {
   QMessageBox::warning(this, "Tool Path Planning Warning", QString(warn_string.c_str()));
-}
-
-void ToolPathParametersEditorWidget::onQErrorBox(std::string error_string)
-{
-  QMessageBox::warning(this, "Tool Path Planning Error", QString(error_string.c_str()));
 }
 
 void ToolPathParametersEditorWidget::onGenerateHeatToolPathsComplete(

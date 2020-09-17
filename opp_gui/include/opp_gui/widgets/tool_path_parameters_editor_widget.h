@@ -111,8 +111,6 @@ private:
 
   void onQWarningBox(std::string warn_string);
 
-  void onQErrorBox(std::string error_string);
-  
   actionlib::SimpleActionClient<noether_msgs::GenerateToolPathsAction> client_;
   actionlib::SimpleActionClient<heat_msgs::GenerateHeatToolPathsAction> heat_client_;
 

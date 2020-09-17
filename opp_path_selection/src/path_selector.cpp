@@ -15,7 +15,7 @@
  */
 
 #include "opp_path_selection/path_selector.h"
-#include "opp_path_selection/filter.h"
+#include "opp_path_selection/filter_impl.hpp"
 
 #include <geometry_msgs/Point.h>
 #include <geometry_msgs/PoseStamped.h>

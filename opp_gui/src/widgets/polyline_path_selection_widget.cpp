@@ -112,49 +112,4 @@ void PolylinePathSelectionWidget::applyPolyline4PathGen()
   return;
 }
 
-void PolylinePathSelectionWidget::writeMeshAsObj(const std::string& filename)
-{
-  ROS_ERROR("writing mesh to %s", filename.c_str());
-  FILE *fp = fopen(filename.c_str(),"w");
-  if(!fp)
-    {
-      ROS_ERROR("couldn't open file: %s", filename.c_str());
-    }
-  else
-    {
-      for(int i=0; i<mesh_->vertices.size(); i++)
-	{
-	  fprintf(fp, "v %lf %lf %lf\n", mesh_->vertices[i].x, mesh_->vertices[i].y, mesh_->vertices[i].z);
-	}
-      for(int i=0; i<mesh_->triangles.size(); i++)
-	{
-	  fprintf(fp, "f %ld %ld %ld\n",
-		  mesh_->triangles[i].vertex_indices[0]+1,   // for some reason, .obj files are 1 referenced, not zero referenced
-		  mesh_->triangles[i].vertex_indices[1]+1,
-		  mesh_->triangles[i].vertex_indices[2]+1);
-	}
-    }
-  fclose(fp);
-}
-void PolylinePathSelectionWidget::writePolylineAsSource(const std::string& filename, const std::vector<int>& path_indices)
-{
-  FILE *fp = fopen(filename.c_str(),"w");
-  if(!fp)
-    {
-      ROS_ERROR("couldn't open file: %s", filename.c_str());
-    }
-  else
-    {
-      ROS_ERROR("source to %s", filename.c_str());
-      fprintf(fp,"1\n%ld ", path_indices.size());
-      for(int i=0; i<path_indices.size(); i++)
-	{
-	  fprintf(fp, "%ld ", path_indices[i]+1);
-	}
-      fprintf(fp,"\n");
-    }
-  fclose(fp);
-
-}
-
 }  // end namespace opp_gui

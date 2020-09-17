@@ -67,11 +67,6 @@ private:
 
   opp_path_selection::PathSelectionArtist selector_;
 
-  void writeMeshAsObj(const std::string& filename);
-
-  void writePolylineAsSource(const std::string& filename, const std::vector<int>& path_indices);
-
-
 };  // end class PolylinePathSelectionWidget
 
 }  // end namespace opp_gui

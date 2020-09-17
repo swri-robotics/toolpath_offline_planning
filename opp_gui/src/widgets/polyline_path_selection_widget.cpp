@@ -55,11 +55,12 @@ void PolylinePathSelectionWidget::clearPolyline()
   bool success = selector_.clearPathPointsCb(srv.request, srv.response);
   if (!success)
   {
-    ROS_ERROR("Tool Path Parameter Editor Widget: Area Selection error: could not clear polygon points");
+    QMessageBox::warning(this, "Tool Path Parameter Editor Widget Error", "Area Selection error: could not clear polygon points");
   }
   if (!srv.response.success)
   {
-    ROS_ERROR_STREAM("Tool Path Parameter Editor Widget: Area Selection error:" << srv.response.message);
+    std::string msg("Area Selection error:" + srv.response.message);
+    QMessageBox::warning(this, "Tool Path Parameter Editor Widget Error", msg.c_str());
   }
 
   std::vector<int> bogus_pnts;
@@ -81,8 +82,8 @@ void PolylinePathSelectionWidget::applyPolylineAsPath()
   bool success = selector_.collectPathMesh(*mesh_, path_indices, error_message);
   if (!success)
   {
-    ROS_ERROR_STREAM(
-        "Tool Path Parameter Editor Widget: Path Selection error: could not compute path: " << error_message);
+    std::string msg("Path Selection error: could not compute path: " + error_message);
+    QMessageBox::warning(this, "Tool Path Parameter Editor Widget:", msg.c_str());
   }
 
   emit(polylinePath(path_indices, mesh_));
@@ -102,8 +103,8 @@ void PolylinePathSelectionWidget::applyPolyline4PathGen()
   bool success = selector_.collectPath(*mesh_, path_indices, error_message);
   if (!success)
   {
-    ROS_ERROR_STREAM(
-        "Tool Path Parameter Editor Widget: Path Selection error: could not compute path: " << error_message);
+    std::string msg("Path Selection error: could not compute path: " + error_message);
+    QMessageBox::warning(this, "Tool Path Parameter Editor Widget:", msg.c_str());
   }
 
   // TODO perhaps we should send the mesh too, It seems like the other widget already knows which mesh has been selected. 

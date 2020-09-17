@@ -16,6 +16,7 @@
 
 #include "opp_gui/widgets/tool_path_editor_widget.h"
 #include "opp_gui/widgets/tool_path_parameters_editor_widget.h"
+#include <QMessageBox>
 
 const static std::string TOOL_PATH_TOPIC = "tool_path";
 
@@ -161,6 +162,7 @@ void ToolPathEditorWidget::onRemovePressed()
     }
     else
     {
+      
       ROS_ERROR_STREAM(__func__ << "Failed to find part '" << key << "' in map");
     }
 
@@ -257,8 +259,10 @@ void ToolPathEditorWidget::publishToolPathDisplay(const opp_msgs::ToolPath& tool
 
 void ToolPathEditorWidget::onPolylinePath(const std::vector<int> pnt_indices)
 {
-  // First find shortest path on surface between each segments same as with pathGen
-  ROS_ERROR("new polyline path in ToolPathEditor has %ld pnts", pnt_indices.size());
+  // TODO: First find shortest path on surface between each segments same as with pathGen
+  // TODO TODO TODO TODO
+  std::string msg("new polyline path in ToolPathEditor has %ld pnts", pnt_indices.size());
+  QMessageBox::warning(this, "Tool Path Editor Widget Error (POLYLINE PATH NOT YET IMPLEMENTED)", msg.c_str());
 }
 
 void ToolPathEditorWidget::onPolylinePathGen(const std::vector<int> pnt_indices)
@@ -282,7 +286,7 @@ void ToolPathEditorWidget::onDataChanged()
         {
           if (surface_selector_ == nullptr)
           {
-            ROS_ERROR("surface_selector_ not assigned in ToolPathEditorWidget");
+	    QMessageBox::warning(this, "Tool Path Editor Widget Error","surface_selector_ not assigned in ToolPathEditorWidget");
           }
           else
           {

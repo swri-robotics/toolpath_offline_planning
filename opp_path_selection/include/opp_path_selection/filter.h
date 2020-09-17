@@ -39,6 +39,4 @@ bool planeFit(const CloudPtr<PointT> input_cloud,
 
 }  // end namespace opp_path_selection
 
-#include "opp_path_selection/filter_impl.h"
-
 #endif  // OPP_PATH_SELECTION_FILTER_H

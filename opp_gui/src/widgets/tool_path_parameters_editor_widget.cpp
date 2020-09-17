@@ -69,9 +69,13 @@ ToolPathParametersEditorWidget::ToolPathParametersEditorWidget(ros::NodeHandle& 
           this,
           &ToolPathParametersEditorWidget::onPolylinePathGen);
   connect(this,
-	  &ToolPathParametersEditorWidget::polylinePath,
+	  &ToolPathParametersEditorWidget::QWarningBox,
           this,
-          &ToolPathParametersEditorWidget::onPolylinePath);
+          &ToolPathParametersEditorWidget::onQWarningBox);
+  connect(this,
+	  &ToolPathParametersEditorWidget::QErrorBox,
+          this,
+          &ToolPathParametersEditorWidget::onQErrorBox);
 }
 
 void ToolPathParametersEditorWidget::init(const shape_msgs::Mesh& mesh) { mesh_.reset(new shape_msgs::Mesh(mesh)); }
@@ -312,6 +316,15 @@ void ToolPathParametersEditorWidget::onGenerateToolPathsComplete(
   }
 }
 
+void ToolPathParametersEditorWidget::onQWarningBox(std::string warn_string)
+{
+  QMessageBox::warning(this, "Tool Path Planning Warning", QString(warn_string.c_str()));
+}
+
+void ToolPathParametersEditorWidget::onQErrorBox(std::string error_string)
+{
+  QMessageBox::warning(this, "Tool Path Planning Error", QString(error_string.c_str()));
+}
 
 void ToolPathParametersEditorWidget::onGenerateHeatToolPathsComplete(
     const actionlib::SimpleClientGoalState& state,
@@ -327,13 +340,13 @@ void ToolPathParametersEditorWidget::onGenerateHeatToolPathsComplete(
   if (state != actionlib::SimpleClientGoalState::SUCCEEDED)
   {
     std::string message = "Action '" + GENERATE_HEAT_TOOLPATHS_ACTION + "' failed to succeed";
-    QMessageBox::warning(this, "Tool Path Planning Error", QString(message.c_str()));
+    emit QWarningBox(message);
   }
   else
   {
     if (!res->success || !res->tool_path_validities[0])
     {
-      QMessageBox::warning(this, "Heat Tool Path Planning Error", "Heat tool path generation failed");
+      emit QWarningBox(std::string("Heat tool path generation failed"));
     }
     else
     {

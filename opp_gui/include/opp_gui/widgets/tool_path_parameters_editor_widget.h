@@ -82,6 +82,12 @@ Q_SIGNALS:
   // signal emitted when user selects a polyline they want to use as a heat source to generate a path
   void polylinePathGen(const std::vector<int> pnt_indices);
   
+  // signal emitted when ros thread wants a warning box
+  void QWarningBox(std::string warn_string);
+
+  // signal emitted when ros thread wants a error box
+  void QErrorBox(std::string error_string);
+
 private Q_SLOTS:
 
   void updateProcessType(const QString&);
@@ -103,6 +109,10 @@ private:
   void onGenerateHeatToolPathsComplete(const actionlib::SimpleClientGoalState& state,
 				       const heat_msgs::GenerateHeatToolPathsResultConstPtr& res);
 
+  void onQWarningBox(std::string warn_string);
+
+  void onQErrorBox(std::string error_string);
+  
   actionlib::SimpleActionClient<noether_msgs::GenerateToolPathsAction> client_;
   actionlib::SimpleActionClient<heat_msgs::GenerateHeatToolPathsAction> heat_client_;
 
@@ -113,6 +123,8 @@ private:
   shape_msgs::Mesh::Ptr mesh_;
 
   QProgressDialog* progress_dialog_;
+
+  
 };
 
 }  // namespace opp_gui

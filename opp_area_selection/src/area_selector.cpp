@@ -25,7 +25,7 @@
 #include <pcl/segmentation/extract_polygonal_prism_data.h>
 #include <pcl/segmentation/region_growing.h>
 
-#include "opp_area_selection/filter.h"
+#include "opp_area_selection/filter_impl.hpp"
 
 namespace
 {

@@ -114,8 +114,8 @@ heat_msgs::HeatToolPathConfig ToolPathParametersEditorWidget::getHeatToolPathCon
   config.tool_offset = ui_->double_spin_box_tool_z_offset->value();
   config.min_hole_size = ui_->double_spin_box_min_hole_size->value();
   config.min_segment_size = ui_->double_spin_box_min_segment_length->value();
+  config.raster_angle = ui_->double_spin_box_raster_angle->value() * M_PI / 180.0;
   config.generate_extra_rasters = false;  // No option to set this from GUI at present.
-
   return config;
 }
 

@@ -58,14 +58,14 @@ std::vector<visualization_msgs::Marker> makeVisual(const std::string& frame_id)
   // Point specific properties
   points.id = 0;
   points.type = visualization_msgs::Marker::SPHERE_LIST;
-  points.scale.x = points.scale.y = 0.1;
+  points.scale.x = points.scale.y = points.scale.z = 0.1;
   points.color.b = points.color.a = 1.0;
   points.pose.orientation.w = 1.0;
 
   // Line specific properties
   lines.id = 1;
   lines.type = visualization_msgs::Marker::LINE_STRIP;
-  lines.scale.x = lines.scale.y = 0.05;
+  lines.scale.x = lines.scale.y = lines.scale.z = 0.05;
   lines.color.b = lines.color.a = 1.0;
   lines.pose.orientation.w = 1.0;
 
@@ -195,7 +195,7 @@ PathSelectionArtist::PathSelectionArtist(const ros::NodeHandle& nh,
                                  const std::string& sensor_frame)
   : nh_(nh), world_frame_(world_frame), sensor_frame_(sensor_frame)
 {
-  marker_pub_ = nh_.advertise<visualization_msgs::MarkerArray>(MARKER_ARRAY_TOPIC, 1, false);
+  marker_pub_ = nh_.advertise<visualization_msgs::MarkerArray>(MARKER_ARRAY_TOPIC, 1, true);
   listener_.reset(new tf::TransformListener(nh_));
 
   if (!listener_->waitForTransform(sensor_frame_, world_frame_, ros::Time(0), ros::Duration(TF_LOOKUP_TIMEOUT)))
@@ -216,10 +216,8 @@ PathSelectionArtist::PathSelectionArtist(const ros::NodeHandle& nh,
   marker_array_.markers = makeVisual(sensor_frame);
 }
 
-bool PathSelectionArtist::clearPathPointsCb(std_srvs::TriggerRequest& req, std_srvs::TriggerResponse& res)
+bool PathSelectionArtist::clearPathPointsCb(std_srvs::TriggerRequest& , std_srvs::TriggerResponse& res)
 {
-  (void)req;  // To suppress warnings, tell the compiler we will not use this parameter
-
   for (auto it = marker_array_.markers.begin(); it != marker_array_.markers.end(); ++it)
   {
     it->points.clear();
@@ -246,23 +244,26 @@ bool PathSelectionArtist::collectPath(const shape_msgs::Mesh& mesh_msg,
 
   // now get the path segments from markers and find point indices from mesh along each segment
   bool success = collectPathPointsCloudCb(srv.request, srv.response);
-  if (!success || !srv.response.success)
-  {
-    message = srv.response.message;
-    return false;
-  }
-  
-  // the response includes res.cloud_indices which represent the path of vertices between each segment of markers/points
+  message = srv.response.message;    
   points_idx.clear();
+  if (!success)
+    {
+      ROS_ERROR("collectPathPointsCloudCb failed");
+      return false;
+    }
+  if(!srv.response.success)// no points found
+    {
+      points_idx.clear(); // this is not a failure, we allow zero points for the heat method
+      return true;
+    }
+
+  // the response includes res.cloud_indices which represent the path of vertices between each segment of markers/points
   for(int i=0; i<srv.response.cloud_indices.size(); i++)
     {
       int idx = srv.response.cloud_indices[i];
       points_idx.push_back(idx);
     }
-  
-  if(points_idx.size()>2) return true;
-  ROS_ERROR("No path points found");
-  return false;
+  return true; 
 }
 
 bool PathSelectionArtist::collectPathMesh(const shape_msgs::Mesh& mesh_msg,
@@ -275,23 +276,25 @@ bool PathSelectionArtist::collectPathMesh(const shape_msgs::Mesh& mesh_msg,
 
   // now get the path segments from markers and find point indices from mesh along each segment
   bool success = collectPathPointsMeshCb(srv.request, srv.response);
-  if (!success || !srv.response.success)
-  {
-    message = srv.response.message;
-    return false;
-  }
-  
-  // the response includes res.cloud_indices which represent the path of vertices between each segment of markers/points
+  message = srv.response.message;
   points_idx.clear();
+  if (!success)
+    {
+      return false;
+    }
+  if(!srv.response.success)
+    {
+      message = "No points found on mesh";
+    }
+
+  // the response includes res.cloud_indices which represent the path of vertices between each segment of markers/points
   for(int i=0; i<srv.response.mesh_indices.size(); i++)
     {
       int idx = srv.response.mesh_indices[i];
       points_idx.push_back(idx);
     }
-  
-  if(points_idx.size()>2) return true;
-  ROS_ERROR("No path points found");
-  return false;
+
+  return true;
 }
 
   
@@ -310,6 +313,14 @@ bool PathSelectionArtist::collectPathPointsCloudCb(opp_msgs::GetPathSelectionClo
     tf::pointMsgToEigen(pt, e);
     points.push_back(std::move(e));
   }
+
+  if(points.size() < 2)
+    {
+      res.cloud_indices.clear();
+      res.success = false;
+      res.message = "No Points Selected, use Geometric Axis";
+      return true;
+    }
 
   // get point cloud from service request
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>());
@@ -350,14 +361,23 @@ bool PathSelectionArtist::collectPathPointsMeshCb(opp_msgs::GetPathSelectionMesh
                                 marker_array_.markers.end(),
                                 [](const visualization_msgs::Marker& marker) { return marker.id == 0; });
 
+
   // Convert the selection points to Eigen vectors
   std::vector<Eigen::Vector3d> points;
   for (const geometry_msgs::Point& pt : points_it->points)
-  {
-    Eigen::Vector3d e;
-    tf::pointMsgToEigen(pt, e);
-    points.push_back(std::move(e));
-  }
+    {
+      Eigen::Vector3d e;
+      tf::pointMsgToEigen(pt, e);
+      points.push_back(std::move(e));
+    }
+
+  if(points.size() < 2)
+    {
+      res.mesh_indices.clear();
+      res.success = true;
+      res.message = "No Points Selected, use Geometric Axis";
+      return true;
+    }
 
   // get parameters from file. Note: This file is specified on construction, re-read allows dynamic changes 
   PathSelectorParameters params;
@@ -390,6 +410,7 @@ bool PathSelectionArtist::collectPathPointsMeshCb(opp_msgs::GetPathSelectionMesh
 bool PathSelectionArtist::transformPoint(const geometry_msgs::PointStamped::ConstPtr pt_stamped,
                                      geometry_msgs::Point& transformed_pt)
 {
+
   ROS_INFO_STREAM(pt_stamped->header.frame_id);
   // Get the current transform from the world frame to the frame of the sensor data
   tf::StampedTransform frame;
@@ -420,9 +441,11 @@ bool PathSelectionArtist::transformPoint(const geometry_msgs::PointStamped::Cons
 
 void PathSelectionArtist::addSelectionPoint(const geometry_msgs::PointStampedConstPtr pt_stamped)
 {
+
   geometry_msgs::Point pt;
   if (!transformPoint(pt_stamped, pt))
   {
+    ROS_ERROR("couldn't transform");
     return;
   }
 

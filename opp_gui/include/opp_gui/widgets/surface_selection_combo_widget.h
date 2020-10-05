@@ -61,6 +61,10 @@ Q_SIGNALS:
 
   void polylinePathGen(const std::vector<int> pnt_indices);
 
+  void polylinePathReset(const std::vector<int> point_indices);
+
+  void polylinePathGenReset(const std::vector<int> pnt_indices);
+
 private Q_SLOTS:
   void newSegmentList(const std::vector<shape_msgs::Mesh::Ptr>&, const shape_msgs::Mesh::Ptr&);
 
@@ -71,6 +75,10 @@ private Q_SLOTS:
   void onPolylinePath(const std::vector<int>& path_indices, const shape_msgs::Mesh::Ptr& mesh);
 
   void onPolylinePathGen(const std::vector<int>& pnt_indices);
+
+  void onPolylinePathReset(const std::vector<int>& path_indices, const shape_msgs::Mesh::Ptr& mesh);
+
+  void onPolylinePathGenReset(const std::vector<int>& pnt_indices);
 
   
 private:

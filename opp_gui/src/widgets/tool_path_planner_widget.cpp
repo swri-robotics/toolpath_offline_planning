@@ -119,6 +119,7 @@ ToolPathPlannerWidget::ToolPathPlannerWidget(QWidget* parent,
   connect(ui_->push_button_suppress_job, &QPushButton::clicked, this, &ToolPathPlannerWidget::deleteJob);
   connect(ui_->push_button_refresh_parts, &QPushButton::clicked, this, &ToolPathPlannerWidget::refresh);
   connect(ui_->push_button_refresh_jobs, &QPushButton::clicked, this, &ToolPathPlannerWidget::refresh);
+  connect(this, &ToolPathPlannerWidget::QWarningBox, this, &ToolPathPlannerWidget::onQWarningBox);
 
   // Add a publisher for the mesh marker
   pub_ = nh_.advertise<visualization_msgs::Marker>(MESH_MARKER_TOPIC, 1, true);
@@ -175,7 +176,7 @@ void ToolPathPlannerWidget::loadMeshFromResource()
   std::string filename = ui_->line_edit_model_filename->text().toStdString();
   if (filename.empty())
   {
-    QMessageBox::warning(this, "Input Error", "Model filename or package name not specified");
+    emit QWarningBox("Input Error: Model filename or package name not specified");
     return;
   }
 
@@ -200,7 +201,7 @@ void ToolPathPlannerWidget::loadMeshFromResource()
     for (const std::string& ext : file_extensions)
       message += ext + " ";
 
-    QMessageBox::warning(this, "Input Error", QString(message.c_str()));
+    emit QWarningBox(message);
     return;
   }
   ROS_INFO_STREAM("Attempting to load mesh from resource: '" << mesh_resource_ << "'");
@@ -220,7 +221,7 @@ void ToolPathPlannerWidget::loadModelsFromDatabase()
   {
     // If the function failed, create a warning pop-up box.
     std::string message = "Failed to retrieve parts from database, experienced error: " + error_msg;
-    QMessageBox::warning(this, "Database Communication Error", QString::fromStdString(message));
+    emit QWarningBox(message);
   }
   else
   {
@@ -277,7 +278,7 @@ void ToolPathPlannerWidget::loadSelectedModel()
   }
   else
   {
-    QMessageBox::warning(this, "Input Error", "Make a selection in the parts list");
+    emit QWarningBox("Make a selection in the parts list");
   }
 }
 
@@ -294,7 +295,7 @@ void ToolPathPlannerWidget::saveModel()
   std::string model_description = ui_->plain_text_edit_model_description->toPlainText().toStdString();
   if (model_name.empty() || model_description.empty())
   {
-    QMessageBox::warning(this, "Input Error", "Model ID or description field(s) is empty");
+    emit QWarningBox("Model ID or description field(s) is empty");
     return;
   }
 
@@ -305,8 +306,7 @@ void ToolPathPlannerWidget::saveModel()
   TouchPointMap verification_points = verification_point_editor_->getPoints();
   if (touch_points.size() < 3 || verification_points.size() < 3)
   {
-    QMessageBox::warning(
-        this, "Invalid Model Definition", "Ensure at least 3 touch points and 3 verification points have been defined");
+    QWarningBox("Ensure at least 3 touch points and 3 verification points have been defined");
     return;
   }
 
@@ -337,7 +337,7 @@ void ToolPathPlannerWidget::saveModel()
   {
     // If the function failed, warn the user.
     std::string message = "Failed to add part to database, received error: " + error_msg;
-    QMessageBox::warning(this, "Database Communication Error", QString(message.c_str()));
+    QWarningBox(message);
   }
   else
   {
@@ -370,7 +370,7 @@ void ToolPathPlannerWidget::loadJobsFromDatabase()
   std::string message;
   if (!database_.getAllJobsFromDatabase(generated_model_id_, message, jobs_map))
   {
-    QMessageBox::warning(this, "Database Error", "Could not load any jobs for this part");
+    emit QWarningBox("Could not load any jobs for this part");
     return;
   }
   existing_jobs_.clear();
@@ -421,7 +421,7 @@ void ToolPathPlannerWidget::loadSelectedJob()
   }
   else
   {
-    QMessageBox::warning(this, "Input Error", "Make a selection in the jobs list");
+    emit QWarningBox("Make a selection in the jobs list");
   }
   return;
 }
@@ -441,7 +441,7 @@ void ToolPathPlannerWidget::saveJob()
   std::string job_description = ui_->plain_text_edit_job_description->toPlainText().toStdString();
   if (job_name.empty() || job_description.empty())
   {
-    QMessageBox::warning(this, "Input Error", "Job ID or description is invalid");
+    emit QWarningBox("Job ID or description is invalid");
     return;
   }
 
@@ -467,7 +467,7 @@ void ToolPathPlannerWidget::saveJob()
   {
     // If the function failed, warn the user.
     std::string message = "Failed to add job to database, received error: " + error_msg;
-    QMessageBox::warning(this, "Database Communication Error", QString(message.c_str()));
+    emit QWarningBox(message);
   }
   else
   {
@@ -601,7 +601,7 @@ bool ToolPathPlannerWidget::loadMesh()
   if (!utils::getMeshMsgFromResource(mesh_resource_, mesh))
   {
     std::string message = "Failed to load mesh from resource: '" + mesh_resource_ + "'";
-    QMessageBox::warning(this, "Input Error", message.c_str());
+    emit QWarningBox(message);
     return false;
   }
 
@@ -650,5 +650,11 @@ void ToolPathPlannerWidget::setJobTabsEnabled(bool enabled, bool first_enabled)
   }
   ui_->frame_define_toolpaths->setEnabled(enabled);
 }
+
+void ToolPathPlannerWidget::onQWarningBox(std::string warn_string)
+{
+  QMessageBox::warning(this, "Tool Path Planning Warning", QString(warn_string.c_str()));
+}
+
 
 }  // namespace opp_gui

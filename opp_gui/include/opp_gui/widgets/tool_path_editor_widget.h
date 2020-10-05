@@ -69,6 +69,8 @@ public:
 
   void polylinePathGen(const std::vector<int> pnt_indices);
 
+  void QWarningBox(const std::string message);
+
 protected Q_SLOTS:
 
   void newTargetMeshSelected(const shape_msgs::Mesh::Ptr& target_mesh);
@@ -84,6 +86,12 @@ protected Q_SLOTS:
   void onPolylinePath(const std::vector<int> pnt_indices);
   
   void onPolylinePathGen(const std::vector<int> pnt_indices);
+
+  void onPolylinePathReset(const std::vector<int> pnt_indices);
+  
+  void onPolylinePathGenReset(const std::vector<int> pnt_indices);
+
+  void onQWarningBox(const std::string message);
 
 private:
   void publishToolPathDisplay(const opp_msgs::ToolPath& tool_path);

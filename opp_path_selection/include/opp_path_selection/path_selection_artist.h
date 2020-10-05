@@ -52,7 +52,7 @@ public:
    */
   PathSelectionArtist(const ros::NodeHandle& nh, const std::string& world_frame, const std::string& sensor_frame);
 
-  bool clearPathPointsCb(std_srvs::TriggerRequest& req, std_srvs::TriggerResponse& res);
+  bool clearPathPointsCb(std_srvs::TriggerRequest& , std_srvs::TriggerResponse& res);
 
   bool collectPath(const shape_msgs::Mesh& mesh_msg, std::vector<int>& points_idx, std::string& message);
 

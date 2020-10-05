@@ -148,13 +148,13 @@ void ToolPathParametersEditorWidget::generateToolPath()
   if (!client_.isServerConnected())
   {
     std::string message = "Action server on '" + GENERATE_TOOLPATHS_ACTION + "' is not connected";
-    QMessageBox::warning(this, "ROS Communication Error", QString(message.c_str()));
+    emit QWarningBox(message);
     return;
   }
 
   if (!mesh_)
   {
-    QMessageBox::warning(this, "Input Error", "Mesh has not yet been specified");
+    emit QWarningBox("Mesh has not yet been specified");
     return;
   }
 
@@ -180,10 +180,10 @@ void ToolPathParametersEditorWidget::onPolylinePath(const std::vector<int> pnt_i
 {
   if (!mesh_)
   {
-    QMessageBox::warning(this, "Input Error", "Mesh has not yet been specified");
+    emit QWarningBox("Mesh has not yet been specified");
     return;
   }
-
+  
   // Create an action goal with only one set of sources and configs
   heat_msgs::GenerateHeatToolPathsGoal goal;
   // copy pnt_indices into goal as the sources
@@ -191,6 +191,10 @@ void ToolPathParametersEditorWidget::onPolylinePath(const std::vector<int> pnt_i
   for(int i=0; i<pnt_indices.size(); i++)
     {
       S.source_indices.push_back(pnt_indices[i]);
+    }
+  if(pnt_indices.size() == 0)
+    {
+      emit QWarningBox("No path points selected, using raster angle instead");
     }
   goal.sources.push_back(S);
   goal.path_configs.push_back(getHeatToolPathConfig());
@@ -207,9 +211,8 @@ void ToolPathParametersEditorWidget::onPolylinePath(const std::vector<int> pnt_i
 
   progress_dialog_->setValue(progress_dialog_->minimum());
   progress_dialog_->show();
-
-
 }
+
 
 void ToolPathParametersEditorWidget::onPolylinePathGen(const std::vector<int> pnt_indices)
 {
@@ -217,13 +220,13 @@ void ToolPathParametersEditorWidget::onPolylinePathGen(const std::vector<int> pn
   if (!heat_client_.isServerConnected())
   {
     std::string message = "Action server on '" + GENERATE_HEAT_TOOLPATHS_ACTION + "' is not connected";
-    QMessageBox::warning(this, "ROS Communication Error", QString(message.c_str()));
+    emit QWarningBox(message);
     return;
   }
 
   if (!mesh_)
   {
-    QMessageBox::warning(this, "Input Error", "Mesh has not yet been specified");
+    emit QWarningBox("Mesh has not yet been specified");
     return;
   }
 
@@ -250,8 +253,6 @@ void ToolPathParametersEditorWidget::onPolylinePathGen(const std::vector<int> pn
 
   progress_dialog_->setValue(progress_dialog_->minimum());
   progress_dialog_->show();
-
-
 }
 
 void ToolPathParametersEditorWidget::onGenerateToolPathsComplete(
@@ -268,13 +269,13 @@ void ToolPathParametersEditorWidget::onGenerateToolPathsComplete(
   if (state != actionlib::SimpleClientGoalState::SUCCEEDED)
   {
     std::string message = "Action '" + GENERATE_TOOLPATHS_ACTION + "' failed to succeed";
-    QMessageBox::warning(this, "Tool Path Planning Error", QString(message.c_str()));
+    emit QWarningBox(message);
   }
   else
   {
     if (!res->success || !res->tool_path_validities[0])
     {
-      QMessageBox::warning(this, "Tool Path Planning Error", "Tool path generation failed");
+      emit QWarningBox("Tool path generation failed");
     }
     else
     {

@@ -208,17 +208,25 @@ void SurfaceSelectionComboWidget::newSelectedSubmesh(const shape_msgs::Mesh::Ptr
 
 void SurfaceSelectionComboWidget::onPolylinePath(const std::vector<int>& path_indices, const shape_msgs::Mesh::Ptr& mesh)
 {
-
-  if(path_indices.size()>0)
-    emit polylinePath(path_indices); // send signal to parent with new path points
+  emit polylinePath(path_indices); 
   return;
 }
 
 void SurfaceSelectionComboWidget::onPolylinePathGen(const std::vector<int>& path_indices)
 {
+  emit polylinePathGen(path_indices);
+  return;
+}
 
-  if(path_indices.size()>0)
-    emit polylinePathGen(path_indices);
+void SurfaceSelectionComboWidget::onPolylinePathReset(const std::vector<int>& path_indices, const shape_msgs::Mesh::Ptr& mesh)
+{
+  emit polylinePath(path_indices); 
+  return;
+}
+
+void SurfaceSelectionComboWidget::onPolylinePathGenReset(const std::vector<int>& path_indices)
+{
+  emit polylinePathGen(path_indices);
   return;
 }
 

@@ -51,6 +51,11 @@ Q_SIGNALS:
 
   void polylinePathGen(std::vector<int> pt_indices);
 
+  void polylinePathReset(const std::vector<int>& path_indices, const shape_msgs::Mesh::Ptr& mesh);
+
+  void polylinePathGenReset(std::vector<int> pt_indices);
+
+  void QWarningBox(std::string warn_string);
 
 private Q_SLOTS:
 
@@ -60,6 +65,7 @@ private Q_SLOTS:
 
   void applyPolyline4PathGen();
 
+  void onQWarningBox(std::string warn_string);
 private:
   Ui::PolylinePathSelectionWidget* ui_;
 

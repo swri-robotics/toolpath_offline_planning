@@ -37,6 +37,7 @@ PolylinePathSelectionWidget::PolylinePathSelectionWidget(ros::NodeHandle& nh,
   connect(ui_->push_button_clear_polyline, &QPushButton::clicked, this, &PolylinePathSelectionWidget::clearPolyline);
   connect(ui_->push_button_apply_polyline, &QPushButton::clicked, this, &PolylinePathSelectionWidget::applyPolylineAsPath);
   connect(ui_->push_button_htgen_polyline, &QPushButton::clicked, this, &PolylinePathSelectionWidget::applyPolyline4PathGen);
+  connect(this,        &PolylinePathSelectionWidget::QWarningBox, this, &PolylinePathSelectionWidget::onQWarningBox);
 }
 
 PolylinePathSelectionWidget::~PolylinePathSelectionWidget() { delete ui_; }
@@ -55,17 +56,20 @@ void PolylinePathSelectionWidget::clearPolyline()
   bool success = selector_.clearPathPointsCb(srv.request, srv.response);
   if (!success)
   {
-    QMessageBox::warning(this, "Tool Path Parameter Editor Widget Error", "Area Selection error: could not clear polygon points");
+    emit QWarningBox("Area Selection error: could not clear polygon points");
   }
   if (!srv.response.success)
   {
     std::string msg("Area Selection error:" + srv.response.message);
-    QMessageBox::warning(this, "Tool Path Parameter Editor Widget Error", msg.c_str());
+    emit QWarningBox(msg.c_str());
   }
 
+
   std::vector<int> bogus_pnts;
+  ROS_ERROR("PLPSW polylinePath, polylinPathGen bogus");
   emit(polylinePath(bogus_pnts, mesh_));
   emit(polylinePathGen(bogus_pnts));
+
   return;
 }
 
@@ -73,7 +77,7 @@ void PolylinePathSelectionWidget::applyPolylineAsPath()
 {
   if (!mesh_)
   {
-    QMessageBox::warning(this, "Tool Path Planning Error", "No mesh available to crop");
+    emit QWarningBox("No mesh available to crop");
     return;
   }
 
@@ -81,11 +85,15 @@ void PolylinePathSelectionWidget::applyPolylineAsPath()
   std::vector<int> path_indices;
   bool success = selector_.collectPathMesh(*mesh_, path_indices, error_message);
   if (!success)
-  {
-    std::string msg("Path Selection error: could not compute path: " + error_message);
-    QMessageBox::warning(this, "Tool Path Parameter Editor Widget:", msg.c_str());
-  }
-
+    {
+      std::string msg("Path Selection error: could not compute path: " + error_message);
+      emit QWarningBox(msg.c_str());
+    }
+  else if(path_indices.size() == 0)
+    {
+      std::string msg("Path Selection error: no points found " + error_message);
+      emit QWarningBox(msg.c_str());
+    }
   emit(polylinePath(path_indices, mesh_));
   return;
 }
@@ -94,7 +102,7 @@ void PolylinePathSelectionWidget::applyPolyline4PathGen()
 {
   if (!mesh_)
   {
-    QMessageBox::warning(this, "Tool Path Planning Error", "No mesh available to crop");
+    emit QWarningBox("No mesh available to crop");
     return;
   }
 
@@ -104,13 +112,18 @@ void PolylinePathSelectionWidget::applyPolyline4PathGen()
   if (!success)
   {
     std::string msg("Path Selection error: could not compute path: " + error_message);
-    QMessageBox::warning(this, "Tool Path Parameter Editor Widget:", msg.c_str());
+    emit QWarningBox(msg.c_str());
   }
-
   // TODO perhaps we should send the mesh too, It seems like the other widget already knows which mesh has been selected. 
   emit(polylinePathGen(path_indices));
 
   return;
 }
+
+void PolylinePathSelectionWidget::onQWarningBox(std::string warn_string)
+{
+  //  QMessageBox::warning(this, "Tool Path Planning Warning", QString(warn_string.c_str()));
+}
+
 
 }  // end namespace opp_gui

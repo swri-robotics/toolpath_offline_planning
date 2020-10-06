@@ -64,12 +64,6 @@ void PolylinePathSelectionWidget::clearPolyline()
     emit QWarningBox(msg.c_str());
   }
 
-
-  std::vector<int> bogus_pnts;
-  ROS_ERROR("PLPSW polylinePath, polylinPathGen bogus");
-  emit(polylinePath(bogus_pnts, mesh_));
-  emit(polylinePathGen(bogus_pnts));
-
   return;
 }
 
@@ -122,7 +116,7 @@ void PolylinePathSelectionWidget::applyPolyline4PathGen()
 
 void PolylinePathSelectionWidget::onQWarningBox(std::string warn_string)
 {
-  //  QMessageBox::warning(this, "Tool Path Planning Warning", QString(warn_string.c_str()));
+  QMessageBox::warning(this, "Tool Path Planning Warning", QString(warn_string.c_str()));
 }
 
 

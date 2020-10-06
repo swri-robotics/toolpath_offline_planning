@@ -218,18 +218,6 @@ void SurfaceSelectionComboWidget::onPolylinePathGen(const std::vector<int>& path
   return;
 }
 
-void SurfaceSelectionComboWidget::onPolylinePathReset(const std::vector<int>& path_indices, const shape_msgs::Mesh::Ptr& mesh)
-{
-  emit polylinePath(path_indices); 
-  return;
-}
-
-void SurfaceSelectionComboWidget::onPolylinePathGenReset(const std::vector<int>& path_indices)
-{
-  emit polylinePathGen(path_indices);
-  return;
-}
-
 void SurfaceSelectionComboWidget::publishTargetMesh()
 {
   visualization_msgs::Marker target_mesh;

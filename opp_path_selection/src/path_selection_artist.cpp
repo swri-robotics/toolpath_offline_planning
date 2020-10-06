@@ -445,7 +445,7 @@ void PathSelectionArtist::addSelectionPoint(const geometry_msgs::PointStampedCon
   geometry_msgs::Point pt;
   if (!transformPoint(pt_stamped, pt))
   {
-    ROS_ERROR("couldn't transform");
+    ROS_ERROR("addSelectionPoint() couldn't transformPoint");
     return;
   }
 
@@ -463,7 +463,7 @@ void PathSelectionArtist::addSelectionPoint(const geometry_msgs::PointStampedCon
   // Add new point to the points marker
   if (points_it == marker_array_.markers.end() || lines_it == marker_array_.markers.end())
   {
-    ROS_ERROR("Unable to find line or point marker");
+    ROS_ERROR("addSelectionPoint() Unable to find line or point marker");
     return;
   }
   else

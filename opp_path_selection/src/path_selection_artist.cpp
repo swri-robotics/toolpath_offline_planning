@@ -411,7 +411,6 @@ bool PathSelectionArtist::transformPoint(const geometry_msgs::PointStamped::Cons
                                      geometry_msgs::Point& transformed_pt)
 {
 
-  ROS_INFO_STREAM(pt_stamped->header.frame_id);
   // Get the current transform from the world frame to the frame of the sensor data
   tf::StampedTransform frame;
   try

@@ -58,6 +58,8 @@ private Q_SLOTS:
 
   void onQWarningBox(const std::string message);
 
+  void updateSelections();
+  
 private:
   Ui::PolygonAreaSelectionWidget* ui_;
 

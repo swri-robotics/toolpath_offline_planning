@@ -58,6 +58,8 @@ public:
 
   bool collectPathMesh(const shape_msgs::Mesh& mesh_msg, std::vector<int>& points_idx, std::string& message);
 
+  void enable(bool value);
+  
 protected:
   void getSensorData(const sensor_msgs::PointCloud2::ConstPtr& msg);
 
@@ -90,6 +92,8 @@ protected:
   std::shared_ptr<tf::TransformListener> listener_;
 
   visualization_msgs::MarkerArray marker_array_;
+
+  bool enabled_;
 };
 
 }  // namespace opp_path_selection

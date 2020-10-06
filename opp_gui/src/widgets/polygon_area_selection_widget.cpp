@@ -37,6 +37,7 @@ PolygonAreaSelectionWidget::PolygonAreaSelectionWidget(ros::NodeHandle& nh,
   connect(
       ui_->push_button_clear_selection, &QPushButton::clicked, this, &PolygonAreaSelectionWidget::clearROISelection);
   connect(ui_->push_button_apply_selection, &QPushButton::clicked, this, &PolygonAreaSelectionWidget::applySelection);
+  connect(ui_->cbox_update_selections,     &QCheckBox::stateChanged, this, &PolygonAreaSelectionWidget::updateSelections);
   connect(this, &PolygonAreaSelectionWidget::QWarningBox, this, &PolygonAreaSelectionWidget::onQWarningBox);
 }
 
@@ -90,6 +91,18 @@ void PolygonAreaSelectionWidget::applySelection()
 
   emit(selectedSubmesh(submesh_));
   return;
+}
+
+void PolygonAreaSelectionWidget::updateSelections()
+{
+  if(ui_->cbox_update_selections->isChecked())
+    {
+      selector_.enable(true);
+    }
+  else
+    {
+      selector_.enable(false);
+    }
 }
 
 void PolygonAreaSelectionWidget::onQWarningBox(std::string warn_string)

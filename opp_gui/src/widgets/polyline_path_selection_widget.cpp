@@ -20,6 +20,7 @@
 
 #include <QMessageBox>
 #include <QPushButton>
+#include <QCheckBox>
 
 #include <std_srvs/Trigger.h>
 
@@ -37,6 +38,7 @@ PolylinePathSelectionWidget::PolylinePathSelectionWidget(ros::NodeHandle& nh,
   connect(ui_->push_button_clear_polyline, &QPushButton::clicked, this, &PolylinePathSelectionWidget::clearPolyline);
   connect(ui_->push_button_apply_polyline, &QPushButton::clicked, this, &PolylinePathSelectionWidget::applyPolylineAsPath);
   connect(ui_->push_button_htgen_polyline, &QPushButton::clicked, this, &PolylinePathSelectionWidget::applyPolyline4PathGen);
+  connect(ui_->cbox_update_polyline,       &QCheckBox::stateChanged, this, &PolylinePathSelectionWidget::updatePolyline);
   connect(this,        &PolylinePathSelectionWidget::QWarningBox, this, &PolylinePathSelectionWidget::onQWarningBox);
 }
 
@@ -114,10 +116,24 @@ void PolylinePathSelectionWidget::applyPolyline4PathGen()
   return;
 }
 
+void PolylinePathSelectionWidget::updatePolyline()
+{
+  if(ui_->cbox_update_polyline->isChecked())
+    {
+      selector_.enable(true);
+    }
+  else
+    {
+      selector_.enable(false);
+    }
+}
+
 void PolylinePathSelectionWidget::onQWarningBox(std::string warn_string)
 {
   QMessageBox::warning(this, "Tool Path Planning Warning", QString(warn_string.c_str()));
 }
+
+
 
 
 }  // end namespace opp_gui

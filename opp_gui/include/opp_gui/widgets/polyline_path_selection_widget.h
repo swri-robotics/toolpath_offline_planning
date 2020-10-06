@@ -62,6 +62,9 @@ private Q_SLOTS:
   void applyPolyline4PathGen();
 
   void onQWarningBox(std::string warn_string);
+
+  void updatePolyline();
+  
 private:
   Ui::PolylinePathSelectionWidget* ui_;
 

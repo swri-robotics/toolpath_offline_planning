@@ -228,6 +228,8 @@ SelectionArtist::SelectionArtist(const ros::NodeHandle& nh,
   drawn_points_sub_ = nh_.subscribe(CLICKED_POINT_TOPIC, 1, drawn_points_cb);
 
   marker_array_.markers = makeVisual(sensor_frame);
+
+  enabled_ = true;
 }
 
 bool SelectionArtist::clearROIPointsCb(std_srvs::TriggerRequest& req, std_srvs::TriggerResponse& res)
@@ -347,6 +349,8 @@ bool SelectionArtist::transformPoint(const geometry_msgs::PointStamped::ConstPtr
 
 void SelectionArtist::addSelectionPoint(const geometry_msgs::PointStampedConstPtr pt_stamped)
 {
+  if(!enabled_) return;
+  
   geometry_msgs::Point pt;
   if (!transformPoint(pt_stamped, pt))
   {
@@ -424,4 +428,8 @@ void SelectionArtist::filterMesh(const pcl::PolygonMesh& input_mesh,
   return;
 }
 
+void  SelectionArtist::enable(bool value)
+{
+  enabled_ = value;
+}
 }  // namespace opp_area_selection

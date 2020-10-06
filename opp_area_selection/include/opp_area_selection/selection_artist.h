@@ -55,6 +55,8 @@ public:
 
   bool collectROIMesh(const shape_msgs::Mesh& mesh_msg, shape_msgs::Mesh& submesh_msg, std::string& message);
 
+  void enable(bool value);
+  
 protected:
 
   void addSelectionPoint(const geometry_msgs::PointStamped::ConstPtr pt_stamped);
@@ -84,6 +86,8 @@ protected:
   std::shared_ptr<tf::TransformListener> listener_;
 
   visualization_msgs::MarkerArray marker_array_;
+
+  bool enabled_;
 };
 
 }  // namespace opp_area_selection

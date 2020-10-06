@@ -1,0 +1,31 @@
+<package format="2">
+  <name>opp_path_selection</name>
+  <version>0.0.0</version>
+
+  <description>
+    The opp_path_selection package contains a number of tools to aid
+    drawing paths on meshes in RViz using the publish point tool. Much of
+    this code is based on the area selection package.
+  </description>
+
+  <author email="clewis@swri.org">Chris Lewis</author>
+  <maintainer email="clewis@swri.org">Chris Lewis</maintainer>
+  <license>Apache 2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>eigen_conversions</depend>
+  <depend>geometry_msgs</depend>
+  <depend>shape_msgs</depend>
+  <depend>opp_msgs_serialization</depend>
+  <depend>pcl_ros</depend>
+  <depend>roscpp</depend>
+  <depend>roslib</depend>
+  <depend>opp_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_srvs</depend>
+  <depend>tf</depend>
+  <depend>tf_conversions</depend>
+  <depend>visualization_msgs</depend>
+
+</package>

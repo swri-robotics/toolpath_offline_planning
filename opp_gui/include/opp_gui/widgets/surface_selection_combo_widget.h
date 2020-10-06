@@ -25,6 +25,7 @@
 
 #include "opp_gui/register_ros_msgs_for_qt.h"
 #include "opp_gui/widgets/polygon_area_selection_widget.h"
+#include "opp_gui/widgets/polyline_path_selection_widget.h"
 #include "opp_gui/widgets/segmentation_parameters_editor_widget.h"
 
 namespace Ui
@@ -56,12 +57,20 @@ public:
 Q_SIGNALS:
   void newTargetMesh(const shape_msgs::Mesh::Ptr& target_mesh);
 
+  void polylinePath(const std::vector<int> point_indices);
+
+  void polylinePathGen(const std::vector<int> pnt_indices);
+
 private Q_SLOTS:
   void newSegmentList(const std::vector<shape_msgs::Mesh::Ptr>&, const shape_msgs::Mesh::Ptr&);
 
   void newSelectedSegment();
 
   void newSelectedSubmesh(const shape_msgs::Mesh::Ptr& selected_submesh);
+
+  void onPolylinePath(const std::vector<int>& path_indices, const shape_msgs::Mesh::Ptr& mesh);
+
+  void onPolylinePathGen(const std::vector<int>& pnt_indices);
 
 private:
   void publishTargetMesh();
@@ -71,6 +80,8 @@ private:
   SegmentationParametersEditorWidget* segmenter_;
 
   PolygonAreaSelectionWidget* area_selector_;
+
+  PolylinePathSelectionWidget* path_selector_;
 
   ros::Publisher selected_area_marker_publisher_;
 

@@ -16,6 +16,7 @@
 
 #include "opp_gui/widgets/tool_path_editor_widget.h"
 #include "opp_gui/widgets/tool_path_parameters_editor_widget.h"
+#include <QMessageBox>
 
 const static std::string TOOL_PATH_TOPIC = "tool_path";
 
@@ -47,10 +48,11 @@ ToolPathEditorWidget::ToolPathEditorWidget(QWidget* parent,
 
   connect(editor_, &ToolPathParametersEditorWidget::dataChanged, this, &ToolPathEditorWidget::onDataChanged);
 
-  connect(surface_selector_,
-          &SurfaceSelectionComboWidget::newTargetMesh,
-          this,
-          &ToolPathEditorWidget::newTargetMeshSelected);
+  connect(surface_selector_, &SurfaceSelectionComboWidget::newTargetMesh,   this, &ToolPathEditorWidget::newTargetMeshSelected);
+  // TODO what to do with a polyline created path
+  connect(surface_selector_, &SurfaceSelectionComboWidget::polylinePath,    this, &ToolPathEditorWidget::onPolylinePath);
+  connect(surface_selector_, &SurfaceSelectionComboWidget::polylinePathGen, editor_, &ToolPathParametersEditorWidget::onPolylinePathGen);
+  connect(this, &ToolPathEditorWidget::QWarningBox, this, &ToolPathEditorWidget::onQWarningBox);
 
   // Create a publisher for the tool path marker
   pub_ = nh_.advertise<geometry_msgs::PoseArray>(TOOL_PATH_TOPIC, 1, true);
@@ -161,6 +163,7 @@ void ToolPathEditorWidget::onRemovePressed()
     }
     else
     {
+      
       ROS_ERROR_STREAM(__func__ << "Failed to find part '" << key << "' in map");
     }
 
@@ -255,6 +258,29 @@ void ToolPathEditorWidget::publishToolPathDisplay(const opp_msgs::ToolPath& tool
   pub_.publish(tool_path_display);
 }
 
+void ToolPathEditorWidget::onPolylinePath(const std::vector<int> pnt_indices)
+{
+  // TODO: First find shortest path on surface between each segments same as with pathGen
+  // TODO TODO TODO TODO
+  std::string msg("new polyline path in ToolPathEditor has %ld pnts", pnt_indices.size());
+  emit QWarningBox(msg.c_str());
+}
+void ToolPathEditorWidget::onPolylinePathReset(const std::vector<int> pnt_indices)
+{
+  std::string msg("Polyline path in ToolPathEditor was reset");
+  emit QWarningBox(msg.c_str());
+}
+
+void ToolPathEditorWidget::onPolylinePathGen(const std::vector<int> pnt_indices)
+{
+  emit(editor_->polylinePathGen(pnt_indices));
+}
+
+void ToolPathEditorWidget::onPolylinePathGenReset(const std::vector<int> pnt_indices)
+{
+  emit(editor_->polylinePathGen(pnt_indices));
+}
+
 void ToolPathEditorWidget::onDataChanged()
 {
   QListWidgetItem* current = ui_->list_widget->currentItem();
@@ -272,7 +298,7 @@ void ToolPathEditorWidget::onDataChanged()
         {
           if (surface_selector_ == nullptr)
           {
-            ROS_ERROR("surface_selector_ not assigned in ToolPathEditorWidget");
+	    emit QWarningBox("surface_selector_ not assigned in ToolPathEditorWidget");
           }
           else
           {
@@ -290,5 +316,11 @@ void ToolPathEditorWidget::onDataChanged()
     }
   }
 }
+
+void ToolPathEditorWidget::onQWarningBox(std::string warn_string)
+{
+  QMessageBox::warning(this, "Tool Path Planning Warning", QString(warn_string.c_str()));
+}
+
 
 }  // namespace opp_gui

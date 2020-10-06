@@ -21,6 +21,8 @@
 
 #include <actionlib/client/simple_action_client.h>
 #include <noether_msgs/GenerateToolPathsAction.h>
+#include <heat_msgs/GenerateHeatToolPathsAction.h>
+#include <heat_msgs/HeatToolPathConfig.h>
 #include <ros/ros.h>
 
 #include <opp_msgs/ToolPath.h>
@@ -41,7 +43,12 @@ namespace opp_gui
 class ToolPathParametersEditorWidget : public QWidget
 {
   Q_OBJECT
+
 public:
+
+  /**
+   * @brief constructor
+   **/
   ToolPathParametersEditorWidget(ros::NodeHandle& nh, QWidget* parent = nullptr);
 
   /**
@@ -60,12 +67,26 @@ public:
 
   noether_msgs::ToolPathConfig getToolPathConfig() const;
 
+  heat_msgs::HeatToolPathConfig getHeatToolPathConfig() const;
+
 Q_SIGNALS:
 
   /**
    * @brief Signal emitted when data has changed in one of the editable UI fields
    */
   void dataChanged();
+
+  // signal emitted when user selects a polyline they want as a path
+  void polylinePath(const std::vector<int> pnt_indices);
+
+  // signal emitted when user selects a polyline they want to use as a heat source to generate a path
+  void polylinePathGen(const std::vector<int> pnt_indices);
+  
+  // signal emitted when ros thread wants a warning box
+  void QWarningBox(std::string warn_string);
+
+  // signal emitted when ros thread wants a error box
+  void QErrorBox(std::string error_string);
 
 private Q_SLOTS:
 
@@ -75,11 +96,23 @@ private Q_SLOTS:
 
   void generateToolPath();
 
+public Q_SLOTS:
+
+  void onPolylinePath(const std::vector<int> pnt_indices);
+
+  void onPolylinePathGen(const std::vector<int> pnt_indices);
+
 private:
   void onGenerateToolPathsComplete(const actionlib::SimpleClientGoalState& state,
                                    const noether_msgs::GenerateToolPathsResultConstPtr& res);
 
+  void onGenerateHeatToolPathsComplete(const actionlib::SimpleClientGoalState& state,
+				       const heat_msgs::GenerateHeatToolPathsResultConstPtr& res);
+
+  void onQWarningBox(std::string warn_string);
+
   actionlib::SimpleActionClient<noether_msgs::GenerateToolPathsAction> client_;
+  actionlib::SimpleActionClient<heat_msgs::GenerateHeatToolPathsAction> heat_client_;
 
   Ui::ToolPathParametersEditor* ui_;
 
@@ -88,6 +121,8 @@ private:
   shape_msgs::Mesh::Ptr mesh_;
 
   QProgressDialog* progress_dialog_;
+
+  
 };
 
 }  // namespace opp_gui

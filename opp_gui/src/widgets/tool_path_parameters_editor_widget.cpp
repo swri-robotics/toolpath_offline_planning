@@ -24,15 +24,17 @@
 #include <std_srvs/Trigger.h>
 
 #include <opp_area_selection/selection_artist.h>
+#include <opp_path_selection/path_selection_artist.h>
 #include "opp_gui/utils.h"
 #include "ui_tool_path_parameters_editor.h"
 
 const static std::string GENERATE_TOOLPATHS_ACTION = "generate_tool_paths";
+const static std::string GENERATE_HEAT_TOOLPATHS_ACTION = "generate_heat_tool_paths";
 
 namespace opp_gui
 {
 ToolPathParametersEditorWidget::ToolPathParametersEditorWidget(ros::NodeHandle& nh, QWidget* parent)
-  : QWidget(parent), client_(GENERATE_TOOLPATHS_ACTION, false)
+  : QWidget(parent), client_(GENERATE_TOOLPATHS_ACTION, false), heat_client_(GENERATE_HEAT_TOOLPATHS_ACTION, false)
 {
   ui_ = new Ui::ToolPathParametersEditor();
   ui_->setupUi(this);
@@ -62,6 +64,14 @@ ToolPathParametersEditorWidget::ToolPathParametersEditorWidget(ros::NodeHandle& 
           static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
           this,
           &ToolPathParametersEditorWidget::updateDwellTime);
+  connect(this,
+	  &ToolPathParametersEditorWidget::polylinePathGen,
+          this,
+          &ToolPathParametersEditorWidget::onPolylinePathGen);
+  connect(this,
+	  &ToolPathParametersEditorWidget::QWarningBox,
+          this,
+          &ToolPathParametersEditorWidget::onQWarningBox);
 }
 
 void ToolPathParametersEditorWidget::init(const shape_msgs::Mesh& mesh) { mesh_.reset(new shape_msgs::Mesh(mesh)); }
@@ -94,6 +104,21 @@ noether_msgs::ToolPathConfig ToolPathParametersEditorWidget::getToolPathConfig()
   return config;
 }
 
+heat_msgs::HeatToolPathConfig ToolPathParametersEditorWidget::getHeatToolPathConfig() const
+{
+  heat_msgs::HeatToolPathConfig config;
+
+  // Create a path configuration from the line edit fields
+  config.pt_spacing = ui_->double_spin_box_point_spacing->value();
+  config.line_spacing = ui_->double_spin_box_line_spacing->value();
+  config.tool_offset = ui_->double_spin_box_tool_z_offset->value();
+  config.min_hole_size = ui_->double_spin_box_min_hole_size->value();
+  config.min_segment_size = ui_->double_spin_box_min_segment_length->value();
+  config.raster_angle = ui_->double_spin_box_raster_angle->value() * M_PI / 180.0;
+  config.generate_extra_rasters = false;  // No option to set this from GUI at present.
+  return config;
+}
+
 void ToolPathParametersEditorWidget::setToolPath(const opp_msgs::ToolPath& tool_path)
 {
   if (!tool_path_)
@@ -123,13 +148,13 @@ void ToolPathParametersEditorWidget::generateToolPath()
   if (!client_.isServerConnected())
   {
     std::string message = "Action server on '" + GENERATE_TOOLPATHS_ACTION + "' is not connected";
-    QMessageBox::warning(this, "ROS Communication Error", QString(message.c_str()));
+    emit QWarningBox(message);
     return;
   }
 
   if (!mesh_)
   {
-    QMessageBox::warning(this, "Input Error", "Mesh has not yet been specified");
+    emit QWarningBox("Mesh has not yet been specified");
     return;
   }
 
@@ -151,6 +176,85 @@ void ToolPathParametersEditorWidget::generateToolPath()
   progress_dialog_->show();
 }
 
+void ToolPathParametersEditorWidget::onPolylinePath(const std::vector<int> pnt_indices)
+{
+  if (!mesh_)
+  {
+    emit QWarningBox("Mesh has not yet been specified");
+    return;
+  }
+  
+  // Create an action goal with only one set of sources and configs
+  heat_msgs::GenerateHeatToolPathsGoal goal;
+  // copy pnt_indices into goal as the sources
+  heat_msgs::Source S;
+  for(int i=0; i<pnt_indices.size(); i++)
+    {
+      S.source_indices.push_back(pnt_indices[i]);
+    }
+  if(pnt_indices.size() == 0)
+    {
+      emit QWarningBox("No path points selected, using raster angle instead");
+    }
+  goal.sources.push_back(S);
+  goal.path_configs.push_back(getHeatToolPathConfig());
+  goal.surface_meshes.push_back(*mesh_);
+  goal.proceed_on_failure = false;
+
+  heat_client_.sendGoal(goal, boost::bind(&ToolPathParametersEditorWidget::onGenerateHeatToolPathsComplete, this, _1, _2));
+  
+  progress_dialog_ = new QProgressDialog(this);
+  progress_dialog_->setModal(true);
+  progress_dialog_->setLabelText("Heat Path Planning Progress");
+  progress_dialog_->setMinimum(0);
+  progress_dialog_->setMaximum(100);
+
+  progress_dialog_->setValue(progress_dialog_->minimum());
+  progress_dialog_->show();
+}
+
+
+void ToolPathParametersEditorWidget::onPolylinePathGen(const std::vector<int> pnt_indices)
+{
+  // TODO call heat method server with mesh and pnt_indices to generate a new set of paths.
+  if (!heat_client_.isServerConnected())
+  {
+    std::string message = "Action server on '" + GENERATE_HEAT_TOOLPATHS_ACTION + "' is not connected";
+    emit QWarningBox(message);
+    return;
+  }
+
+  if (!mesh_)
+  {
+    emit QWarningBox("Mesh has not yet been specified");
+    return;
+  }
+
+  // Create an action goal with only one set of sources and configs
+  heat_msgs::GenerateHeatToolPathsGoal goal;
+  // copy pnt_indices into goal as the sources
+  heat_msgs::Source S;
+  for(int i=0; i<pnt_indices.size(); i++)
+    {
+      S.source_indices.push_back(pnt_indices[i]);
+    }
+  goal.sources.push_back(S);
+  goal.path_configs.push_back(getHeatToolPathConfig());
+  goal.surface_meshes.push_back(*mesh_);
+  goal.proceed_on_failure = false;
+
+  heat_client_.sendGoal(goal, boost::bind(&ToolPathParametersEditorWidget::onGenerateHeatToolPathsComplete, this, _1, _2));
+  
+  progress_dialog_ = new QProgressDialog(this);
+  progress_dialog_->setModal(true);
+  progress_dialog_->setLabelText("Heat Path Planning Progress");
+  progress_dialog_->setMinimum(0);
+  progress_dialog_->setMaximum(100);
+
+  progress_dialog_->setValue(progress_dialog_->minimum());
+  progress_dialog_->show();
+}
+
 void ToolPathParametersEditorWidget::onGenerateToolPathsComplete(
     const actionlib::SimpleClientGoalState& state,
     const noether_msgs::GenerateToolPathsResultConstPtr& res)
@@ -165,17 +269,80 @@ void ToolPathParametersEditorWidget::onGenerateToolPathsComplete(
   if (state != actionlib::SimpleClientGoalState::SUCCEEDED)
   {
     std::string message = "Action '" + GENERATE_TOOLPATHS_ACTION + "' failed to succeed";
-    QMessageBox::warning(this, "Tool Path Planning Error", QString(message.c_str()));
+    emit QWarningBox(message);
   }
   else
   {
     if (!res->success || !res->tool_path_validities[0])
     {
-      QMessageBox::warning(this, "Tool Path Planning Error", "Tool path generation failed");
+      emit QWarningBox("Tool path generation failed");
     }
     else
     {
       ROS_INFO_STREAM("Successfully generated tool path");
+
+      opp_msgs::ToolPath tp;
+      tp.header.stamp = ros::Time::now();
+      tp.process_type.val = qvariant_cast<opp_msgs::ProcessType::_val_type>(ui_->combo_box_process_type->currentData());
+      tp.paths = res->tool_raster_paths[0].paths;
+      tp.params.config.pt_spacing = ui_->double_spin_box_point_spacing->value();
+      tp.params.config.tool_offset = ui_->double_spin_box_tool_z_offset->value();
+      tp.params.config.line_spacing = ui_->double_spin_box_line_spacing->value();
+      tp.params.config.raster_angle = ui_->double_spin_box_raster_angle->value() * M_PI / 180.0;
+      tp.params.config.min_hole_size = ui_->double_spin_box_min_hole_size->value();
+      tp.params.config.min_segment_size = ui_->double_spin_box_min_segment_length->value();
+      tp.params.config.generate_extra_rasters = false;  // No option to set this from GUI at present.
+      tp.params.config.raster_wrt_global_axes = false;  // No option to set this from GUI at present.
+      tp.params.config.intersecting_plane_height = ui_->double_spin_box_intersecting_plane_height->value();
+
+      // Create the tool path offset transform
+      // 1. Add z offset
+      // 2. Rotate 180 degrees about X
+      Eigen::Isometry3d tool_offset = Eigen::Isometry3d::Identity();
+      tool_offset.rotate(
+          Eigen::AngleAxisd(ui_->double_spin_box_tool_pitch->value() * M_PI / 180.0, Eigen::Vector3d::UnitY()));
+      tool_offset.translate(Eigen::Vector3d(0.0, 0.0, ui_->double_spin_box_tool_z_offset->value()));
+      tool_offset.rotate(Eigen::AngleAxisd(M_PI, Eigen::Vector3d::UnitX()));
+      tf::poseEigenToMsg(tool_offset, tp.tool_offset);
+
+      // Save the toolpath
+      tool_path_.reset(new opp_msgs::ToolPath(tp));
+
+      emit dataChanged();
+    }
+  }
+}
+
+void ToolPathParametersEditorWidget::onQWarningBox(std::string warn_string)
+{
+  QMessageBox::warning(this, "Tool Path Planning Warning", QString(warn_string.c_str()));
+}
+
+void ToolPathParametersEditorWidget::onGenerateHeatToolPathsComplete(
+    const actionlib::SimpleClientGoalState& state,
+    const heat_msgs::GenerateHeatToolPathsResultConstPtr& res)
+{
+  for (int i = progress_dialog_->minimum(); i < progress_dialog_->maximum(); ++i)
+  {
+    progress_dialog_->setValue(i);
+    ros::Duration(0.01).sleep();
+  }
+  progress_dialog_->hide();
+
+  if (state != actionlib::SimpleClientGoalState::SUCCEEDED)
+  {
+    std::string message = "Action '" + GENERATE_HEAT_TOOLPATHS_ACTION + "' failed to succeed";
+    emit QWarningBox(message);
+  }
+  else
+  {
+    if (!res->success || !res->tool_path_validities[0])
+    {
+      emit QWarningBox(std::string("Heat tool path generation failed"));
+    }
+    else
+    {
+      ROS_INFO_STREAM("Successfully generated heat tool path");
 
       opp_msgs::ToolPath tp;
       tp.header.stamp = ros::Time::now();

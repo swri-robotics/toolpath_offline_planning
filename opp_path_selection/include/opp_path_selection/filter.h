@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#ifndef OPP_AREA_SELECTION_FILTER_H
-#define OPP_AREA_SELECTION_FILTER_H
+#ifndef OPP_PATH_SELECTION_FILTER_H
+#define OPP_PATH_SELECTION_FILTER_H
 
 #include <pcl/point_cloud.h>
 
-namespace opp_area_selection
+namespace opp_path_selection
 {
 namespace data_filtering
 {
@@ -37,6 +37,6 @@ bool planeFit(const CloudPtr<PointT> input_cloud,
 
 }  // end namespace data_filtering
 
-}  // end namespace opp_area_selection
+}  // end namespace opp_path_selection
 
-#endif  // OPP_AREA_SELECTION_FILTER_H
+#endif  // OPP_PATH_SELECTION_FILTER_H

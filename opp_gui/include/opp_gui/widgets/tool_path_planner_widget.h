@@ -53,6 +53,9 @@ public:
                         const ros::NodeHandle& nh = ros::NodeHandle("~"),
                         const std::vector<std::string>& frames = { "map" });
 
+ Q_SIGNALS:
+  void QWarningBox(std::string warn_string);
+
 protected Q_SLOTS:
 
   void setVisualizationFrame(const QString& text);
@@ -63,6 +66,7 @@ protected Q_SLOTS:
 
   void loadModelsFromDatabase();
   void onModelSelectionChanged(QListWidgetItem* current, QListWidgetItem* previous);
+  void onQWarningBox(std::string warn_string);
   void loadSelectedModel();
   void saveModel();
 
@@ -78,6 +82,7 @@ protected Q_SLOTS:
   void deletePart();
   void deleteJob();
   void refresh();
+
 
 private:
   void clear();

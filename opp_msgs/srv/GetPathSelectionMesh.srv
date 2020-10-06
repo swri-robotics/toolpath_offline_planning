@@ -1,0 +1,11 @@
+# Request
+
+# Mesh from which the points will be selected
+shape_msgs/Mesh input_mesh
+
+---
+
+# Response
+bool success
+string message
+int32[] mesh_indices

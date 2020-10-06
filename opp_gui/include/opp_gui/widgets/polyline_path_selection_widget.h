@@ -14,60 +14,63 @@
  * limitations under the License.
  */
 
-#ifndef OPP_GUI_WIDGETS_POLYGON_AREA_SELECTION_WIDGET_H
-#define OPP_GUI_WIDGETS_POLYGON_AREA_SELECTION_WIDGET_H
+#ifndef OPP_GUI_WIDGETS_POLYLINE_PATH_SELECTION_WIDGET_H
+#define OPP_GUI_WIDGETS_POLYLINE_PATH_SELECTION_WIDGET_H
 
 #include <QWidget>
 
 #include <ros/ros.h>
 #include <shape_msgs/Mesh.h>
 
-#include <opp_area_selection/selection_artist.h>
+#include <opp_path_selection/path_selection_artist.h>
 #include "opp_gui/register_ros_msgs_for_qt.h"
 
 namespace Ui
 {
-class PolygonAreaSelectionWidget;
+class PolylinePathSelectionWidget;
 }
 
 namespace opp_gui
 {
-class PolygonAreaSelectionWidget : public QWidget
+class PolylinePathSelectionWidget : public QWidget
 {
   Q_OBJECT
 
 public:
-  explicit PolygonAreaSelectionWidget(ros::NodeHandle& nh,
+  explicit PolylinePathSelectionWidget(ros::NodeHandle& nh,
                                       const std::string& selection_world_frame,
                                       const std::string& selection_sensor_frame,
                                       QWidget* parent = nullptr);
-  ~PolygonAreaSelectionWidget();
+  ~PolylinePathSelectionWidget();
 
 public Q_SLOTS:
   void init(const shape_msgs::Mesh& mesh);
 
 Q_SIGNALS:
-  void selectedSubmesh(const shape_msgs::Mesh::Ptr& selected_submesh);
+  void polylinePath(const std::vector<int>& path_indices, const shape_msgs::Mesh::Ptr& mesh);
 
-  void QWarningBox(const std::string message);
-  
+  void polylinePathGen(std::vector<int> pt_indices);
+
+  void QWarningBox(std::string warn_string);
+
 private Q_SLOTS:
-  void clearROISelection();
 
-  void applySelection();
+  void clearPolyline();
 
-  void onQWarningBox(const std::string message);
+  void applyPolylineAsPath();
 
+  void applyPolyline4PathGen();
+
+  void onQWarningBox(std::string warn_string);
 private:
-  Ui::PolygonAreaSelectionWidget* ui_;
+  Ui::PolylinePathSelectionWidget* ui_;
 
   shape_msgs::Mesh::Ptr mesh_;
 
-  shape_msgs::Mesh::Ptr submesh_;
+  opp_path_selection::PathSelectionArtist selector_;
 
-  opp_area_selection::SelectionArtist selector_;
-};  // end class PolygonAreaSelectionWidget
+};  // end class PolylinePathSelectionWidget
 
 }  // end namespace opp_gui
 
-#endif  // OPP_GUI_WIDGETS_POLYGON_AREA_SELECTION_WIDGET_H
+#endif  // OPP_GUI_WIDGETS_POLYLINE_PATH_SELECTION_WIDGET_H

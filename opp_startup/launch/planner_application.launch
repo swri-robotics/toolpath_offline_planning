@@ -9,6 +9,10 @@
 
   <node name="tool_path_planner" pkg="noether" type="surface_raster_planner_server" output="screen" respawn="true"/>
 
-  <!-- Launch the segmentation server -->
+  <node name="heat_tool_path_planner" pkg="heat_ros" type="heat_surface_plan_server" output="screen" respawn="true" />
+
+  <node name="pose_traj_smooth" pkg="smooth_pose_traj" type="smooth_pose_traj_srv" output="screen" respawn="true" />
+
   <node name="mesh_segmenter_server_node" type="segmentation_server" pkg="noether" output="screen" required="true" />
+
 </launch>

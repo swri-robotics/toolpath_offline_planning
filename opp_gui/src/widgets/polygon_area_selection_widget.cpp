@@ -39,6 +39,9 @@ PolygonAreaSelectionWidget::PolygonAreaSelectionWidget(ros::NodeHandle& nh,
   connect(ui_->push_button_apply_selection, &QPushButton::clicked, this, &PolygonAreaSelectionWidget::applySelection);
   connect(ui_->cbox_update_selections,     &QCheckBox::stateChanged, this, &PolygonAreaSelectionWidget::updateSelections);
   connect(this, &PolygonAreaSelectionWidget::QWarningBox, this, &PolygonAreaSelectionWidget::onQWarningBox);
+
+  updateSelections(); // synchronize check boxes 
+
 }
 
 PolygonAreaSelectionWidget::~PolygonAreaSelectionWidget() { delete ui_; }

@@ -1,0 +1,28 @@
+name: Bionic-Build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  industrial_ci:
+    name: Bionic-Build
+    runs-on: ubuntu-latest
+    env:
+      CI_NAME: Bionic-Build
+      OS_NAME: ubuntu
+      OS_CODE_NAME: bioinic
+      ROS_DISTRO: melodic
+      ROS_REPO: main
+      UPSTREAM_WORKSPACE: 'dependencies.rosinstall'
+      ROSDEP_SKIP_KEYS: 'libqt5sql5-mysql'
+      DOCKER_IMAGE: 'rosindustrial/noether:melodic'
+      UPSTREAM_CMAKE_ARGS: '-DNURBS_FOUND=TRUE'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: 'ros-industrial/industrial_ci@master'
+        env: ${{env}}

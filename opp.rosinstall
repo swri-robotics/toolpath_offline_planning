@@ -1,7 +1,12 @@
-# ROS-Install File 
 
 # Noether
-- git: {local-name: noether, uri: 'https://github.com/ros-industrial/noether.git', version: master}
+- git:
+    local-name: noether
+    uri: 'https://github.com/ros-industrial/noether.git'
+    version: 3765895f451cbff8eefb5ec1e5a2387042ab65a4
 
 # RViz Tool Cursor
-- git: {local-name: rviz_tool_cursor, uri: 'https://github.com/marip8/rviz_tool_cursor.git', version: master}
+- git:
+    local-name: rviz_tool_cursor
+    uri: 'https://github.com/marip8/rviz_tool_cursor.git'
+    version: 0.1.0

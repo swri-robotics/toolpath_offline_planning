@@ -10,3 +10,9 @@
     local-name: rviz_tool_cursor
     uri: 'https://github.com/marip8/rviz_tool_cursor.git'
     version: 0.1.0
+
+# cmake_common_scripts
+- git:
+    local-name: cmake_common_scripts
+    uri: 'https://github.com/ros-industrial/cmake_common_scripts.git'
+    version: 15450c289e1a92c51e9b6d953f4d07d7e7ccaa18

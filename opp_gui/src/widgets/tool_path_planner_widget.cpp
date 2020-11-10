@@ -307,8 +307,11 @@ void ToolPathPlannerWidget::saveModel()
   TouchPointMap verification_points = verification_point_editor_->getPoints();
   if (touch_points.size() < MIN_TOUCH_POINTS || verification_points.size() < MIN_VERIFICATION_POINTS)
   {
-    QMessageBox::warning(
-        this, "Invalid Model Definition", ("Ensure at least " + std::to_string(MIN_TOUCH_POINTS) + " touch points and " + std::to_string(MIN_VERIFICATION_POINTS) + " verification points have been defined").c_str());
+    QMessageBox::warning(this,
+                         "Invalid Model Definition",
+                         ("Ensure at least " + std::to_string(MIN_TOUCH_POINTS) + " touch points and " +
+                          std::to_string(MIN_VERIFICATION_POINTS) + " verification points have been defined")
+                             .c_str());
     return;
   }
 

@@ -10,7 +10,7 @@ notifications:
 env:
   global:
     - UPSTREAM_WORKSPACE=file
-    - ROSINSTALL_FILENAME=opp.rosinstall
+    - ROSINSTALL_FILENAME=dependencies.rosinstall
     - ROS_REPO=ros
     - CMAKE_ARGS="-DCMAKE_BUILD_TYPE=Debug"
     - ROSDEP_SKIP_KEYS="libqt5sql5-mysql"

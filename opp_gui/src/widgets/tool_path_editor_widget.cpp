@@ -83,13 +83,14 @@ void ToolPathEditorWidget::addToolPathData(const std::vector<opp_msgs::ToolPath>
     // comparison to 0.0 will turn false negatives, but should never get
     // a false positive.  We definitely don't want to overwrite valid
     // parameters, so that seems OK for now.
-    if (val.params.config.line_spacing == 0.0)
+    if (val.params.config.surface_walk_generator.raster_spacing == 0.0)
     {
-      val.params.config.line_spacing = 0.2;
-      val.params.config.pt_spacing = 0.1;
-      val.params.config.min_hole_size = 0.2;
-      val.params.config.min_segment_size = 0.5;
-      val.params.config.intersecting_plane_height = 0.05;
+      val.params.config.type = 0;//SURFACE_WALK_RASTER_GENERATOR;
+      val.params.config.surface_walk_generator.raster_spacing = 0.2;
+      val.params.config.surface_walk_generator.point_spacing = 0.1;
+      val.params.config.surface_walk_generator.min_hole_size = 0.2;
+      val.params.config.surface_walk_generator.min_segment_size = 0.5;
+      val.params.config.surface_walk_generator.intersection_plane_height = 0.05;
 
       val.params.curvature_threshold = 0.050;
       val.params.min_polygons_per_cluster = 500;
@@ -124,11 +125,11 @@ void ToolPathEditorWidget::onAddPressed()
   if (ok && !key.isEmpty())
   {
     opp_msgs::ToolPath val;
-    val.params.config.line_spacing = 0.2;
-    val.params.config.pt_spacing = 0.1;
-    val.params.config.min_hole_size = 0.2;
-    val.params.config.min_segment_size = 0.5;
-    val.params.config.intersecting_plane_height = 0.05;
+    val.params.config.surface_walk_generator.raster_spacing = 0.2;
+    val.params.config.surface_walk_generator.point_spacing = 0.1;
+    val.params.config.surface_walk_generator.min_hole_size = 0.2;
+    val.params.config.surface_walk_generator.min_segment_size = 0.5;
+    val.params.config.surface_walk_generator.intersection_plane_height = 0.05;
     val.params.curvature_threshold = 0.050;
     val.params.min_polygons_per_cluster = 500;
 

@@ -68,13 +68,13 @@ void ToolPathParametersEditorWidget::init(const shape_msgs::Mesh& mesh) { mesh_.
 
 void ToolPathParametersEditorWidget::setToolPathConfig(const noether_msgs::ToolPathConfig& config)
 {
-  ui_->double_spin_box_point_spacing->setValue(config.pt_spacing);
-  ui_->double_spin_box_tool_z_offset->setValue(config.tool_offset);
-  ui_->double_spin_box_line_spacing->setValue(config.line_spacing);
-  ui_->double_spin_box_min_hole_size->setValue(config.min_hole_size);
-  ui_->double_spin_box_min_segment_length->setValue(config.min_segment_size);
-  ui_->double_spin_box_intersecting_plane_height->setValue(config.intersecting_plane_height);
-  ui_->double_spin_box_raster_angle->setValue(config.raster_angle * 180.0 / M_PI);
+  ui_->double_spin_box_point_spacing->setValue(config.surface_walk_generator.point_spacing);
+  ui_->double_spin_box_tool_z_offset->setValue(config.surface_walk_generator.tool_offset);
+  ui_->double_spin_box_line_spacing->setValue(config.surface_walk_generator.raster_spacing);
+  ui_->double_spin_box_min_hole_size->setValue(config.surface_walk_generator.min_hole_size);
+  ui_->double_spin_box_min_segment_length->setValue(config.surface_walk_generator.min_segment_size);
+  ui_->double_spin_box_intersecting_plane_height->setValue(config.surface_walk_generator.intersection_plane_height);
+  ui_->double_spin_box_raster_angle->setValue(config.surface_walk_generator.raster_rot_offset * 180.0 / M_PI);
 }
 
 noether_msgs::ToolPathConfig ToolPathParametersEditorWidget::getToolPathConfig() const
@@ -82,14 +82,14 @@ noether_msgs::ToolPathConfig ToolPathParametersEditorWidget::getToolPathConfig()
   noether_msgs::ToolPathConfig config;
 
   // Create a path configuration from the line edit fields
-  config.pt_spacing = ui_->double_spin_box_point_spacing->value();
-  config.tool_offset = ui_->double_spin_box_tool_z_offset->value();
-  config.line_spacing = ui_->double_spin_box_line_spacing->value();
-  config.min_hole_size = ui_->double_spin_box_min_hole_size->value();
-  config.min_segment_size = ui_->double_spin_box_min_segment_length->value();
-  config.intersecting_plane_height = ui_->double_spin_box_intersecting_plane_height->value();
-  config.raster_angle = ui_->double_spin_box_raster_angle->value() * M_PI / 180.0;
-  config.raster_wrt_global_axes = false;
+  config.surface_walk_generator.point_spacing = ui_->double_spin_box_point_spacing->value();
+  config.surface_walk_generator.tool_offset = ui_->double_spin_box_tool_z_offset->value();
+  config.surface_walk_generator.raster_spacing = ui_->double_spin_box_line_spacing->value();
+  config.surface_walk_generator.min_hole_size = ui_->double_spin_box_min_hole_size->value();
+  config.surface_walk_generator.min_segment_size = ui_->double_spin_box_min_segment_length->value();
+  config.surface_walk_generator.intersection_plane_height = ui_->double_spin_box_intersecting_plane_height->value();
+  config.surface_walk_generator.raster_rot_offset = ui_->double_spin_box_raster_angle->value() * M_PI / 180.0;
+  config.surface_walk_generator.raster_wrt_global_axes = false;
 
   return config;
 }
@@ -180,16 +180,16 @@ void ToolPathParametersEditorWidget::onGenerateToolPathsComplete(
       opp_msgs::ToolPath tp;
       tp.header.stamp = ros::Time::now();
       tp.process_type.val = qvariant_cast<opp_msgs::ProcessType::_val_type>(ui_->combo_box_process_type->currentData());
-      tp.paths = res->tool_raster_paths[0].paths;
-      tp.params.config.pt_spacing = ui_->double_spin_box_point_spacing->value();
-      tp.params.config.tool_offset = ui_->double_spin_box_tool_z_offset->value();
-      tp.params.config.line_spacing = ui_->double_spin_box_line_spacing->value();
-      tp.params.config.raster_angle = ui_->double_spin_box_raster_angle->value() * M_PI / 180.0;
-      tp.params.config.min_hole_size = ui_->double_spin_box_min_hole_size->value();
-      tp.params.config.min_segment_size = ui_->double_spin_box_min_segment_length->value();
-      tp.params.config.generate_extra_rasters = false;  // No option to set this from GUI at present.
-      tp.params.config.raster_wrt_global_axes = false;  // No option to set this from GUI at present.
-      tp.params.config.intersecting_plane_height = ui_->double_spin_box_intersecting_plane_height->value();
+      tp.paths = res->tool_paths[0].paths[0].segments; // TODO, do something smart with the array of arrays issue here
+      tp.params.config.surface_walk_generator.point_spacing = ui_->double_spin_box_point_spacing->value();
+      tp.params.config.surface_walk_generator.tool_offset = ui_->double_spin_box_tool_z_offset->value();
+      tp.params.config.surface_walk_generator.raster_spacing = ui_->double_spin_box_line_spacing->value();
+      tp.params.config.surface_walk_generator.raster_rot_offset = ui_->double_spin_box_raster_angle->value() * M_PI / 180.0;
+      tp.params.config.surface_walk_generator.min_hole_size = ui_->double_spin_box_min_hole_size->value();
+      tp.params.config.surface_walk_generator.min_segment_size = ui_->double_spin_box_min_segment_length->value();
+      tp.params.config.surface_walk_generator.generate_extra_rasters = false;  // No option to set this from GUI at present.
+      tp.params.config.surface_walk_generator.raster_wrt_global_axes = false;  // No option to set this from GUI at present.
+      tp.params.config.surface_walk_generator.intersection_plane_height = ui_->double_spin_box_intersecting_plane_height->value();
 
       // Create the tool path offset transform
       // 1. Add z offset

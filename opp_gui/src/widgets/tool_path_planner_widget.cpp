@@ -36,6 +36,8 @@
 #include "ui_tool_path_planner.h"
 
 const static std::string MESH_MARKER_TOPIC = "mesh_marker";
+const static int MIN_TOUCH_POINTS = 0;
+const static int MIN_VERIFICATION_POINTS = 0;
 
 namespace opp_gui
 {
@@ -303,10 +305,13 @@ void ToolPathPlannerWidget::saveModel()
   using TouchPointMap = std::map<std::string, opp_msgs::TouchPoint>;
   TouchPointMap touch_points = touch_point_editor_->getPoints();
   TouchPointMap verification_points = verification_point_editor_->getPoints();
-  if (touch_points.size() < 3 || verification_points.size() < 3)
+  if (touch_points.size() < MIN_TOUCH_POINTS || verification_points.size() < MIN_VERIFICATION_POINTS)
   {
-    QMessageBox::warning(
-        this, "Invalid Model Definition", "Ensure at least 3 touch points and 3 verification points have been defined");
+    QMessageBox::warning(this,
+                         "Invalid Model Definition",
+                         ("Ensure at least " + std::to_string(MIN_TOUCH_POINTS) + " touch points and " +
+                          std::to_string(MIN_VERIFICATION_POINTS) + " verification points have been defined")
+                             .c_str());
     return;
   }
 

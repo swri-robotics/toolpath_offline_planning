@@ -10,7 +10,7 @@ ROS packages for generating offline toolpaths from CAD.  Built to run on Ubuntu 
 2) Pretty pictures
 
 ## Install instructions
-1) Clone the repo into your workspace. Then from the workspace root run `wstool init src opp.rosinstall`
+1) Clone the repo into your workspace. Then from the workspace root run `wstool init src dependencies.rosinstall`
 
 2) Run rosdep from the root of your workspace to pull dependencies `rosdep install --from-paths src --ignore-src -r -y`
 

@@ -180,16 +180,20 @@ void ToolPathParametersEditorWidget::onGenerateToolPathsComplete(
       opp_msgs::ToolPath tp;
       tp.header.stamp = ros::Time::now();
       tp.process_type.val = qvariant_cast<opp_msgs::ProcessType::_val_type>(ui_->combo_box_process_type->currentData());
-      tp.paths = res->tool_paths[0].paths[0].segments; // TODO, do something smart with the array of arrays issue here
+      tp.paths = res->tool_paths[0].paths[0].segments;  // TODO, do something smart with the array of arrays issue here
       tp.params.config.surface_walk_generator.point_spacing = ui_->double_spin_box_point_spacing->value();
       tp.params.config.surface_walk_generator.tool_offset = ui_->double_spin_box_tool_z_offset->value();
       tp.params.config.surface_walk_generator.raster_spacing = ui_->double_spin_box_line_spacing->value();
-      tp.params.config.surface_walk_generator.raster_rot_offset = ui_->double_spin_box_raster_angle->value() * M_PI / 180.0;
+      tp.params.config.surface_walk_generator.raster_rot_offset =
+          ui_->double_spin_box_raster_angle->value() * M_PI / 180.0;
       tp.params.config.surface_walk_generator.min_hole_size = ui_->double_spin_box_min_hole_size->value();
       tp.params.config.surface_walk_generator.min_segment_size = ui_->double_spin_box_min_segment_length->value();
-      tp.params.config.surface_walk_generator.generate_extra_rasters = false;  // No option to set this from GUI at present.
-      tp.params.config.surface_walk_generator.raster_wrt_global_axes = false;  // No option to set this from GUI at present.
-      tp.params.config.surface_walk_generator.intersection_plane_height = ui_->double_spin_box_intersecting_plane_height->value();
+      tp.params.config.surface_walk_generator.generate_extra_rasters =
+          false;  // No option to set this from GUI at present.
+      tp.params.config.surface_walk_generator.raster_wrt_global_axes =
+          false;  // No option to set this from GUI at present.
+      tp.params.config.surface_walk_generator.intersection_plane_height =
+          ui_->double_spin_box_intersecting_plane_height->value();
 
       // Create the tool path offset transform
       // 1. Add z offset

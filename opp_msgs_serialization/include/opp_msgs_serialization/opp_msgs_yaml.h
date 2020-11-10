@@ -33,7 +33,7 @@ struct convert<noether_msgs::ToolPathConfig>
   static Node encode(const noether_msgs::ToolPathConfig& rhs)
   {
     Node node;
-    
+
     node["surface_walk_generator"] = rhs.surface_walk_generator;
     node["plane_slicer_generator"] = rhs.plane_slicer_generator;
     //    node["heat_generator"] = rhs.heat_generator;
@@ -61,7 +61,7 @@ struct convert<noether_msgs::HalfedgeEdgeGeneratorConfig>
   static Node encode(const noether_msgs::HalfedgeEdgeGeneratorConfig& rhs)
   {
     Node node;
-    
+
     node["min_num_points"] = rhs.min_num_points;
     node["normal_averaging"] = rhs.normal_averaging;
     node["normal_search_radius"] = rhs.normal_search_radius;
@@ -91,7 +91,7 @@ struct convert<noether_msgs::SurfaceWalkRasterGeneratorConfig>
   static Node encode(const noether_msgs::SurfaceWalkRasterGeneratorConfig& rhs)
   {
     Node node;
-    
+
     node["raster_spacing"] = rhs.raster_spacing;
     node["point_spacing"] = rhs.point_spacing;
     node["raster_spacing"] = rhs.raster_spacing;
@@ -129,7 +129,7 @@ struct convert<noether_msgs::PlaneSlicerRasterGeneratorConfig>
   static Node encode(const noether_msgs::PlaneSlicerRasterGeneratorConfig& rhs)
   {
     Node node;
-    
+
     node["raster_spacing"] = rhs.raster_spacing;
     node["point_spacing"] = rhs.point_spacing;
     node["raster_rot_offset"] = rhs.raster_rot_offset;
@@ -159,7 +159,7 @@ struct convert<noether_msgs::EigenValueEdgeGeneratorConfig>
   static Node encode(const noether_msgs::EigenValueEdgeGeneratorConfig& rhs)
   {
     Node node;
-    
+
     node["octree_res"] = rhs.octree_res;
     node["search_radius"] = rhs.search_radius;
     node["num_threads"] = rhs.num_threads;

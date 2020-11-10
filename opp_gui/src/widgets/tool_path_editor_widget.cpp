@@ -85,7 +85,7 @@ void ToolPathEditorWidget::addToolPathData(const std::vector<opp_msgs::ToolPath>
     // parameters, so that seems OK for now.
     if (val.params.config.surface_walk_generator.raster_spacing == 0.0)
     {
-      val.params.config.type = 0;//SURFACE_WALK_RASTER_GENERATOR;
+      val.params.config.type = 0;  // SURFACE_WALK_RASTER_GENERATOR;
       val.params.config.surface_walk_generator.raster_spacing = 0.2;
       val.params.config.surface_walk_generator.point_spacing = 0.1;
       val.params.config.surface_walk_generator.min_hole_size = 0.2;

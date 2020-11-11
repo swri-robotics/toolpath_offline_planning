@@ -47,7 +47,7 @@ struct convert<noether_msgs::ToolPathConfig>
     if (node.size() != 4)
       return false;
     rhs.plane_slicer_generator = node["plane_slicer_generator"].as<decltype(rhs.plane_slicer_generator)>();
-    rhs.halfedge_generator = node["halfedge_generator"].as<decltype(rhs.halfedge_generator)>();
+    rhs.halfedge_generator = node["half_edge_generator"].as<decltype(rhs.halfedge_generator)>();
     rhs.eigen_value_generator = node["eigen_value_generator"].as<decltype(rhs.eigen_value_generator)>();
     //    rhs.heat_generator = node["heat_generator"].as<decltype(rhs.heat_generator)>();
     rhs.surface_walk_generator = node["surface_walk_generator"].as<decltype(rhs.surface_walk_generator)>();
@@ -94,7 +94,6 @@ struct convert<noether_msgs::SurfaceWalkRasterGeneratorConfig>
 
     node["raster_spacing"] = rhs.raster_spacing;
     node["point_spacing"] = rhs.point_spacing;
-    node["raster_spacing"] = rhs.raster_spacing;
     node["tool_offset"] = rhs.tool_offset;
     node["intersection_plane_height"] = rhs.intersection_plane_height;
     node["min_hole_size"] = rhs.min_hole_size;
@@ -107,11 +106,10 @@ struct convert<noether_msgs::SurfaceWalkRasterGeneratorConfig>
 
   static bool decode(const Node& node, noether_msgs::SurfaceWalkRasterGeneratorConfig& rhs)
   {
-    if (node.size() != 10)
+    if (node.size() != 9)
       return false;
     rhs.raster_spacing = node["raster_spacing"].as<decltype(rhs.raster_spacing)>();
     rhs.point_spacing = node["point_spacing"].as<decltype(rhs.point_spacing)>();
-    rhs.raster_spacing = node["raster_spacing"].as<decltype(rhs.raster_spacing)>();
     rhs.tool_offset = node["tool_offset"].as<decltype(rhs.tool_offset)>();
     rhs.intersection_plane_height = node["intersection_plane_height"].as<decltype(rhs.intersection_plane_height)>();
     rhs.min_hole_size = node["min_hole_size"].as<decltype(rhs.min_hole_size)>();

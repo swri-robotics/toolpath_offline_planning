@@ -64,14 +64,14 @@ install(DIRECTORY include/${PROJECT_NAME}/
 #############
 ## Testing ##
 #############
-if(CATKIN_ENABLE_TESTING)
-  find_package(rostest REQUIRED)
+#if(CATKIN_ENABLE_TESTING)
+#  find_package(rostest REQUIRED)
 
-  catkin_add_gtest(database_interface_cpp_test test/database_interface_cpp_test.cpp)
-  target_link_libraries(database_interface_cpp_test
-    ${catkin_LIBRARIES}
-    ${PROJECT_NAME}_cpp
-    ${Boost_LIBRARIES}
-    Qt5::Sql
-  )
-endif()
+#  catkin_add_gtest(database_interface_cpp_test test/database_interface_cpp_test.cpp)
+#  target_link_libraries(database_interface_cpp_test
+#    ${catkin_LIBRARIES}
+#    ${PROJECT_NAME}_cpp
+#    ${Boost_LIBRARIES}
+#    Qt5::Sql
+#  )
+#endif()

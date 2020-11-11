@@ -18,8 +18,6 @@
   <depend>geometry_msgs</depend>
   <depend>opp_msgs_serialization</depend>
   <depend>pcl_ros</depend>
-  <depend>roscpp</depend>
-  <depend>roslib</depend>
   <depend>opp_msgs</depend>
   <depend>sensor_msgs</depend>
   <depend>std_srvs</depend>

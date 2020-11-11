@@ -7,9 +7,8 @@ find_package(catkin REQUIRED COMPONENTS
   eigen_conversions
   geometry_msgs
   opp_msgs_serialization
-  roscpp
-  roslib
   opp_msgs
+  pcl_ros
   sensor_msgs
   std_srvs
   tf
@@ -17,72 +16,52 @@ find_package(catkin REQUIRED COMPONENTS
   visualization_msgs
 )
 
-find_package(Eigen3 REQUIRED)
-
-find_package(PCL 1.9 REQUIRED)
-add_definitions(${PCL_DEFINITIONS})
-
 catkin_package(
   INCLUDE_DIRS
     include
   LIBRARIES
-    area_selection
+    ${PROJECT_NAME}
   CATKIN_DEPENDS
     eigen_conversions
     geometry_msgs
     opp_msgs_serialization
-    roscpp
-    roslib
     opp_msgs
+    pcl_ros
     sensor_msgs
     std_srvs
     tf
     tf_conversions
     visualization_msgs
-  DEPENDS
-    EIGEN3
-    PCL
 )
 
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
-  ${EIGEN3_INCLUDE_DIRS}
-  ${PCL_INCLUDE_DIRS}
 )
 
 # Library containing tools for specifying regions
 # and determining inlying points
-add_library(area_selection
+add_library(${PROJECT_NAME}
   src/area_selector.cpp
   src/selection_artist.cpp
 )
-target_link_libraries(area_selection
+target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
-  ${PCL_LIBRARIES}
-)
-add_dependencies(area_selection
-  ${catkin_EXPORTED_TARGETS}
-  ${${PROJECT_NAME}_EXPORTED_TARGETS}
 )
 
 # Node that runs area selection service
-add_executable(area_selection_node
+add_executable(${PROJECT_NAME}_node
   src/area_selection_node.cpp
 )
-target_link_libraries(area_selection_node
-  area_selection
+target_link_libraries(${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
-)
-add_dependencies(area_selection_node
-  ${catkin_EXPORTED_TARGETS}
-  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+  ${PROJECT_NAME}
 )
 
 # Install built targets
 install(TARGETS
-    area_selection
-    area_selection_node
+    ${PROJECT_NAME}
+    ${PROJECT_NAME}_node
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

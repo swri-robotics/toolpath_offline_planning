@@ -104,17 +104,17 @@ noether_msgs::ToolPathConfig ToolPathParametersEditorWidget::getToolPathConfig()
   return config;
 }
 
-heat_msgs::HeatToolPathConfig ToolPathParametersEditorWidget::getHeatToolPathConfig() const
+heat_msgs::HeatRasterGeneratorConfig ToolPathParametersEditorWidget::getHeatRasterGeneratorConfig() const
 {
-  heat_msgs::HeatToolPathConfig config;
+  heat_msgs::HeatRasterGeneratorConfig config;
 
   // Create a path configuration from the line edit fields
-  config.pt_spacing = ui_->double_spin_box_point_spacing->value();
-  config.line_spacing = ui_->double_spin_box_line_spacing->value();
+  config.point_spacing = ui_->double_spin_box_point_spacing->value();
+  config.raster_spacing = ui_->double_spin_box_line_spacing->value();
   config.tool_offset = ui_->double_spin_box_tool_z_offset->value();
   config.min_hole_size = ui_->double_spin_box_min_hole_size->value();
   config.min_segment_size = ui_->double_spin_box_min_segment_length->value();
-  config.raster_angle = ui_->double_spin_box_raster_angle->value() * M_PI / 180.0;
+  config.raster_rot_offset = ui_->double_spin_box_raster_angle->value() * M_PI / 180.0;
   config.generate_extra_rasters = false;  // No option to set this from GUI at present.
   return config;
 }
@@ -197,7 +197,7 @@ void ToolPathParametersEditorWidget::onPolylinePath(const std::vector<int> pnt_i
       emit QWarningBox("No path points selected, using raster angle instead");
     }
   goal.sources.push_back(S);
-  goal.path_configs.push_back(getHeatToolPathConfig());
+  goal.path_configs.push_back(getHeatRasterGeneratorConfig());
   goal.surface_meshes.push_back(*mesh_);
   goal.proceed_on_failure = false;
 
@@ -239,7 +239,7 @@ void ToolPathParametersEditorWidget::onPolylinePathGen(const std::vector<int> pn
       S.source_indices.push_back(pnt_indices[i]);
     }
   goal.sources.push_back(S);
-  goal.path_configs.push_back(getHeatToolPathConfig());
+  goal.path_configs.push_back(getHeatRasterGeneratorConfig());
   goal.surface_meshes.push_back(*mesh_);
   goal.proceed_on_failure = false;
 
@@ -352,15 +352,14 @@ void ToolPathParametersEditorWidget::onGenerateHeatToolPathsComplete(
       tp.header.stamp = ros::Time::now();
       tp.process_type.val = qvariant_cast<opp_msgs::ProcessType::_val_type>(ui_->combo_box_process_type->currentData());
       tp.paths = res->tool_raster_paths[0].paths;
-      tp.params.config.pt_spacing = ui_->double_spin_box_point_spacing->value();
-      tp.params.config.tool_offset = ui_->double_spin_box_tool_z_offset->value();
-      tp.params.config.line_spacing = ui_->double_spin_box_line_spacing->value();
-      tp.params.config.raster_angle = ui_->double_spin_box_raster_angle->value() * M_PI / 180.0;
-      tp.params.config.min_hole_size = ui_->double_spin_box_min_hole_size->value();
-      tp.params.config.min_segment_size = ui_->double_spin_box_min_segment_length->value();
-      tp.params.config.generate_extra_rasters = false;  // No option to set this from GUI at present.
-      tp.params.config.raster_wrt_global_axes = false;  // No option to set this from GUI at present.
-      tp.params.config.intersecting_plane_height = ui_->double_spin_box_intersecting_plane_height->value();
+      tp.params.config.type = 2;
+      tp.params.config.heat_generator.point_spacing = ui_->double_spin_box_point_spacing->value();
+      tp.params.config.heat_generator.tool_offset = ui_->double_spin_box_tool_z_offset->value();
+      tp.params.config.heat_generator.raster_spacing = ui_->double_spin_box_line_spacing->value();
+      tp.params.config.heat_generator.raster_rot_offset = ui_->double_spin_box_raster_angle->value() * M_PI / 180.0;
+      tp.params.config.heat_generator.min_hole_size = ui_->double_spin_box_min_hole_size->value();
+      tp.params.config.heat_generator.min_segment_size = ui_->double_spin_box_min_segment_length->value();
+      tp.params.config.heat_generator.generate_extra_rasters = false;  // No option to set this from GUI at present.
 
       // Create the tool path offset transform
       // 1. Add z offset

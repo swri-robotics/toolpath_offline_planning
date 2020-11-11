@@ -36,7 +36,7 @@ struct convert<noether_msgs::ToolPathConfig>
 
     node["surface_walk_generator"] = rhs.surface_walk_generator;
     node["plane_slicer_generator"] = rhs.plane_slicer_generator;
-    //    node["heat_generator"] = rhs.heat_generator;
+    node["heat_generator"] = rhs.heat_generator;
     node["eigen_value_generator"] = rhs.eigen_value_generator;
     node["half_edge_generator"] = rhs.halfedge_generator;
     return node;
@@ -44,12 +44,12 @@ struct convert<noether_msgs::ToolPathConfig>
 
   static bool decode(const Node& node, noether_msgs::ToolPathConfig& rhs)
   {
-    if (node.size() != 4)
+    if (node.size() != 5)
       return false;
     rhs.plane_slicer_generator = node["plane_slicer_generator"].as<decltype(rhs.plane_slicer_generator)>();
     rhs.halfedge_generator = node["halfedge_generator"].as<decltype(rhs.halfedge_generator)>();
     rhs.eigen_value_generator = node["eigen_value_generator"].as<decltype(rhs.eigen_value_generator)>();
-    //    rhs.heat_generator = node["heat_generator"].as<decltype(rhs.heat_generator)>();
+    rhs.heat_generator = node["heat_generator"].as<decltype(rhs.heat_generator)>();
     rhs.surface_walk_generator = node["surface_walk_generator"].as<decltype(rhs.surface_walk_generator)>();
     return true;
   }
@@ -84,6 +84,7 @@ struct convert<noether_msgs::HalfedgeEdgeGeneratorConfig>
     return true;
   }
 };
+
 
 template <>
 struct convert<noether_msgs::SurfaceWalkRasterGeneratorConfig>
@@ -152,6 +153,38 @@ struct convert<noether_msgs::PlaneSlicerRasterGeneratorConfig>
     return true;
   }
 };
+
+template <>
+struct convert<heat_msgs::HeatRasterGeneratorConfig>
+{
+  static Node encode(const heat_msgs::HeatRasterGeneratorConfig& rhs)
+  {
+    Node node;
+
+    node["point_spacing"] = rhs.point_spacing;
+    node["raster_spacing"] = rhs.raster_spacing;
+    node["tool_offset"] = rhs.tool_offset;
+    node["min_hole_size"] = rhs.min_hole_size;
+    node["min_segment_size"] = rhs.min_segment_size;
+    node["raster_rot_offset"] = rhs.raster_rot_offset;
+    node["generate_extra_rasters"] = rhs.generate_extra_rasters;
+    return node;
+  }
+
+  static bool decode(const Node& node, heat_msgs::HeatRasterGeneratorConfig& rhs)
+  {
+    if (node.size() != 7)
+      return false;
+    rhs.raster_spacing = node["raster_spacing"].as<decltype(rhs.raster_spacing)>();
+    rhs.tool_offset = node["tool_offset"].as<decltype(rhs.tool_offset)>();    
+    rhs.min_hole_size = node["min_hole_size"].as<decltype(rhs.min_hole_size)>();
+    rhs.min_segment_size = node["min_segment_size"].as<decltype(rhs.min_segment_size)>();
+    rhs.raster_rot_offset = node["raster_rot_offset"].as<decltype(rhs.raster_rot_offset)>();
+    rhs.generate_extra_rasters = node["generate_extra_rasters"].as<decltype(rhs.generate_extra_rasters)>();
+    return true;
+  }
+};
+
 
 template <>
 struct convert<noether_msgs::EigenValueEdgeGeneratorConfig>

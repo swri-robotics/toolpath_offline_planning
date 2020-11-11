@@ -22,7 +22,7 @@
 #include <actionlib/client/simple_action_client.h>
 #include <noether_msgs/GenerateToolPathsAction.h>
 #include <heat_msgs/GenerateHeatToolPathsAction.h>
-#include <heat_msgs/HeatToolPathConfig.h>
+#include <heat_msgs/HeatRasterGeneratorConfig.h>
 #include <ros/ros.h>
 
 #include <opp_msgs/ToolPath.h>
@@ -67,7 +67,7 @@ public:
 
   noether_msgs::ToolPathConfig getToolPathConfig() const;
 
-  heat_msgs::HeatToolPathConfig getHeatToolPathConfig() const;
+  heat_msgs::HeatRasterGeneratorConfig getHeatRasterGeneratorConfig() const;
 
 Q_SIGNALS:
 

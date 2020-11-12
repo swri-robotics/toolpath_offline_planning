@@ -85,7 +85,6 @@ struct convert<noether_msgs::HalfedgeEdgeGeneratorConfig>
   }
 };
 
-
 template <>
 struct convert<noether_msgs::SurfaceWalkRasterGeneratorConfig>
 {
@@ -95,7 +94,6 @@ struct convert<noether_msgs::SurfaceWalkRasterGeneratorConfig>
 
     node["raster_spacing"] = rhs.raster_spacing;
     node["point_spacing"] = rhs.point_spacing;
-    node["raster_spacing"] = rhs.raster_spacing;
     node["tool_offset"] = rhs.tool_offset;
     node["intersection_plane_height"] = rhs.intersection_plane_height;
     node["min_hole_size"] = rhs.min_hole_size;
@@ -112,7 +110,6 @@ struct convert<noether_msgs::SurfaceWalkRasterGeneratorConfig>
       return false;
     rhs.raster_spacing = node["raster_spacing"].as<decltype(rhs.raster_spacing)>();
     rhs.point_spacing = node["point_spacing"].as<decltype(rhs.point_spacing)>();
-    rhs.raster_spacing = node["raster_spacing"].as<decltype(rhs.raster_spacing)>();
     rhs.tool_offset = node["tool_offset"].as<decltype(rhs.tool_offset)>();
     rhs.intersection_plane_height = node["intersection_plane_height"].as<decltype(rhs.intersection_plane_height)>();
     rhs.min_hole_size = node["min_hole_size"].as<decltype(rhs.min_hole_size)>();

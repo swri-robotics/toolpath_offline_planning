@@ -1,0 +1,28 @@
+name: Clang-Formatting
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  industrial_ci:
+    name: Clang-Formatting
+    runs-on: ubuntu-latest
+    env:
+      CI_NAME: Clang-Formatting
+      OS_NAME: ubuntu
+      OS_CODE_NAME: focal
+      ROS_DISTRO: noetic
+      ROS_REPO: main
+      ROSDEP_SKIP_KEYS: 'libqt5sql5-mysql'
+      DOCKER_IMAGE: "rosindustrial/noether:noetic"
+      CLANG_FORMAT_CHECK: file
+      CLANG_FORMAT_VERSION: 8
+    steps:
+      - uses: actions/checkout@v2
+      - uses: 'ros-industrial/industrial_ci@master'
+        env: ${{env}}

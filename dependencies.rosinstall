@@ -10,6 +10,12 @@
     uri: 'https://github.com/ros-industrial/noether.git'
     version: 9c97ac493f9eb2cee83523fadf5cf331f2c22ceb
 
+# heat_raster
+- git:
+    local-name: heat_raster
+    uri: 'https://github.com/ros-industrial/heat_raster.git'
+    version: a4d5696a98655fd538a66a5a43a5551c29d3f24f
+
 # RViz Tool Cursor
 - git:
     local-name: rviz_tool_cursor

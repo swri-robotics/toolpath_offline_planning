@@ -56,9 +56,8 @@ public:
   bool collectROIMesh(const shape_msgs::Mesh& mesh_msg, shape_msgs::Mesh& submesh_msg, std::string& message);
 
   void enable(bool value);
-  
-protected:
 
+protected:
   void addSelectionPoint(const geometry_msgs::PointStamped::ConstPtr pt_stamped);
 
   bool transformPoint(const geometry_msgs::PointStamped::ConstPtr pt_stamped, geometry_msgs::Point& transformed_pt);

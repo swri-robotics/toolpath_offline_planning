@@ -38,9 +38,9 @@ class PolylinePathSelectionWidget : public QWidget
 
 public:
   explicit PolylinePathSelectionWidget(ros::NodeHandle& nh,
-                                      const std::string& selection_world_frame,
-                                      const std::string& selection_sensor_frame,
-                                      QWidget* parent = nullptr);
+                                       const std::string& selection_world_frame,
+                                       const std::string& selection_sensor_frame,
+                                       QWidget* parent = nullptr);
   ~PolylinePathSelectionWidget();
 
 public Q_SLOTS:
@@ -64,7 +64,7 @@ private Q_SLOTS:
   void onQWarningBox(std::string warn_string);
 
   void updatePolyline();
-  
+
 private:
   Ui::PolylinePathSelectionWidget* ui_;
 

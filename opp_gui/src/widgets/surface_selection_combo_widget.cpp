@@ -80,16 +80,13 @@ SurfaceSelectionComboWidget::SurfaceSelectionComboWidget(ros::NodeHandle& nh,
           this,
           &SurfaceSelectionComboWidget::newSelectedSubmesh);
 
-  connect(path_selector_,
-          &PolylinePathSelectionWidget::polylinePath,
-          this,
-          &SurfaceSelectionComboWidget::onPolylinePath);
+  connect(
+      path_selector_, &PolylinePathSelectionWidget::polylinePath, this, &SurfaceSelectionComboWidget::onPolylinePath);
 
   connect(path_selector_,
           &PolylinePathSelectionWidget::polylinePathGen,
           this,
           &SurfaceSelectionComboWidget::onPolylinePathGen);
-
 }
 
 SurfaceSelectionComboWidget::~SurfaceSelectionComboWidget()
@@ -206,9 +203,10 @@ void SurfaceSelectionComboWidget::newSelectedSubmesh(const shape_msgs::Mesh::Ptr
   return;
 }
 
-void SurfaceSelectionComboWidget::onPolylinePath(const std::vector<int>& path_indices, const shape_msgs::Mesh::Ptr& mesh)
+void SurfaceSelectionComboWidget::onPolylinePath(const std::vector<int>& path_indices,
+                                                 const shape_msgs::Mesh::Ptr& mesh)
 {
-  emit polylinePath(path_indices); 
+  emit polylinePath(path_indices);
   return;
 }
 

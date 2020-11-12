@@ -173,7 +173,7 @@ struct convert<heat_msgs::HeatRasterGeneratorConfig>
     if (node.size() != 7)
       return false;
     rhs.raster_spacing = node["raster_spacing"].as<decltype(rhs.raster_spacing)>();
-    rhs.tool_offset = node["tool_offset"].as<decltype(rhs.tool_offset)>();    
+    rhs.tool_offset = node["tool_offset"].as<decltype(rhs.tool_offset)>();
     rhs.min_hole_size = node["min_hole_size"].as<decltype(rhs.min_hole_size)>();
     rhs.min_segment_size = node["min_segment_size"].as<decltype(rhs.min_segment_size)>();
     rhs.raster_rot_offset = node["raster_rot_offset"].as<decltype(rhs.raster_rot_offset)>();
@@ -181,7 +181,6 @@ struct convert<heat_msgs::HeatRasterGeneratorConfig>
     return true;
   }
 };
-
 
 template <>
 struct convert<noether_msgs::EigenValueEdgeGeneratorConfig>

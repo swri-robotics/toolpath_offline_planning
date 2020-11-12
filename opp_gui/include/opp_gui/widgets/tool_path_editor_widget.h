@@ -65,7 +65,7 @@ public:
 
   inline void setMarkerFrame(const std::string& frame) { marker_frame_ = frame; }
 
- Q_SIGNALS:
+Q_SIGNALS:
 
   void polylinePathGen(const std::vector<int> pnt_indices);
 
@@ -84,11 +84,11 @@ protected Q_SLOTS:
   virtual void onDataChanged() override;
 
   void onPolylinePath(const std::vector<int> pnt_indices);
-  
+
   void onPolylinePathGen(const std::vector<int> pnt_indices);
 
   void onPolylinePathReset(const std::vector<int> pnt_indices);
-  
+
   void onPolylinePathGenReset(const std::vector<int> pnt_indices);
 
   void onQWarningBox(const std::string message);

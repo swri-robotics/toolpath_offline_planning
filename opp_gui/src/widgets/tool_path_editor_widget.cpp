@@ -48,10 +48,16 @@ ToolPathEditorWidget::ToolPathEditorWidget(QWidget* parent,
 
   connect(editor_, &ToolPathParametersEditorWidget::dataChanged, this, &ToolPathEditorWidget::onDataChanged);
 
-  connect(surface_selector_, &SurfaceSelectionComboWidget::newTargetMesh,   this, &ToolPathEditorWidget::newTargetMeshSelected);
+  connect(surface_selector_,
+          &SurfaceSelectionComboWidget::newTargetMesh,
+          this,
+          &ToolPathEditorWidget::newTargetMeshSelected);
   // TODO what to do with a polyline created path
-  connect(surface_selector_, &SurfaceSelectionComboWidget::polylinePath,    this, &ToolPathEditorWidget::onPolylinePath);
-  connect(surface_selector_, &SurfaceSelectionComboWidget::polylinePathGen, editor_, &ToolPathParametersEditorWidget::onPolylinePathGen);
+  connect(surface_selector_, &SurfaceSelectionComboWidget::polylinePath, this, &ToolPathEditorWidget::onPolylinePath);
+  connect(surface_selector_,
+          &SurfaceSelectionComboWidget::polylinePathGen,
+          editor_,
+          &ToolPathParametersEditorWidget::onPolylinePathGen);
   connect(this, &ToolPathEditorWidget::QWarningBox, this, &ToolPathEditorWidget::onQWarningBox);
 
   // Create a publisher for the tool path marker
@@ -164,7 +170,6 @@ void ToolPathEditorWidget::onRemovePressed()
     }
     else
     {
-      
       ROS_ERROR_STREAM(__func__ << "Failed to find part '" << key << "' in map");
     }
 
@@ -299,7 +304,7 @@ void ToolPathEditorWidget::onDataChanged()
         {
           if (surface_selector_ == nullptr)
           {
-	    emit QWarningBox("surface_selector_ not assigned in ToolPathEditorWidget");
+            emit QWarningBox("surface_selector_ not assigned in ToolPathEditorWidget");
           }
           else
           {
@@ -322,6 +327,5 @@ void ToolPathEditorWidget::onQWarningBox(std::string warn_string)
 {
   QMessageBox::warning(this, "Tool Path Planning Warning", QString(warn_string.c_str()));
 }
-
 
 }  // namespace opp_gui

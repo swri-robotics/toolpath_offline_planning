@@ -29,10 +29,9 @@
 
 namespace opp_path_selection
 {
-
 /**
  * @brief The PathSelector class takes a set of 3D points defining path segments and attempts to identify which
- * points in a published point cloud lie along those segements. 
+ * points in a published point cloud lie along those segements.
  */
 class PathSelector
 {
@@ -40,16 +39,17 @@ public:
   typedef boost::property<boost::edge_weight_t, double> EdgeWeightProperty;
   typedef boost::property<boost::vertex_color_t, boost::default_color_type> VertexColorProperty;
   typedef boost::adjacency_list<boost::listS,
-				boost::vecS, boost::undirectedS,
-				boost::disallow_parallel_edge_tag,
-				EdgeWeightProperty,
-				VertexColorProperty> MeshGraph;
+                                boost::vecS,
+                                boost::undirectedS,
+                                boost::disallow_parallel_edge_tag,
+                                EdgeWeightProperty,
+                                VertexColorProperty>
+      MeshGraph;
   typedef boost::property_map<MeshGraph, boost::vertex_index_t>::type IndexMap;
   typedef boost::graph_traits<MeshGraph>::edge_iterator edge_itr;
   typedef boost::graph_traits<MeshGraph>::edge_descriptor edge_desc;
   typedef boost::graph_traits<MeshGraph>::vertex_descriptor vertex_des;
   typedef boost::property_map<MeshGraph, boost::vertex_index_t> Vertex_id;
-
 
   /**
    * @brief PathSelector class constructor
@@ -62,9 +62,9 @@ public:
    * @return Returns false if there are less than 2 points in segment, or if less than 2 vertices are found
    * otherwise returns true.
    */
-  std::vector<int>  findPointsAlongSegments(const shape_msgs::Mesh& input_mesh,
-					    const std::vector<Eigen::Vector3d>& points,
-					    const PathSelectorParameters& params);
+  std::vector<int> findPointsAlongSegments(const shape_msgs::Mesh& input_mesh,
+                                           const std::vector<Eigen::Vector3d>& points,
+                                           const PathSelectorParameters& params);
 
   /**
    * @brief Finds the points that lie along the segments defined by the points
@@ -72,23 +72,23 @@ public:
    * @return Returns false if there are less than 2 points in segment, or if less than 2 vertices are found
    * otherwise returns true.
    */
-  std::vector<int>  findPointsAlongSegments(const pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud,
-					      const std::vector<Eigen::Vector3d>& points,
-					      const PathSelectorParameters& params);
+  std::vector<int> findPointsAlongSegments(const pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud,
+                                           const std::vector<Eigen::Vector3d>& points,
+                                           const PathSelectorParameters& params);
+
 protected:
-  /** @brief Finds distance between a line segment defined by segStart and segEnd 
+  /** @brief Finds distance between a line segment defined by segStart and segEnd
    *  @param segStart one end point of segment
    *  @param segEnd other end point of segment
    *  @param pt     point in question
    *  @output distance distance between line segment and point, could be off ends
-   *  @returns true if not off either end 0 if beyond segStart, -1 if point is beyond segEnd 
+   *  @returns true if not off either end 0 if beyond segStart, -1 if point is beyond segEnd
    */
   int pointToLineSegmentDistance(const Eigen::Vector3d& segStart,
-				 const Eigen::Vector3d& segEnd,
-				 const Eigen::Vector3d& pt,
-				 double& distance_to_seg,
-				 double& distance_along_seg);
-
+                                 const Eigen::Vector3d& segEnd,
+                                 const Eigen::Vector3d& pt,
+                                 double& distance_to_seg,
+                                 double& distance_along_seg);
 };
 
 }  // namespace opp_path_selection

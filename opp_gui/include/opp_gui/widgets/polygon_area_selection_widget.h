@@ -50,7 +50,7 @@ Q_SIGNALS:
   void selectedSubmesh(const shape_msgs::Mesh::Ptr& selected_submesh);
 
   void QWarningBox(const std::string message);
-  
+
 private Q_SLOTS:
   void clearROISelection();
 
@@ -59,7 +59,7 @@ private Q_SLOTS:
   void onQWarningBox(const std::string message);
 
   void updateSelections();
-  
+
 private:
   Ui::PolygonAreaSelectionWidget* ui_;
 

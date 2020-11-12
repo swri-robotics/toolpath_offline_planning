@@ -27,20 +27,24 @@
 namespace opp_gui
 {
 PolylinePathSelectionWidget::PolylinePathSelectionWidget(ros::NodeHandle& nh,
-                                                       const std::string& selection_world_frame,
-                                                       const std::string& selection_sensor_frame,
-                                                       QWidget* parent)
+                                                         const std::string& selection_world_frame,
+                                                         const std::string& selection_sensor_frame,
+                                                         QWidget* parent)
   : QWidget(parent)
   , ui_(new Ui::PolylinePathSelectionWidget)
   , selector_(nh, selection_world_frame, selection_sensor_frame)
 {
   ui_->setupUi(this);
   connect(ui_->push_button_clear_polyline, &QPushButton::clicked, this, &PolylinePathSelectionWidget::clearPolyline);
-  connect(ui_->push_button_apply_polyline, &QPushButton::clicked, this, &PolylinePathSelectionWidget::applyPolylineAsPath);
-  connect(ui_->push_button_htgen_polyline, &QPushButton::clicked, this, &PolylinePathSelectionWidget::applyPolyline4PathGen);
-  connect(ui_->cbox_update_polyline,       &QCheckBox::stateChanged, this, &PolylinePathSelectionWidget::updatePolyline);
-  connect(this,        &PolylinePathSelectionWidget::QWarningBox, this, &PolylinePathSelectionWidget::onQWarningBox);
-  updatePolyline(); // synchronize checkboxes
+  connect(
+      ui_->push_button_apply_polyline, &QPushButton::clicked, this, &PolylinePathSelectionWidget::applyPolylineAsPath);
+  connect(ui_->push_button_htgen_polyline,
+          &QPushButton::clicked,
+          this,
+          &PolylinePathSelectionWidget::applyPolyline4PathGen);
+  connect(ui_->cbox_update_polyline, &QCheckBox::stateChanged, this, &PolylinePathSelectionWidget::updatePolyline);
+  connect(this, &PolylinePathSelectionWidget::QWarningBox, this, &PolylinePathSelectionWidget::onQWarningBox);
+  updatePolyline();  // synchronize checkboxes
 }
 
 PolylinePathSelectionWidget::~PolylinePathSelectionWidget() { delete ui_; }
@@ -82,15 +86,15 @@ void PolylinePathSelectionWidget::applyPolylineAsPath()
   std::vector<int> path_indices;
   bool success = selector_.collectPathMesh(*mesh_, path_indices, error_message);
   if (!success)
-    {
-      std::string msg("Path Selection error: could not compute path: " + error_message);
-      emit QWarningBox(msg.c_str());
-    }
-  else if(path_indices.size() == 0)
-    {
-      std::string msg("Path Selection error: no points found " + error_message);
-      emit QWarningBox(msg.c_str());
-    }
+  {
+    std::string msg("Path Selection error: could not compute path: " + error_message);
+    emit QWarningBox(msg.c_str());
+  }
+  else if (path_indices.size() == 0)
+  {
+    std::string msg("Path Selection error: no points found " + error_message);
+    emit QWarningBox(msg.c_str());
+  }
   emit(polylinePath(path_indices, mesh_));
   return;
 }
@@ -111,7 +115,8 @@ void PolylinePathSelectionWidget::applyPolyline4PathGen()
     std::string msg("Path Selection error: could not compute path: " + error_message);
     emit QWarningBox(msg.c_str());
   }
-  // TODO perhaps we should send the mesh too, It seems like the other widget already knows which mesh has been selected. 
+  // TODO perhaps we should send the mesh too, It seems like the other widget already knows which mesh has been
+  // selected.
   emit(polylinePathGen(path_indices));
 
   return;
@@ -119,22 +124,19 @@ void PolylinePathSelectionWidget::applyPolyline4PathGen()
 
 void PolylinePathSelectionWidget::updatePolyline()
 {
-  if(ui_->cbox_update_polyline->isChecked())
-    {
-      selector_.enable(true);
-    }
+  if (ui_->cbox_update_polyline->isChecked())
+  {
+    selector_.enable(true);
+  }
   else
-    {
-      selector_.enable(false);
-    }
+  {
+    selector_.enable(false);
+  }
 }
 
 void PolylinePathSelectionWidget::onQWarningBox(std::string warn_string)
 {
   QMessageBox::warning(this, "Tool Path Planning Warning", QString(warn_string.c_str()));
 }
-
-
-
 
 }  // end namespace opp_gui

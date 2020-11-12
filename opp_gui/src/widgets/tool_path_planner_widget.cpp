@@ -658,5 +658,4 @@ void ToolPathPlannerWidget::onQWarningBox(std::string warn_string)
   QMessageBox::warning(this, "Tool Path Planning Warning", QString(warn_string.c_str()));
 }
 
-
 }  // namespace opp_gui

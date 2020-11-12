@@ -33,10 +33,10 @@
 namespace opp_path_selection
 {
 /**
- * @brief The PathSelectionArtist class uses the Publish Points plugin in Rviz to allow the user to drop points on a mesh or
- * geometry primitive, creating a closed polyline path. The path is displayed using an Interactive
- * Marker, which enables the user to reset the path.
- * This class also contains a ROS service server to output the last selection points.
+ * @brief The PathSelectionArtist class uses the Publish Points plugin in Rviz to allow the user to drop points on a
+ * mesh or geometry primitive, creating a closed polyline path. The path is displayed using an Interactive Marker, which
+ * enables the user to reset the path. This class also contains a ROS service server to output the last selection
+ * points.
  */
 class PathSelectionArtist
 {
@@ -52,14 +52,14 @@ public:
    */
   PathSelectionArtist(const ros::NodeHandle& nh, const std::string& world_frame, const std::string& sensor_frame);
 
-  bool clearPathPointsCb(std_srvs::TriggerRequest& , std_srvs::TriggerResponse& res);
+  bool clearPathPointsCb(std_srvs::TriggerRequest&, std_srvs::TriggerResponse& res);
 
   bool collectPath(const shape_msgs::Mesh& mesh_msg, std::vector<int>& points_idx, std::string& message);
 
   bool collectPathMesh(const shape_msgs::Mesh& mesh_msg, std::vector<int>& points_idx, std::string& message);
 
   void enable(bool value);
-  
+
 protected:
   void getSensorData(const sensor_msgs::PointCloud2::ConstPtr& msg);
 
@@ -67,9 +67,11 @@ protected:
 
   bool transformPoint(const geometry_msgs::PointStamped::ConstPtr pt_stamped, geometry_msgs::Point& transformed_pt);
 
-  bool collectPathPointsCloudCb(opp_msgs::GetPathSelectionCloud::Request& req, opp_msgs::GetPathSelectionCloud::Response& res);
+  bool collectPathPointsCloudCb(opp_msgs::GetPathSelectionCloud::Request& req,
+                                opp_msgs::GetPathSelectionCloud::Response& res);
 
-  bool collectPathPointsMeshCb(opp_msgs::GetPathSelectionMesh::Request& req, opp_msgs::GetPathSelectionMesh::Response& res);
+  bool collectPathPointsMeshCb(opp_msgs::GetPathSelectionMesh::Request& req,
+                               opp_msgs::GetPathSelectionMesh::Response& res);
 
   void filterMesh(const pcl::PolygonMesh& input_mesh,
                   const std::vector<int>& inlying_indices,

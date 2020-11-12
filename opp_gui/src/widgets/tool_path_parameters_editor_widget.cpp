@@ -64,14 +64,9 @@ ToolPathParametersEditorWidget::ToolPathParametersEditorWidget(ros::NodeHandle& 
           static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
           this,
           &ToolPathParametersEditorWidget::updateDwellTime);
-  connect(this,
-	  &ToolPathParametersEditorWidget::polylinePathGen,
-          this,
-          &ToolPathParametersEditorWidget::onPolylinePathGen);
-  connect(this,
-	  &ToolPathParametersEditorWidget::QWarningBox,
-          this,
-          &ToolPathParametersEditorWidget::onQWarningBox);
+  connect(
+      this, &ToolPathParametersEditorWidget::polylinePathGen, this, &ToolPathParametersEditorWidget::onPolylinePathGen);
+  connect(this, &ToolPathParametersEditorWidget::QWarningBox, this, &ToolPathParametersEditorWidget::onQWarningBox);
 }
 
 void ToolPathParametersEditorWidget::init(const shape_msgs::Mesh& mesh) { mesh_.reset(new shape_msgs::Mesh(mesh)); }
@@ -183,26 +178,27 @@ void ToolPathParametersEditorWidget::onPolylinePath(const std::vector<int> pnt_i
     emit QWarningBox("Mesh has not yet been specified");
     return;
   }
-  
+
   // Create an action goal with only one set of sources and configs
   heat_msgs::GenerateHeatToolPathsGoal goal;
   // copy pnt_indices into goal as the sources
   heat_msgs::Source S;
-  for(int i=0; i<pnt_indices.size(); i++)
-    {
-      S.source_indices.push_back(pnt_indices[i]);
-    }
-  if(pnt_indices.size() == 0)
-    {
-      emit QWarningBox("No path points selected, using raster angle instead");
-    }
+  for (int i = 0; i < pnt_indices.size(); i++)
+  {
+    S.source_indices.push_back(pnt_indices[i]);
+  }
+  if (pnt_indices.size() == 0)
+  {
+    emit QWarningBox("No path points selected, using raster angle instead");
+  }
   goal.sources.push_back(S);
   goal.path_configs.push_back(getHeatRasterGeneratorConfig());
   goal.surface_meshes.push_back(*mesh_);
   goal.proceed_on_failure = false;
 
-  heat_client_.sendGoal(goal, boost::bind(&ToolPathParametersEditorWidget::onGenerateHeatToolPathsComplete, this, _1, _2));
-  
+  heat_client_.sendGoal(goal,
+                        boost::bind(&ToolPathParametersEditorWidget::onGenerateHeatToolPathsComplete, this, _1, _2));
+
   progress_dialog_ = new QProgressDialog(this);
   progress_dialog_->setModal(true);
   progress_dialog_->setLabelText("Heat Path Planning Progress");
@@ -212,7 +208,6 @@ void ToolPathParametersEditorWidget::onPolylinePath(const std::vector<int> pnt_i
   progress_dialog_->setValue(progress_dialog_->minimum());
   progress_dialog_->show();
 }
-
 
 void ToolPathParametersEditorWidget::onPolylinePathGen(const std::vector<int> pnt_indices)
 {
@@ -234,17 +229,18 @@ void ToolPathParametersEditorWidget::onPolylinePathGen(const std::vector<int> pn
   heat_msgs::GenerateHeatToolPathsGoal goal;
   // copy pnt_indices into goal as the sources
   heat_msgs::Source S;
-  for(int i=0; i<pnt_indices.size(); i++)
-    {
-      S.source_indices.push_back(pnt_indices[i]);
-    }
+  for (int i = 0; i < pnt_indices.size(); i++)
+  {
+    S.source_indices.push_back(pnt_indices[i]);
+  }
   goal.sources.push_back(S);
   goal.path_configs.push_back(getHeatRasterGeneratorConfig());
   goal.surface_meshes.push_back(*mesh_);
   goal.proceed_on_failure = false;
 
-  heat_client_.sendGoal(goal, boost::bind(&ToolPathParametersEditorWidget::onGenerateHeatToolPathsComplete, this, _1, _2));
-  
+  heat_client_.sendGoal(goal,
+                        boost::bind(&ToolPathParametersEditorWidget::onGenerateHeatToolPathsComplete, this, _1, _2));
+
   progress_dialog_ = new QProgressDialog(this);
   progress_dialog_->setModal(true);
   progress_dialog_->setLabelText("Heat Path Planning Progress");

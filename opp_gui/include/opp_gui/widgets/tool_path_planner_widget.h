@@ -53,7 +53,7 @@ public:
                         const ros::NodeHandle& nh = ros::NodeHandle("~"),
                         const std::vector<std::string>& frames = { "map" });
 
- Q_SIGNALS:
+Q_SIGNALS:
   void QWarningBox(std::string warn_string);
 
 protected Q_SLOTS:
@@ -82,7 +82,6 @@ protected Q_SLOTS:
   void deletePart();
   void deleteJob();
   void refresh();
-
 
 private:
   void clear();

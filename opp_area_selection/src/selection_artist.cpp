@@ -349,8 +349,9 @@ bool SelectionArtist::transformPoint(const geometry_msgs::PointStamped::ConstPtr
 
 void SelectionArtist::addSelectionPoint(const geometry_msgs::PointStampedConstPtr pt_stamped)
 {
-  if(!enabled_) return;
-  
+  if (!enabled_)
+    return;
+
   geometry_msgs::Point pt;
   if (!transformPoint(pt_stamped, pt))
   {
@@ -428,8 +429,5 @@ void SelectionArtist::filterMesh(const pcl::PolygonMesh& input_mesh,
   return;
 }
 
-void  SelectionArtist::enable(bool value)
-{
-  enabled_ = value;
-}
+void SelectionArtist::enable(bool value) { enabled_ = value; }
 }  // namespace opp_area_selection

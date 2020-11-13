@@ -46,7 +46,6 @@ ToolPathParametersEditorWidget::ToolPathParametersEditorWidget(ros::NodeHandle& 
   ui_->double_spin_box_min_segment_length->setRange(0.0, std::numeric_limits<double>::max());
   ui_->double_spin_box_intersecting_plane_height->setRange(0.0, std::numeric_limits<double>::max());
   ui_->double_spin_box_raster_angle->setRange(-180., 180.);
-
   ui_->spin_box_dwell_time->setRange(0, std::numeric_limits<int>::max());
 
   // Add values to the process type drop-down
@@ -87,6 +86,8 @@ noether_msgs::ToolPathConfig ToolPathParametersEditorWidget::getToolPathConfig()
   noether_msgs::ToolPathConfig config;
 
   // Create a path configuration from the line edit fields
+
+  //  config.type = noether_msgs::ToolPathConfig::SURFACE_WALK_RASTER_GENERATOR;
   config.surface_walk_generator.point_spacing = ui_->double_spin_box_point_spacing->value();
   config.surface_walk_generator.tool_offset = ui_->double_spin_box_tool_z_offset->value();
   config.surface_walk_generator.raster_spacing = ui_->double_spin_box_line_spacing->value();
@@ -96,6 +97,12 @@ noether_msgs::ToolPathConfig ToolPathParametersEditorWidget::getToolPathConfig()
   config.surface_walk_generator.raster_rot_offset = ui_->double_spin_box_raster_angle->value() * M_PI / 180.0;
   config.surface_walk_generator.raster_wrt_global_axes = false;
 
+  config.type = noether_msgs::ToolPathConfig::PLANE_SLICER_RASTER_GENERATOR;
+  config.plane_slicer_generator.raster_spacing = ui_->double_spin_box_line_spacing->value();
+  config.plane_slicer_generator.point_spacing = ui_->double_spin_box_point_spacing->value();
+  config.plane_slicer_generator.min_segment_size = ui_->double_spin_box_min_segment_length->value();
+  config.plane_slicer_generator.min_hole_size = ui_->double_spin_box_min_hole_size->value();
+  config.plane_slicer_generator.tool_offset = ui_->double_spin_box_tool_z_offset->value();
   return config;
 }
 
@@ -261,7 +268,7 @@ void ToolPathParametersEditorWidget::onGenerateToolPathsComplete(
     ros::Duration(0.01).sleep();
   }
   progress_dialog_->hide();
-
+  
   if (state != actionlib::SimpleClientGoalState::SUCCEEDED)
   {
     std::string message = "Action '" + GENERATE_TOOLPATHS_ACTION + "' failed to succeed";
@@ -273,14 +280,23 @@ void ToolPathParametersEditorWidget::onGenerateToolPathsComplete(
     {
       emit QWarningBox("Tool path generation failed");
     }
+    else if (res->tool_paths[0].paths.size()<1 || res->tool_paths[0].paths[0].segments.size() < 1)
+      {
+      emit QWarningBox("Tool path generation succeeded, but not paths returned");
+      }
     else
     {
-      ROS_INFO_STREAM("Successfully generated tool path");
-
+      ROS_INFO_STREAM("Successfully generated tool path returned from action");
       opp_msgs::ToolPath tp;
       tp.header.stamp = ros::Time::now();
       tp.process_type.val = qvariant_cast<opp_msgs::ProcessType::_val_type>(ui_->combo_box_process_type->currentData());
-      tp.paths = res->tool_paths[0].paths[0].segments;  // TODO, do something smart with the array of arrays issue here
+      for(size_t i=0; i<res->tool_paths[0].paths.size(); i++)
+	{
+	  for(size_t j=0; j<res->tool_paths[0].paths[i].segments.size(); j++)
+	    {
+	      tp.paths.push_back(res->tool_paths[0].paths[i].segments[j]);
+	    }
+	}
       tp.params.config.surface_walk_generator.point_spacing = ui_->double_spin_box_point_spacing->value();
       tp.params.config.surface_walk_generator.tool_offset = ui_->double_spin_box_tool_z_offset->value();
       tp.params.config.surface_walk_generator.raster_spacing = ui_->double_spin_box_line_spacing->value();
@@ -294,6 +310,14 @@ void ToolPathParametersEditorWidget::onGenerateToolPathsComplete(
           false;  // No option to set this from GUI at present.
       tp.params.config.surface_walk_generator.intersection_plane_height =
           ui_->double_spin_box_intersecting_plane_height->value();
+
+      tp.params.config.plane_slicer_generator.point_spacing = ui_->double_spin_box_point_spacing->value();
+      tp.params.config.plane_slicer_generator.tool_offset = ui_->double_spin_box_tool_z_offset->value();
+      tp.params.config.plane_slicer_generator.raster_spacing = ui_->double_spin_box_line_spacing->value();
+      tp.params.config.plane_slicer_generator.raster_rot_offset =
+          ui_->double_spin_box_raster_angle->value() * M_PI / 180.0;
+      tp.params.config.plane_slicer_generator.min_hole_size = ui_->double_spin_box_min_hole_size->value();
+      tp.params.config.plane_slicer_generator.min_segment_size = ui_->double_spin_box_min_segment_length->value();
 
       // Create the tool path offset transform
       // 1. Add z offset

@@ -268,7 +268,7 @@ void ToolPathParametersEditorWidget::onGenerateToolPathsComplete(
     ros::Duration(0.01).sleep();
   }
   progress_dialog_->hide();
-  
+
   if (state != actionlib::SimpleClientGoalState::SUCCEEDED)
   {
     std::string message = "Action '" + GENERATE_TOOLPATHS_ACTION + "' failed to succeed";
@@ -280,23 +280,23 @@ void ToolPathParametersEditorWidget::onGenerateToolPathsComplete(
     {
       emit QWarningBox("Tool path generation failed");
     }
-    else if (res->tool_paths[0].paths.size()<1 || res->tool_paths[0].paths[0].segments.size() < 1)
-      {
+    else if (res->tool_paths[0].paths.size() < 1 || res->tool_paths[0].paths[0].segments.size() < 1)
+    {
       emit QWarningBox("Tool path generation succeeded, but not paths returned");
-      }
+    }
     else
     {
       ROS_INFO_STREAM("Successfully generated tool path returned from action");
       opp_msgs::ToolPath tp;
       tp.header.stamp = ros::Time::now();
       tp.process_type.val = qvariant_cast<opp_msgs::ProcessType::_val_type>(ui_->combo_box_process_type->currentData());
-      for(size_t i=0; i<res->tool_paths[0].paths.size(); i++)
-	{
-	  for(size_t j=0; j<res->tool_paths[0].paths[i].segments.size(); j++)
-	    {
-	      tp.paths.push_back(res->tool_paths[0].paths[i].segments[j]);
-	    }
-	}
+      for (size_t i = 0; i < res->tool_paths[0].paths.size(); i++)
+      {
+        for (size_t j = 0; j < res->tool_paths[0].paths[i].segments.size(); j++)
+        {
+          tp.paths.push_back(res->tool_paths[0].paths[i].segments[j]);
+        }
+      }
       tp.params.config.surface_walk_generator.point_spacing = ui_->double_spin_box_point_spacing->value();
       tp.params.config.surface_walk_generator.tool_offset = ui_->double_spin_box_tool_z_offset->value();
       tp.params.config.surface_walk_generator.raster_spacing = ui_->double_spin_box_line_spacing->value();

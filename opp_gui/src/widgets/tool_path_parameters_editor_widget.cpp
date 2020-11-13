@@ -86,8 +86,8 @@ noether_msgs::ToolPathConfig ToolPathParametersEditorWidget::getToolPathConfig()
   noether_msgs::ToolPathConfig config;
 
   // Create a path configuration from the line edit fields
+  config.type = noether_msgs::ToolPathConfig::PLANE_SLICER_RASTER_GENERATOR; // was SURFACE_WALK_RASTER_GENERATOR;
 
-  //  config.type = noether_msgs::ToolPathConfig::SURFACE_WALK_RASTER_GENERATOR;
   config.surface_walk_generator.point_spacing = ui_->double_spin_box_point_spacing->value();
   config.surface_walk_generator.tool_offset = ui_->double_spin_box_tool_z_offset->value();
   config.surface_walk_generator.raster_spacing = ui_->double_spin_box_line_spacing->value();
@@ -97,7 +97,6 @@ noether_msgs::ToolPathConfig ToolPathParametersEditorWidget::getToolPathConfig()
   config.surface_walk_generator.raster_rot_offset = ui_->double_spin_box_raster_angle->value() * M_PI / 180.0;
   config.surface_walk_generator.raster_wrt_global_axes = false;
 
-  config.type = noether_msgs::ToolPathConfig::PLANE_SLICER_RASTER_GENERATOR;
   config.plane_slicer_generator.raster_spacing = ui_->double_spin_box_line_spacing->value();
   config.plane_slicer_generator.point_spacing = ui_->double_spin_box_point_spacing->value();
   config.plane_slicer_generator.min_segment_size = ui_->double_spin_box_min_segment_length->value();

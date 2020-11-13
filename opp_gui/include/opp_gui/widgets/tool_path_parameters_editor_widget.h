@@ -84,9 +84,6 @@ Q_SIGNALS:
   // signal emitted when ros thread wants a warning box
   void QWarningBox(std::string warn_string);
 
-  // signal emitted when ros thread wants a error box
-  void QErrorBox(std::string error_string);
-
 private Q_SLOTS:
 
   void updateProcessType(const QString&);

@@ -86,7 +86,7 @@ noether_msgs::ToolPathConfig ToolPathParametersEditorWidget::getToolPathConfig()
   noether_msgs::ToolPathConfig config;
 
   // Create a path configuration from the line edit fields
-  config.type = noether_msgs::ToolPathConfig::PLANE_SLICER_RASTER_GENERATOR; // was SURFACE_WALK_RASTER_GENERATOR;
+  config.type = noether_msgs::ToolPathConfig::PLANE_SLICER_RASTER_GENERATOR;  // was SURFACE_WALK_RASTER_GENERATOR;
 
   config.surface_walk_generator.point_spacing = ui_->double_spin_box_point_spacing->value();
   config.surface_walk_generator.tool_offset = ui_->double_spin_box_tool_z_offset->value();

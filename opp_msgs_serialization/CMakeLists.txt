@@ -11,13 +11,8 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   sensor_msgs
   std_msgs
-  roscpp_serialization
+  message_serialization
 )
-
-find_package(yaml-cpp REQUIRED)
-
-# Prevents certain runtime errors in Ubuntu 18.04
-add_definitions(${PCL_DEFINITIONS})
 
 catkin_package(
   INCLUDE_DIRS
@@ -31,8 +26,7 @@ catkin_package(
     noether_msgs
     roscpp
     opp_msgs
-  DEPENDS
-    YAML_CPP
+    message_serialization
 )
 
 ###########
@@ -42,7 +36,6 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
-  ${YAML_CPP_INCLUDE_DIRS}
 )
 
 #############
@@ -64,6 +57,5 @@ if(CATKIN_ENABLE_TESTING)
   )
   target_link_libraries(${PROJECT_NAME}_test
     ${catkin_LIBRARIES}
-    yaml-cpp
   )
 endif()

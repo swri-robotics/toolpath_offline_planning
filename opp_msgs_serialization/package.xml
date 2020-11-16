@@ -18,6 +18,7 @@
   <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>
   <depend>roscpp_serialization</depend>
+  <depend>message_serialization</depend>
 
   <test_depend>rostest</test_depend>
 </package>

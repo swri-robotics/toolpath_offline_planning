@@ -23,7 +23,7 @@
 
 #include <eigen_conversions/eigen_msg.h>
 #include <geometry_msgs/PointStamped.h>
-#include <opp_msgs_serialization/serialize.h>
+#include <message_serialization/serialize.h>
 #include <ros/package.h>
 #include <shape_msgs/Mesh.h>
 #include <tf/tf.h>
@@ -331,7 +331,7 @@ bool PathSelectionArtist::collectPathPointsCloudCb(opp_msgs::GetPathSelectionClo
 
   // get parameters from file. Note: This file is specified on construction, re-read allows dynamic changes
   PathSelectorParameters params;
-  bool success = opp_msgs_serialization::deserialize(path_selection_config_file, params);
+  bool success = message_serialization::deserialize(path_selection_config_file, params);
   if (!success)
   {
     ROS_ERROR_STREAM("Could not load path selection config from: " << path_selection_config_file);
@@ -384,7 +384,7 @@ bool PathSelectionArtist::collectPathPointsMeshCb(opp_msgs::GetPathSelectionMesh
 
   // get parameters from file. Note: This file is specified on construction, re-read allows dynamic changes
   PathSelectorParameters params;
-  bool success = opp_msgs_serialization::deserialize(path_selection_config_file, params);
+  bool success = message_serialization::deserialize(path_selection_config_file, params);
   if (!success)
   {
     ROS_ERROR_STREAM("Could not load path selection config from: " << path_selection_config_file);

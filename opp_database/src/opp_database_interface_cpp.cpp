@@ -27,6 +27,12 @@
 #include <ros/console.h>
 
 #include <message_serialization/serialize.h>
+#include <message_serialization/trajectory_msgs_yaml.h>
+#include <message_serialization/geometry_msgs_yaml.h>
+#include <message_serialization/std_msgs_yaml.h>
+#include <message_serialization/sensor_msgs_yaml.h>
+#include <message_serialization/shape_msgs_yaml.h>
+#include <message_serialization/eigen_yaml.h>
 #include <opp_msgs_serialization/opp_msgs_yaml.h>
 
 namespace opp_db

@@ -4,17 +4,17 @@
     uri: 'https://github.com/ros-perception/perception_pcl.git'
     version: 1.7.1
 
-# Noether
+# Noether PR #114
 - git:
     local-name: noether
-    uri: 'https://github.com/ros-industrial/noether.git'
-    version: 9c97ac493f9eb2cee83523fadf5cf331f2c22ceb
+    uri: 'https://github.com/drchrislewis/noether.git'
+    version: 33830b1c8e72227b72a94e98b921569bc1b2f554
 
-# heat_raster
+# heat_raster current master
 - git:
     local-name: heat_raster
-    uri: 'https://github.com/ros-industrial/heat_raster.git'
-    version: a4d5696a98655fd538a66a5a43a5551c29d3f24f
+    uri: 'https://github.com/swri-robotics/heat_raster.git'
+    version: 6d74f2ad8010b824736dc5057c643ef21021c778
 
 # RViz Tool Cursor
 - git:

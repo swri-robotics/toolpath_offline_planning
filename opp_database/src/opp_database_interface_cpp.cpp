@@ -26,7 +26,7 @@
 
 #include <ros/console.h>
 
-#include <opp_msgs_serialization/serialize.h>
+#include <message_serialization/serialize.h>
 #include <opp_msgs_serialization/opp_msgs_yaml.h>
 
 namespace opp_db
@@ -66,7 +66,7 @@ long int ROSDatabaseInterface::addJobToDatabase(const opp_msgs::Job& job, std::s
 
   std::string filepath =
       save_dir_ + "/job_" + job.name + "_" + boost::posix_time::to_iso_string(ros::Time::now().toBoost()) + ".yaml";
-  bool success = opp_msgs_serialization::serialize(filepath, job.paths);
+  bool success = message_serialization::serialize(filepath, job.paths);
   if (!success)
   {
     message = "Failed to save tool paths to file at '" + filepath + "'";
@@ -92,7 +92,7 @@ long int ROSDatabaseInterface::addPartToDatabase(const opp_msgs::Part& part, std
 
   // touchoff_points
   std::string filepath = save_dir_ + "/touch_pts_" + part.name + "_" + time + ".yaml";
-  bool success = opp_msgs_serialization::serialize(filepath, part.touch_points);
+  bool success = message_serialization::serialize(filepath, part.touch_points);
   if (!success)
   {
     message = "Failed to save touchoff points to file '" + filepath + "'";
@@ -103,7 +103,7 @@ long int ROSDatabaseInterface::addPartToDatabase(const opp_msgs::Part& part, std
 
   // verification_points
   filepath = save_dir_ + "/verification_points_" + part.name + "_" + time + ".yaml";
-  success = opp_msgs_serialization::serialize(filepath, part.verification_points);
+  success = message_serialization::serialize(filepath, part.verification_points);
   if (!success)
   {
     message = "Failed to save verification points to file '" + filepath + "'";
@@ -147,7 +147,7 @@ bool ROSDatabaseInterface::getJobFromDatabase(const unsigned int job_id, std::st
   job.part_id = result.value("part_id").toUInt();
 
   const std::string file_path = result.value("paths").toString().toStdString();
-  bool success = opp_msgs_serialization::deserialize(file_path, job.paths);
+  bool success = message_serialization::deserialize(file_path, job.paths);
   if (!success)
   {
     message = "Failed to load tool paths file from '" + file_path + "'";
@@ -191,7 +191,7 @@ bool ROSDatabaseInterface::getAllJobsFromDatabase(const unsigned int part_id,
     j.part_id = result.value("part_id").toUInt();
 
     const std::string filepath = result.value("paths").toString().toStdString();
-    bool success = opp_msgs_serialization::deserialize(filepath, j.paths);
+    bool success = message_serialization::deserialize(filepath, j.paths);
     if (!success)
     {
       message = "Failed to load tool path file from '" + filepath + "'";
@@ -237,7 +237,7 @@ bool ROSDatabaseInterface::getPartFromDatabase(const unsigned int part_id, std::
   part.mesh_resource = result.value("mesh_resource").toString().toStdString();
 
   const std::string touchoff_pts_filename = result.value("touchoff_points").toString().toStdString();
-  bool success = opp_msgs_serialization::deserialize(touchoff_pts_filename, part.touch_points);
+  bool success = message_serialization::deserialize(touchoff_pts_filename, part.touch_points);
   if (!success)
   {
     message = "Failed to load touchoff points from '" + touchoff_pts_filename + "'";
@@ -245,7 +245,7 @@ bool ROSDatabaseInterface::getPartFromDatabase(const unsigned int part_id, std::
   }
 
   const std::string verification_pts_filename = result.value("verification_points").toString().toStdString();
-  success = opp_msgs_serialization::deserialize(verification_pts_filename, part.verification_points);
+  success = message_serialization::deserialize(verification_pts_filename, part.verification_points);
   if (!success)
   {
     message = "Failed to load verification points from '" + verification_pts_filename + "'";
@@ -285,7 +285,7 @@ bool ROSDatabaseInterface::getAllPartsFromDatabase(std::string& message, std::ma
     p.mesh_resource = result.value("mesh_resource").toString().toStdString();
 
     const std::string touch_pts_filename = result.value("touchoff_points").toString().toStdString();
-    bool success = opp_msgs_serialization::deserialize(touch_pts_filename, p.touch_points);
+    bool success = message_serialization::deserialize(touch_pts_filename, p.touch_points);
     if (!success)
     {
       message = "Failed to load touchoff points from '" + touch_pts_filename + "'";
@@ -293,7 +293,7 @@ bool ROSDatabaseInterface::getAllPartsFromDatabase(std::string& message, std::ma
     }
 
     const std::string verification_pts_filename = result.value("verification_points").toString().toStdString();
-    success = opp_msgs_serialization::deserialize(verification_pts_filename, p.verification_points);
+    success = message_serialization::deserialize(verification_pts_filename, p.verification_points);
     if (!success)
     {
       message = "Failed to load verification points from '" + verification_pts_filename + "'";

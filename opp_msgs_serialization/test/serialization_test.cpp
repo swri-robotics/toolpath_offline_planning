@@ -15,7 +15,7 @@
  */
 
 #include <opp_msgs_serialization/opp_msgs_yaml.h>
-#include <opp_msgs_serialization/serialize.h>
+#include <message_serialization/serialize.h>
 #include <gtest/gtest.h>
 
 TEST(opp_serialization, process_type)
@@ -24,11 +24,11 @@ TEST(opp_serialization, process_type)
   opp_msgs::ProcessType orig_msg;
   orig_msg.val = opp_msgs::ProcessType::PROCESS_PAINT;
 
-  bool result = opp_msgs_serialization::serialize(file, orig_msg);
+  bool result = message_serialization::serialize(file, orig_msg);
   EXPECT_TRUE(result);
 
   opp_msgs::ProcessType new_msg;
-  bool load_result = opp_msgs_serialization::deserialize(file, new_msg);
+  bool load_result = message_serialization::deserialize(file, new_msg);
   EXPECT_TRUE(load_result);
 
   bool eq = (orig_msg.val == new_msg.val);
@@ -49,11 +49,11 @@ TEST(opp_serialization, touch_point)
   orig_msg.transform.pose.orientation.y = 1.0;
   orig_msg.transform.pose.orientation.z = 1.0;
 
-  bool save_result = opp_msgs_serialization::serialize(file, orig_msg);
+  bool save_result = message_serialization::serialize(file, orig_msg);
   EXPECT_TRUE(save_result);
 
   opp_msgs::TouchPoint new_msg;
-  bool load_result = opp_msgs_serialization::deserialize(file, new_msg);
+  bool load_result = message_serialization::deserialize(file, new_msg);
   EXPECT_TRUE(load_result);
 
   EXPECT_EQ(new_msg.name, orig_msg.name);
@@ -101,11 +101,11 @@ TEST(opp_serialization, tool_path)
     orig_msg.paths.push_back(std::move(segment));
   }
 
-  bool result = opp_msgs_serialization::serialize(file, orig_msg);
+  bool result = message_serialization::serialize(file, orig_msg);
   EXPECT_TRUE(result);
 
   opp_msgs::ToolPath new_msg;
-  bool load_result = opp_msgs_serialization::deserialize(file, new_msg);
+  bool load_result = message_serialization::deserialize(file, new_msg);
   EXPECT_TRUE(load_result);
 
   EXPECT_EQ(new_msg.process_type.val, orig_msg.process_type.val);

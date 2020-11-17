@@ -23,7 +23,7 @@
 
 #include <eigen_conversions/eigen_msg.h>
 #include <geometry_msgs/PointStamped.h>
-#include <opp_msgs_serialization/serialize.h>
+#include <message_serialization/serialize.h>
 #include <ros/package.h>
 #include <shape_msgs/Mesh.h>
 #include <tf/tf.h>
@@ -293,7 +293,7 @@ bool SelectionArtist::collectROIPointsCb(opp_msgs::GetROISelectionRequest& req, 
   pcl::fromROSMsg(req.input_cloud, *cloud);
 
   AreaSelectorParameters params;
-  bool success = opp_msgs_serialization::deserialize(area_selection_config_file, params);
+  bool success = message_serialization::deserialize(area_selection_config_file, params);
   if (!success)
   {
     ROS_ERROR_STREAM("Could not load area selection config from: " << area_selection_config_file);

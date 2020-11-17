@@ -33,6 +33,7 @@
   <depend>opp_path_selection</depend>
   <depend>opp_msgs</depend>
   <depend>opp_database</depend>
+  <depend>pcl_ros</depend>
   <depend>rviz</depend>
   <depend>shape_msgs</depend>
   <depend>std_srvs</depend>

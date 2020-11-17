@@ -13,9 +13,6 @@ find_package(catkin REQUIRED COMPONENTS
 find_package(Qt5 REQUIRED COMPONENTS Sql)
 find_package(Boost REQUIRED)
 
-# Prevents certain runtime errors in Ubuntu 18.04
-add_definitions(${PCL_DEFINITIONS})
-
 catkin_package(
   INCLUDE_DIRS
     include
@@ -27,8 +24,9 @@ catkin_package(
     opp_msgs
     opp_msgs_serialization
   DEPENDS
-    Qt5
     Boost
+  CFG_EXTRAS
+    ${PROJECT_NAME}-extras.cmake
 )
 
 include_directories(
@@ -45,7 +43,6 @@ target_link_libraries(${PROJECT_NAME}_cpp
   ${Boost_LIBRARIES}
   Qt5::Sql
 )
-
 
 #############
 ## Install ##

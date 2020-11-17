@@ -17,6 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
   opp_path_selection
   opp_msgs
   opp_database
+  pcl_ros
   rviz
   shape_msgs
   std_srvs
@@ -28,9 +29,6 @@ find_package(Qt5 REQUIRED COMPONENTS
   Widgets
   Sql
 )
-
-find_package(PCL 1.9 REQUIRED)
-add_definitions(${PCL_DEFINITIONS})
 
 catkin_package(
   INCLUDE_DIRS
@@ -53,13 +51,13 @@ catkin_package(
     opp_path_selection
     opp_msgs
     opp_database
+    pcl_ros
     rviz
     shape_msgs
     std_srvs
     visualization_msgs
-  DEPENDS
-    Qt5
-    PCL
+  CFG_EXTRAS
+    ${PROJECT_NAME}-extras.cmake
 )
 
 ###########
@@ -70,7 +68,6 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${CMAKE_CURRENT_BINARY_DIR}
-  ${PCL_INCLUDE_DIRS}
 )
 
 set(opp_gui_UIS
@@ -136,7 +133,6 @@ target_link_libraries(${PROJECT_NAME}_utils
   ${catkin_LIBRARIES}
   ${PCL_LIBRARIES}
   Qt5::Core
-  Qt5::Sql
 )
 
 # Qt Widgets
@@ -150,6 +146,7 @@ target_link_libraries(${PROJECT_NAME}_widgets
   ${PCL_LIBRARIES}
   ${PROJECT_NAME}_utils
   Qt5::Widgets
+  Qt5::Sql
 )
 
 # Rviz Panel
@@ -201,7 +198,6 @@ target_link_libraries(touch_point_editor_demo_app
 ## Install ##
 #############
 
-# Mark executables and/or libraries for installation
 install(
   TARGETS
     ${PROJECT_NAME}_panels
@@ -216,15 +212,14 @@ install(
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-# Mark cpp header files for installation
 install(DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-# Mark other files for installation (e.g. launch and bag files, etc.)
 install(DIRECTORY ui/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/ui
 )
+
 install(
   FILES
     plugin_description.xml

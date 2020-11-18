@@ -286,21 +286,17 @@ struct convert<opp_msgs::ToolPath>
   static bool decode(const Node& node, opp_msgs::ToolPath& rhs)
   {
     // Allow both old entries (without Noether params) and new entries (with Noether params)
-    if (node.size() != 5 && node.size() != 6)
-      return false;
-
+    if (node.size() != 6)
+      {
+	return false;
+      }
     // Get the opp_msgs::ToolPath fields
     rhs.header = node["header"].as<decltype(rhs.header)>();
     rhs.process_type = node["process_type"].as<decltype(rhs.process_type)>();
     rhs.paths = node["paths"].as<decltype(rhs.paths)>();
     rhs.dwell_time = node["dwell_time"].as<decltype(rhs.dwell_time)>();
     rhs.tool_offset = node["tool_offset"].as<decltype(rhs.tool_offset)>();
-
-    // Get the Noether parameters, if they exist
-    if (node["params"])
-    {
-      rhs.params = node["params"].as<decltype(rhs.params)>();
-    }
+    //rhs.params = node["params"].as<decltype(rhs.params)>();
     return true;
   }
 };

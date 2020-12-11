@@ -102,6 +102,8 @@ noether_msgs::ToolPathConfig ToolPathParametersEditorWidget::getToolPathConfig()
   config.plane_slicer_generator.min_segment_size = ui_->double_spin_box_min_segment_length->value();
   config.plane_slicer_generator.min_hole_size = ui_->double_spin_box_min_hole_size->value();
   config.plane_slicer_generator.tool_offset = ui_->double_spin_box_tool_z_offset->value();
+  config.plane_slicer_generator.raster_rot_offset = ui_->double_spin_box_raster_angle->value() * M_PI / 180.0;
+
   return config;
 }
 

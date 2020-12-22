@@ -296,7 +296,6 @@ struct convert<opp_msgs::ToolPath>
     rhs.paths = node["paths"].as<decltype(rhs.paths)>();
     rhs.dwell_time = node["dwell_time"].as<decltype(rhs.dwell_time)>();
     rhs.tool_offset = node["tool_offset"].as<decltype(rhs.tool_offset)>();
-    //rhs.params = node["params"].as<decltype(rhs.params)>();
     return true;
   }
 };

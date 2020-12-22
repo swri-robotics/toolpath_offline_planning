@@ -31,5 +31,5 @@
 # Message serialization
 - git:
     local-name: message_serialization
-    uri: 'https://github.com/swri-robotics/message_serialization.git'
-    version: 0.1.0
+    uri: 'https://github.com/drchrislewis/message_serialization.git'
+    version: shape_msgs

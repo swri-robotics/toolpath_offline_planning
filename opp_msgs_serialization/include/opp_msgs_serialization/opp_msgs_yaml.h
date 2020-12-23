@@ -99,7 +99,6 @@ struct convert<noether_msgs::SurfaceWalkRasterGeneratorConfig>
     node["min_hole_size"] = rhs.min_hole_size;
     node["min_segment_size"] = rhs.min_segment_size;
     node["raster_rot_offset"] = rhs.raster_rot_offset;
-    node["raster_wrt_global_axes"] = rhs.raster_wrt_global_axes;
     node["generate_extra_rasters"] = rhs.generate_extra_rasters;
     return node;
   }
@@ -115,7 +114,6 @@ struct convert<noether_msgs::SurfaceWalkRasterGeneratorConfig>
     rhs.min_hole_size = node["min_hole_size"].as<decltype(rhs.min_hole_size)>();
     rhs.min_segment_size = node["min_segment_size"].as<decltype(rhs.min_segment_size)>();
     rhs.raster_rot_offset = node["raster_rot_offset"].as<decltype(rhs.raster_rot_offset)>();
-    rhs.raster_wrt_global_axes = node["raster_wrt_global_axes"].as<decltype(rhs.raster_wrt_global_axes)>();
     rhs.generate_extra_rasters = node["generate_extra_rasters"].as<decltype(rhs.generate_extra_rasters)>();
     return true;
   }

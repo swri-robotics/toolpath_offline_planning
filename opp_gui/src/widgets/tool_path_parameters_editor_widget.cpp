@@ -95,7 +95,6 @@ noether_msgs::ToolPathConfig ToolPathParametersEditorWidget::getToolPathConfig()
   config.surface_walk_generator.min_segment_size = ui_->double_spin_box_min_segment_length->value();
   config.surface_walk_generator.intersection_plane_height = ui_->double_spin_box_intersecting_plane_height->value();
   config.surface_walk_generator.raster_rot_offset = ui_->double_spin_box_raster_angle->value() * M_PI / 180.0;
-  config.surface_walk_generator.raster_wrt_global_axes = false;
 
   config.plane_slicer_generator.raster_spacing = ui_->double_spin_box_line_spacing->value();
   config.plane_slicer_generator.point_spacing = ui_->double_spin_box_point_spacing->value();
@@ -307,7 +306,6 @@ void ToolPathParametersEditorWidget::onGenerateToolPathsComplete(
       tp.params.config.surface_walk_generator.min_segment_size = ui_->double_spin_box_min_segment_length->value();
       tp.params.config.surface_walk_generator.generate_extra_rasters =
           false;  // No option to set this from GUI at present.
-      tp.params.config.surface_walk_generator.raster_wrt_global_axes =
           false;  // No option to set this from GUI at present.
       tp.params.config.surface_walk_generator.intersection_plane_height =
           ui_->double_spin_box_intersecting_plane_height->value();

@@ -306,7 +306,7 @@ void ToolPathParametersEditorWidget::onGenerateToolPathsComplete(
       tp.params.config.surface_walk_generator.min_segment_size = ui_->double_spin_box_min_segment_length->value();
       tp.params.config.surface_walk_generator.generate_extra_rasters =
           false;  // No option to set this from GUI at present.
-          false;  // No option to set this from GUI at present.
+      false;      // No option to set this from GUI at present.
       tp.params.config.surface_walk_generator.intersection_plane_height =
           ui_->double_spin_box_intersecting_plane_height->value();
 

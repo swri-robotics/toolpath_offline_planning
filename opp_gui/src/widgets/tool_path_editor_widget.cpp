@@ -268,8 +268,9 @@ void ToolPathEditorWidget::onPolylinePath(const std::vector<int> pnt_indices)
 {
   // TODO: First find shortest path on surface between each segments same as with pathGen
   // TODO TODO TODO TODO
-  std::string msg("new polyline path in ToolPathEditor has %ld pnts", pnt_indices.size());
-  emit QWarningBox(msg.c_str());
+  char old_style[255];
+  sprintf(old_style, "new polyline path in ToolPathEditor has %ld pnts", pnt_indices.size());
+  emit QWarningBox(old_style);
 }
 void ToolPathEditorWidget::onPolylinePathReset(const std::vector<int> pnt_indices)
 {

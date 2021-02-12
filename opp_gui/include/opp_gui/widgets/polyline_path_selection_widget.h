@@ -59,7 +59,7 @@ private Q_SLOTS:
 
   void applyPolylineAsPath();
 
-  void applyPolyline4PathGen();
+  void applyPolylineforPathGen();
 
   void onQWarningBox(std::string warn_string);
 

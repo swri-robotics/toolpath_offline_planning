@@ -52,15 +52,16 @@ public:
    */
   PathSelectionArtist(const ros::NodeHandle& nh, const std::string& world_frame, const std::string& sensor_frame);
 
-  bool clearPathPointsCb(std_srvs::TriggerRequest&, std_srvs::TriggerResponse& res);
-
   bool collectPath(const shape_msgs::Mesh& mesh_msg, std::vector<int>& points_idx, std::string& message);
 
   bool collectPathMesh(const shape_msgs::Mesh& mesh_msg, std::vector<int>& points_idx, std::string& message);
 
   void enable(bool value);
 
+  bool clearPathPointsCb(std_srvs::TriggerRequest&, std_srvs::TriggerResponse& res);
+
 protected:
+
   void getSensorData(const sensor_msgs::PointCloud2::ConstPtr& msg);
 
   void addSelectionPoint(const geometry_msgs::PointStamped::ConstPtr pt_stamped);
@@ -73,9 +74,7 @@ protected:
   bool collectPathPointsMeshCb(opp_msgs::GetPathSelectionMesh::Request& req,
                                opp_msgs::GetPathSelectionMesh::Response& res);
 
-  void filterMesh(const pcl::PolygonMesh& input_mesh,
-                  const std::vector<int>& inlying_indices,
-                  pcl::PolygonMesh& output_mesh);
+  pcl::PolygonMesh filterMesh(const pcl::PolygonMesh& input_mesh, const std::vector<int>& inlying_indices);
 
   ros::NodeHandle nh_;
 

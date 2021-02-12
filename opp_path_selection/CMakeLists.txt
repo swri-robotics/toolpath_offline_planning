@@ -21,9 +21,6 @@ find_package(catkin REQUIRED COMPONENTS
 
 find_package(Eigen3 REQUIRED)
 
-find_package(PCL 1.9 REQUIRED)
-add_definitions(${PCL_DEFINITIONS})
-
 catkin_package(
   INCLUDE_DIRS
     include
@@ -44,14 +41,12 @@ catkin_package(
     visualization_msgs
   DEPENDS
     EIGEN3
-    PCL
 )
 
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIRS}
-  ${PCL_INCLUDE_DIRS}
 )
 
 # Library containing tools for specifying regions
@@ -60,10 +55,11 @@ add_library(path_selection
   src/path_selector.cpp
   src/path_selection_artist.cpp
 )
+
 target_link_libraries(path_selection
   ${catkin_LIBRARIES}
-  ${PCL_LIBRARIES}
 )
+
 add_dependencies(path_selection
   ${catkin_EXPORTED_TARGETS}
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
@@ -73,10 +69,12 @@ add_dependencies(path_selection
 add_executable(path_selection_node
   src/path_selection_node.cpp
 )
+
 target_link_libraries(path_selection_node
   path_selection
   ${catkin_LIBRARIES}
 )
+
 add_dependencies(path_selection_node
   ${catkin_EXPORTED_TARGETS}
   ${${PROJECT_NAME}_EXPORTED_TARGETS}

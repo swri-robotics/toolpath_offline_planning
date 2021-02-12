@@ -55,10 +55,9 @@ bool planeFit(const CloudPtr<PointT> input_cloud,
     ROS_ERROR("Unable to fit a plane to the data");
     return false;
   }
-  ROS_DEBUG_NAMED("[a5::data_filtering]",
-                  "Plane fit: %lu input points, %lu output points",
-                  input_cloud->points.size(),
-                  plane_inliers->indices.size());
+  ROS_DEBUG("Plane fit: %lu input points, %lu output points",
+	    input_cloud->points.size(),
+	    plane_inliers->indices.size());
 
   // Create new point cloud from
   extract.setInputCloud(input_cloud);

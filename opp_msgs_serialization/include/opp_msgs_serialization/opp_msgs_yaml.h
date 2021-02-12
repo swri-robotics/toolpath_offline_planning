@@ -105,7 +105,7 @@ struct convert<noether_msgs::SurfaceWalkRasterGeneratorConfig>
 
   static bool decode(const Node& node, noether_msgs::SurfaceWalkRasterGeneratorConfig& rhs)
   {
-    if (node.size() != 10)
+    if (node.size() != 8)
       return false;
     rhs.raster_spacing = node["raster_spacing"].as<decltype(rhs.raster_spacing)>();
     rhs.point_spacing = node["point_spacing"].as<decltype(rhs.point_spacing)>();
@@ -170,6 +170,7 @@ struct convert<heat_msgs::HeatRasterGeneratorConfig>
   {
     if (node.size() != 7)
       return false;
+    rhs.point_spacing = node["point_spacing"].as<decltype(rhs.point_spacing)>();
     rhs.raster_spacing = node["raster_spacing"].as<decltype(rhs.raster_spacing)>();
     rhs.tool_offset = node["tool_offset"].as<decltype(rhs.tool_offset)>();
     rhs.min_hole_size = node["min_hole_size"].as<decltype(rhs.min_hole_size)>();
@@ -294,6 +295,10 @@ struct convert<opp_msgs::ToolPath>
     rhs.paths = node["paths"].as<decltype(rhs.paths)>();
     rhs.dwell_time = node["dwell_time"].as<decltype(rhs.dwell_time)>();
     rhs.tool_offset = node["tool_offset"].as<decltype(rhs.tool_offset)>();
+    if (node["params"])
+    {
+      rhs.params = node["params"].as<decltype(rhs.params)>();
+    }
     return true;
   }
 };

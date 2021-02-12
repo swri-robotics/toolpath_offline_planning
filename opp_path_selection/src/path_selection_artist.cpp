@@ -30,7 +30,6 @@
 #include <tf_conversions/tf_eigen.h>
 
 #include "opp_path_selection/path_selector.h"
-#include "opp_path_selection/path_selector_parameters.h"
 #include <opp_msgs/GetPathSelectionMesh.h>
 
 namespace opp_path_selection
@@ -162,31 +161,6 @@ bool pclFromShapeMsg(const shape_msgs::Mesh& mesh_msg, pcl::PolygonMesh& pcl_mes
 }
 
 }  // namespace
-
-namespace YAML
-{
-template <>
-struct convert<opp_path_selection::PathSelectorParameters>
-{
-  static Node encode(const opp_path_selection::PathSelectorParameters& rhs)
-  {
-    Node node;
-    node["line_threshold"] = rhs.line_threshold;
-    return node;
-  }
-
-  static bool decode(const Node& node, opp_path_selection::PathSelectorParameters& rhs)
-  {
-    if (node.size() != 1)
-    {
-      return false;
-    }
-    rhs.line_threshold = node["line_threshold"].as<decltype(rhs.line_threshold)>();
-    return true;
-  }
-};
-
-}  // namespace YAML
 
 namespace opp_path_selection
 {
@@ -329,19 +303,10 @@ bool PathSelectionArtist::collectPathPointsCloudCb(opp_msgs::GetPathSelectionClo
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>());
   pcl::fromROSMsg(req.input_cloud, *cloud);
 
-  // get parameters from file. Note: This file is specified on construction, re-read allows dynamic changes
-  PathSelectorParameters params;
-  bool success = message_serialization::deserialize(path_selection_config_file, params);
-  if (!success)
-  {
-    ROS_ERROR_STREAM("Could not load path selection config from: " << path_selection_config_file);
-    return false;
-  }
-
   // get all indices from provided mesh vertices along path
   // TODO replace getRegionOfInterest with a path equivalent
   PathSelector sel;
-  res.cloud_indices = sel.findPointsAlongSegments(cloud, points, params);
+  res.cloud_indices = sel.findPointsAlongSegments(cloud, points);
 
   if (!res.cloud_indices.empty())
   {
@@ -382,19 +347,11 @@ bool PathSelectionArtist::collectPathPointsMeshCb(opp_msgs::GetPathSelectionMesh
     return true;
   }
 
-  // get parameters from file. Note: This file is specified on construction, re-read allows dynamic changes
-  PathSelectorParameters params;
-  bool success = message_serialization::deserialize(path_selection_config_file, params);
-  if (!success)
-  {
-    ROS_ERROR_STREAM("Could not load path selection config from: " << path_selection_config_file);
-    return false;
-  }
 
   // get all indices from provided mesh vertices along path
   // TODO replace getRegionOfInterest with a path equivalent
   PathSelector sel;
-  res.mesh_indices = sel.findPointsAlongSegments(req.input_mesh, points, params);
+  res.mesh_indices = sel.findPointsAlongSegments(req.input_mesh, points);
 
   if (!res.mesh_indices.empty())
   {
@@ -478,9 +435,8 @@ void PathSelectionArtist::addSelectionPoint(const geometry_msgs::PointStampedCon
   marker_pub_.publish(marker_array_);
 }
 
-void PathSelectionArtist::filterMesh(const pcl::PolygonMesh& input_mesh,
-                                     const std::vector<int>& inlying_indices,
-                                     pcl::PolygonMesh& output_mesh)
+pcl::PolygonMesh PathSelectionArtist::filterMesh(const pcl::PolygonMesh& input_mesh,
+						 const std::vector<int>& inlying_indices)
 {
   // mark inlying points as true and outlying points as false
   std::vector<bool> whitelist(input_mesh.cloud.width * input_mesh.cloud.height, false);
@@ -505,9 +461,10 @@ void PathSelectionArtist::filterMesh(const pcl::PolygonMesh& input_mesh,
 
   // Remove unused points and save the result to the output mesh
   pcl::surface::SimplificationRemoveUnusedVertices simplifier;
+  pcl::PolygonMesh output_mesh;
   simplifier.simplify(intermediate_mesh, output_mesh);
 
-  return;
+  return output_mesh;
 }
 
 void PathSelectionArtist::enable(bool value) { enabled_ = value; }

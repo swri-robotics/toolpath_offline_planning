@@ -38,38 +38,10 @@
 
 namespace opp_path_selection
 {
-int PathSelector::pointToLineSegmentDistance(const Eigen::Vector3d& segStart,
-                                             const Eigen::Vector3d& segEnd,
-                                             const Eigen::Vector3d& pt,
-                                             double& distance_to_seg,
-                                             double& distance_along_seg)
-{
-  int rtn = 1;
-  Eigen::Vector3d line = segEnd - segStart;
-  Eigen::Vector3d ptln = pt - segStart;
-  double seg_len = line.norm();
-  line.normalize();
-
-  distance_to_seg = line.cross(ptln).norm();
-  distance_along_seg = line.dot(ptln);
-  if (distance_along_seg < 0)
-  {
-    Eigen::Vector3d dv = segStart - pt;
-    distance_to_seg = dv.norm();
-    rtn = 0;
-  }
-  else if (distance_along_seg > seg_len)
-  {
-    Eigen::Vector3d dv = segEnd - pt;
-    distance_to_seg = dv.norm();
-    rtn = -1;
-  }
-  return rtn;
-}
 
 std::vector<int> PathSelector::findPointsAlongSegments(const shape_msgs::Mesh& input_mesh,
-                                                       const std::vector<Eigen::Vector3d>& points,
-                                                       const PathSelectorParameters& params)
+                                                       const std::vector<Eigen::Vector3d>& points)
+
 {
   // Check size of selection points vector
   if (points.size() < 2)
@@ -81,7 +53,7 @@ std::vector<int> PathSelector::findPointsAlongSegments(const shape_msgs::Mesh& i
   std::vector<int> point_seg_indices;
   for (int i = 0; i < points.size(); i++)
   {
-    double mind = 2000.0;
+    double mind = std::numeric_limits<double>::max();
     int minj = -1;
     // TODO figure out why dmin is not equal to zero
     for (int j = 0; j < input_mesh.vertices.size(); j++)
@@ -138,8 +110,7 @@ std::vector<int> PathSelector::findPointsAlongSegments(const shape_msgs::Mesh& i
         index_map,     // takes a vertex descriptor and finds the index of the vertex
         std::less<double>(),
         boost::closed_plus<double>(),
-        1000.0,
-        //			      (std::numeric_limits<double>::max)(),
+	(std::numeric_limits<double>::max)(),
         0.0,
         boost::default_dijkstra_visitor());
 
@@ -167,8 +138,7 @@ std::vector<int> PathSelector::findPointsAlongSegments(const shape_msgs::Mesh& i
 }
 
 std::vector<int> PathSelector::findPointsAlongSegments(const pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud,
-                                                       const std::vector<Eigen::Vector3d>& points,
-                                                       const PathSelectorParameters& params)
+                                                       const std::vector<Eigen::Vector3d>& points)
 {
   // Check size of selection points vector
   if (points.size() < 2)
@@ -228,7 +198,7 @@ std::vector<int> PathSelector::findPointsAlongSegments(const pcl::PointCloud<pcl
   std::vector<int> point_seg_indices;
   for (int i = 0; i < points.size(); i++)
   {
-    double mind = 2000.0;
+    double mind = std::numeric_limits<double>::max();
     int minj = -1;
     // TODO figure out why dmin is not equal to zero
     for (int j = 0; j < input_cloud->points.size(); j++)
@@ -268,8 +238,7 @@ std::vector<int> PathSelector::findPointsAlongSegments(const pcl::PointCloud<pcl
         index_map,     // takes a vertex descriptor and finds the index of the vertex
         std::less<double>(),
         boost::closed_plus<double>(),
-        1000.0,
-        //			      (std::numeric_limits<double>::max)(),
+	(std::numeric_limits<double>::max)(),
         0.0,
         boost::default_dijkstra_visitor());
 

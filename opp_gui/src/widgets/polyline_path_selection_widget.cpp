@@ -41,7 +41,7 @@ PolylinePathSelectionWidget::PolylinePathSelectionWidget(ros::NodeHandle& nh,
   connect(ui_->push_button_htgen_polyline,
           &QPushButton::clicked,
           this,
-          &PolylinePathSelectionWidget::applyPolyline4PathGen);
+          &PolylinePathSelectionWidget::applyPolylineforPathGen);
   connect(ui_->cbox_update_polyline, &QCheckBox::stateChanged, this, &PolylinePathSelectionWidget::updatePolyline);
   connect(this, &PolylinePathSelectionWidget::QWarningBox, this, &PolylinePathSelectionWidget::onQWarningBox);
   updatePolyline();  // synchronize checkboxes
@@ -99,7 +99,7 @@ void PolylinePathSelectionWidget::applyPolylineAsPath()
   return;
 }
 
-void PolylinePathSelectionWidget::applyPolyline4PathGen()
+void PolylinePathSelectionWidget::applyPolylineforPathGen()
 {
   if (!mesh_)
   {

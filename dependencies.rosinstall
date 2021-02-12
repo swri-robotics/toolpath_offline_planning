@@ -8,13 +8,13 @@
 - git:
     local-name: noether
     uri: 'https://github.com/drchrislewis/noether.git'
-    version: 33830b1c8e72227b72a94e98b921569bc1b2f554
+    version: d7c5a52cb72aa6b828a5c03433a9afac70e16cdd
 
 # heat_raster current master
 - git:
     local-name: heat_raster
     uri: 'https://github.com/swri-robotics/heat_raster.git'
-    version: 6d74f2ad8010b824736dc5057c643ef21021c778
+    version: 
 
 # RViz Tool Cursor
 - git:
@@ -32,4 +32,4 @@
 - git:
     local-name: message_serialization
     uri: 'https://github.com/swri-robotics/message_serialization.git'
-    version: master
+    version: 81bad7772dae6b134fe8ffebedf8de145d854a39

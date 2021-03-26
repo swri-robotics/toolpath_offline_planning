@@ -372,6 +372,7 @@ void ToolPathPlannerWidget::loadJobsFromDatabase()
   std::string message;
   if (!database_.getAllJobsFromDatabase(generated_model_id_, message, jobs_map))
   {
+    emit QWarningBox(message.c_str());
     emit QWarningBox("Could not load any jobs for this part");
     return;
   }

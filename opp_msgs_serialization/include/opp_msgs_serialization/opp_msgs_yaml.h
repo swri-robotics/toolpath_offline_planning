@@ -162,9 +162,9 @@ struct convert<noether_msgs::PlaneSlicerRasterGeneratorConfig>
 };
 
 template <>
-struct convert<heat_msgs::HeatRasterGeneratorConfig>
+struct convert<noether_msgs::HeatRasterGeneratorConfig>
 {
-  static Node encode(const heat_msgs::HeatRasterGeneratorConfig& rhs)
+  static Node encode(const noether_msgs::HeatRasterGeneratorConfig& rhs)
   {
     Node node;
 
@@ -178,7 +178,7 @@ struct convert<heat_msgs::HeatRasterGeneratorConfig>
     return node;
   }
 
-  static bool decode(const Node& node, heat_msgs::HeatRasterGeneratorConfig& rhs)
+  static bool decode(const Node& node, noether_msgs::HeatRasterGeneratorConfig& rhs)
   {
     if (node.size() != 7)
       return false;

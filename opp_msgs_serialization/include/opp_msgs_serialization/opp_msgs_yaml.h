@@ -75,10 +75,10 @@ struct convert<noether_msgs::HalfedgeEdgeGeneratorConfig>
   static bool decode(const Node& node, noether_msgs::HalfedgeEdgeGeneratorConfig& rhs)
   {
     if (node.size() != 7)
-      {
-	return false;
-      }
-    int q=0;
+    {
+      return false;
+    }
+    int q = 0;
 
     rhs.min_num_points = node["min_num_points"].as<decltype(rhs.min_num_points)>();
     rhs.normal_averaging = node["normal_averaging"].as<decltype(rhs.normal_averaging)>();
@@ -306,7 +306,7 @@ struct convert<opp_msgs::ToolPath>
     // Get the opp_msgs::ToolPath fields
     rhs.header = node["header"].as<decltype(rhs.header)>();
     rhs.process_type = node["process_type"].as<decltype(rhs.process_type)>();
-    rhs.paths = node["paths"].as< std::vector<geometry_msgs::PoseArray> >();
+    rhs.paths = node["paths"].as<std::vector<geometry_msgs::PoseArray> >();
     rhs.dwell_time = node["dwell_time"].as<decltype(rhs.dwell_time)>();
     rhs.tool_offset = node["tool_offset"].as<decltype(rhs.tool_offset)>();
     if (node["params"])

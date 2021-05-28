@@ -38,7 +38,6 @@
 
 namespace opp_path_selection
 {
-
 std::vector<int> PathSelector::findPointsAlongSegments(const shape_msgs::Mesh& input_mesh,
                                                        const std::vector<Eigen::Vector3d>& points)
 
@@ -110,7 +109,7 @@ std::vector<int> PathSelector::findPointsAlongSegments(const shape_msgs::Mesh& i
         index_map,     // takes a vertex descriptor and finds the index of the vertex
         std::less<double>(),
         boost::closed_plus<double>(),
-	(std::numeric_limits<double>::max)(),
+        (std::numeric_limits<double>::max)(),
         0.0,
         boost::default_dijkstra_visitor());
 
@@ -238,7 +237,7 @@ std::vector<int> PathSelector::findPointsAlongSegments(const pcl::PointCloud<pcl
         index_map,     // takes a vertex descriptor and finds the index of the vertex
         std::less<double>(),
         boost::closed_plus<double>(),
-	(std::numeric_limits<double>::max)(),
+        (std::numeric_limits<double>::max)(),
         0.0,
         boost::default_dijkstra_visitor());
 

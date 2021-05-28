@@ -34,7 +34,6 @@ namespace opp_path_selection
  */
 class PathSelector
 {
-  
 public:
   typedef boost::property<boost::edge_weight_t, double> EdgeWeightProperty;
   typedef boost::property<boost::vertex_color_t, boost::default_color_type> VertexColorProperty;

@@ -347,7 +347,6 @@ bool PathSelectionArtist::collectPathPointsMeshCb(opp_msgs::GetPathSelectionMesh
     return true;
   }
 
-
   // get all indices from provided mesh vertices along path
   // TODO replace getRegionOfInterest with a path equivalent
   PathSelector sel;
@@ -436,7 +435,7 @@ void PathSelectionArtist::addSelectionPoint(const geometry_msgs::PointStampedCon
 }
 
 pcl::PolygonMesh PathSelectionArtist::filterMesh(const pcl::PolygonMesh& input_mesh,
-						 const std::vector<int>& inlying_indices)
+                                                 const std::vector<int>& inlying_indices)
 {
   // mark inlying points as true and outlying points as false
   std::vector<bool> whitelist(input_mesh.cloud.width * input_mesh.cloud.height, false);

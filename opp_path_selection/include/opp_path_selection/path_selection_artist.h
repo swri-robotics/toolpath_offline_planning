@@ -61,7 +61,6 @@ public:
   bool clearPathPointsCb(std_srvs::TriggerRequest&, std_srvs::TriggerResponse& res);
 
 protected:
-
   void getSensorData(const sensor_msgs::PointCloud2::ConstPtr& msg);
 
   void addSelectionPoint(const geometry_msgs::PointStamped::ConstPtr pt_stamped);

@@ -26,9 +26,11 @@
   <depend>geometric_shapes</depend>
   <depend>geometry_msgs</depend>
   <depend>noether_msgs</depend>
+  <depend>heat_msgs</depend>
   <depend>pluginlib</depend>
   <depend>roscpp</depend>
   <depend>opp_area_selection</depend>
+  <depend>opp_path_selection</depend>
   <depend>opp_msgs</depend>
   <depend>opp_database</depend>
   <depend>pcl_ros</depend>

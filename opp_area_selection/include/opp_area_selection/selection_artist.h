@@ -55,9 +55,9 @@ public:
 
   bool collectROIMesh(const shape_msgs::Mesh& mesh_msg, shape_msgs::Mesh& submesh_msg, std::string& message);
 
-protected:
-  void getSensorData(const sensor_msgs::PointCloud2::ConstPtr& msg);
+  void enable(bool value);
 
+protected:
   void addSelectionPoint(const geometry_msgs::PointStamped::ConstPtr pt_stamped);
 
   bool transformPoint(const geometry_msgs::PointStamped::ConstPtr pt_stamped, geometry_msgs::Point& transformed_pt);
@@ -85,6 +85,8 @@ protected:
   std::shared_ptr<tf::TransformListener> listener_;
 
   visualization_msgs::MarkerArray marker_array_;
+
+  bool enabled_;
 };
 
 }  // namespace opp_area_selection

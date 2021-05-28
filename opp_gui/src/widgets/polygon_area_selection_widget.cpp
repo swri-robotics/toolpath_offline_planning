@@ -37,6 +37,10 @@ PolygonAreaSelectionWidget::PolygonAreaSelectionWidget(ros::NodeHandle& nh,
   connect(
       ui_->push_button_clear_selection, &QPushButton::clicked, this, &PolygonAreaSelectionWidget::clearROISelection);
   connect(ui_->push_button_apply_selection, &QPushButton::clicked, this, &PolygonAreaSelectionWidget::applySelection);
+  connect(ui_->cbox_update_selections, &QCheckBox::stateChanged, this, &PolygonAreaSelectionWidget::updateSelections);
+  connect(this, &PolygonAreaSelectionWidget::QWarningBox, this, &PolygonAreaSelectionWidget::onQWarningBox);
+
+  updateSelections();  // synchronize check boxes
 }
 
 PolygonAreaSelectionWidget::~PolygonAreaSelectionWidget() { delete ui_; }
@@ -71,7 +75,7 @@ void PolygonAreaSelectionWidget::applySelection()
 {
   if (!mesh_)
   {
-    QMessageBox::warning(this, "Tool Path Planning Error", "No mesh available to crop");
+    emit QWarningBox("No mesh available to crop");
     return;
   }
   submesh_.reset(new shape_msgs::Mesh());
@@ -89,6 +93,23 @@ void PolygonAreaSelectionWidget::applySelection()
 
   emit(selectedSubmesh(submesh_));
   return;
+}
+
+void PolygonAreaSelectionWidget::updateSelections()
+{
+  if (ui_->cbox_update_selections->isChecked())
+  {
+    selector_.enable(true);
+  }
+  else
+  {
+    selector_.enable(false);
+  }
+}
+
+void PolygonAreaSelectionWidget::onQWarningBox(std::string warn_string)
+{
+  QMessageBox::warning(this, "Tool Path Planning Warning", QString(warn_string.c_str()));
 }
 
 }  // end namespace opp_gui

@@ -36,7 +36,7 @@ struct convert<noether_msgs::ToolPathConfig>
 
     node["surface_walk_generator"] = rhs.surface_walk_generator;
     node["plane_slicer_generator"] = rhs.plane_slicer_generator;
-    //    node["heat_generator"] = rhs.heat_generator;
+    node["heat_generator"] = rhs.heat_generator;
     node["eigen_value_generator"] = rhs.eigen_value_generator;
     node["half_edge_generator"] = rhs.halfedge_generator;
     return node;
@@ -44,12 +44,12 @@ struct convert<noether_msgs::ToolPathConfig>
 
   static bool decode(const Node& node, noether_msgs::ToolPathConfig& rhs)
   {
-    if (node.size() != 4)
+    if (node.size() != 5)
       return false;
     rhs.plane_slicer_generator = node["plane_slicer_generator"].as<decltype(rhs.plane_slicer_generator)>();
     rhs.halfedge_generator = node["half_edge_generator"].as<decltype(rhs.halfedge_generator)>();
     rhs.eigen_value_generator = node["eigen_value_generator"].as<decltype(rhs.eigen_value_generator)>();
-    //    rhs.heat_generator = node["heat_generator"].as<decltype(rhs.heat_generator)>();
+    rhs.heat_generator = node["heat_generator"].as<decltype(rhs.heat_generator)>();
     rhs.surface_walk_generator = node["surface_walk_generator"].as<decltype(rhs.surface_walk_generator)>();
     return true;
   }
@@ -68,19 +68,25 @@ struct convert<noether_msgs::HalfedgeEdgeGeneratorConfig>
     node["normal_influence_weight"] = rhs.normal_influence_weight;
     node["point_spacing_method"] = rhs.point_spacing_method;
     node["point_dist"] = rhs.point_dist;
+    node["max_segment_length"] = rhs.max_segment_length;
     return node;
   }
 
   static bool decode(const Node& node, noether_msgs::HalfedgeEdgeGeneratorConfig& rhs)
   {
-    if (node.size() != 6)
+    if (node.size() != 7)
+    {
       return false;
+    }
+    int q = 0;
+
     rhs.min_num_points = node["min_num_points"].as<decltype(rhs.min_num_points)>();
     rhs.normal_averaging = node["normal_averaging"].as<decltype(rhs.normal_averaging)>();
     rhs.normal_search_radius = node["normal_search_radius"].as<decltype(rhs.normal_search_radius)>();
     rhs.normal_influence_weight = node["normal_influence_weight"].as<decltype(rhs.normal_influence_weight)>();
     rhs.point_spacing_method = node["point_spacing_method"].as<decltype(rhs.point_spacing_method)>();
     rhs.point_dist = node["point_dist"].as<decltype(rhs.point_dist)>();
+    rhs.max_segment_length = node["max_segment_length"].as<decltype(rhs.max_segment_length)>();
     return true;
   }
 };
@@ -92,15 +98,15 @@ struct convert<noether_msgs::SurfaceWalkRasterGeneratorConfig>
   {
     Node node;
 
-    node["raster_spacing"] = rhs.raster_spacing;
     node["point_spacing"] = rhs.point_spacing;
+    node["raster_spacing"] = rhs.raster_spacing;
     node["tool_offset"] = rhs.tool_offset;
     node["intersection_plane_height"] = rhs.intersection_plane_height;
     node["min_hole_size"] = rhs.min_hole_size;
     node["min_segment_size"] = rhs.min_segment_size;
     node["raster_rot_offset"] = rhs.raster_rot_offset;
-    node["raster_wrt_global_axes"] = rhs.raster_wrt_global_axes;
     node["generate_extra_rasters"] = rhs.generate_extra_rasters;
+    node["cut_direction"] = rhs.cut_direction;
     return node;
   }
 
@@ -115,8 +121,8 @@ struct convert<noether_msgs::SurfaceWalkRasterGeneratorConfig>
     rhs.min_hole_size = node["min_hole_size"].as<decltype(rhs.min_hole_size)>();
     rhs.min_segment_size = node["min_segment_size"].as<decltype(rhs.min_segment_size)>();
     rhs.raster_rot_offset = node["raster_rot_offset"].as<decltype(rhs.raster_rot_offset)>();
-    rhs.raster_wrt_global_axes = node["raster_wrt_global_axes"].as<decltype(rhs.raster_wrt_global_axes)>();
     rhs.generate_extra_rasters = node["generate_extra_rasters"].as<decltype(rhs.generate_extra_rasters)>();
+    rhs.cut_direction = node["cut_direction"].as<decltype(rhs.cut_direction)>();
     return true;
   }
 };
@@ -127,26 +133,62 @@ struct convert<noether_msgs::PlaneSlicerRasterGeneratorConfig>
   static Node encode(const noether_msgs::PlaneSlicerRasterGeneratorConfig& rhs)
   {
     Node node;
-
     node["raster_spacing"] = rhs.raster_spacing;
     node["point_spacing"] = rhs.point_spacing;
     node["raster_rot_offset"] = rhs.raster_rot_offset;
     node["min_segment_size"] = rhs.min_segment_size;
     node["min_hole_size"] = rhs.min_hole_size;
     node["tool_offset"] = rhs.tool_offset;
+    node["raster_wrt_global_axes"] = rhs.raster_wrt_global_axes;
+    node["raster_direction"] = rhs.raster_direction;
     return node;
   }
 
   static bool decode(const Node& node, noether_msgs::PlaneSlicerRasterGeneratorConfig& rhs)
   {
-    if (node.size() != 6)
+    if (node.size() != 8)
       return false;
+
     rhs.raster_spacing = node["raster_spacing"].as<decltype(rhs.raster_spacing)>();
     rhs.point_spacing = node["point_spacing"].as<decltype(rhs.point_spacing)>();
     rhs.raster_rot_offset = node["raster_rot_offset"].as<decltype(rhs.raster_rot_offset)>();
     rhs.min_segment_size = node["min_segment_size"].as<decltype(rhs.min_segment_size)>();
     rhs.min_hole_size = node["min_hole_size"].as<decltype(rhs.min_hole_size)>();
     rhs.tool_offset = node["tool_offset"].as<decltype(rhs.tool_offset)>();
+    rhs.raster_wrt_global_axes = node["raster_wrt_global_axes"].as<decltype(rhs.raster_wrt_global_axes)>();
+    rhs.raster_direction = node["raster_direction"].as<decltype(rhs.raster_direction)>();
+    return true;
+  }
+};
+
+template <>
+struct convert<noether_msgs::HeatRasterGeneratorConfig>
+{
+  static Node encode(const noether_msgs::HeatRasterGeneratorConfig& rhs)
+  {
+    Node node;
+
+    node["point_spacing"] = rhs.point_spacing;
+    node["raster_spacing"] = rhs.raster_spacing;
+    node["tool_offset"] = rhs.tool_offset;
+    node["min_hole_size"] = rhs.min_hole_size;
+    node["min_segment_size"] = rhs.min_segment_size;
+    node["raster_rot_offset"] = rhs.raster_rot_offset;
+    node["generate_extra_rasters"] = rhs.generate_extra_rasters;
+    return node;
+  }
+
+  static bool decode(const Node& node, noether_msgs::HeatRasterGeneratorConfig& rhs)
+  {
+    if (node.size() != 7)
+      return false;
+    rhs.point_spacing = node["point_spacing"].as<decltype(rhs.point_spacing)>();
+    rhs.raster_spacing = node["raster_spacing"].as<decltype(rhs.raster_spacing)>();
+    rhs.tool_offset = node["tool_offset"].as<decltype(rhs.tool_offset)>();
+    rhs.min_hole_size = node["min_hole_size"].as<decltype(rhs.min_hole_size)>();
+    rhs.min_segment_size = node["min_segment_size"].as<decltype(rhs.min_segment_size)>();
+    rhs.raster_rot_offset = node["raster_rot_offset"].as<decltype(rhs.raster_rot_offset)>();
+    rhs.generate_extra_rasters = node["generate_extra_rasters"].as<decltype(rhs.generate_extra_rasters)>();
     return true;
   }
 };
@@ -168,12 +210,13 @@ struct convert<noether_msgs::EigenValueEdgeGeneratorConfig>
     node["min_projection_dist"] = rhs.min_projection_dist;
     node["max_intersecting_voxels"] = rhs.max_intersecting_voxels;
     node["merge_dist"] = rhs.merge_dist;
+    node["max_segment_length"] = rhs.max_segment_length;
     return node;
   }
 
   static bool decode(const Node& node, noether_msgs::EigenValueEdgeGeneratorConfig& rhs)
   {
-    if (node.size() != 10)
+    if (node.size() != 11)
       return false;
     rhs.octree_res = node["octree_res"].as<decltype(rhs.octree_res)>();
     rhs.search_radius = node["search_radius"].as<decltype(rhs.search_radius)>();
@@ -185,6 +228,7 @@ struct convert<noether_msgs::EigenValueEdgeGeneratorConfig>
     rhs.min_projection_dist = node["min_projection_dist"].as<decltype(rhs.min_projection_dist)>();
     rhs.max_intersecting_voxels = node["max_intersecting_voxels"].as<decltype(rhs.max_intersecting_voxels)>();
     rhs.merge_dist = node["merge_dist"].as<decltype(rhs.merge_dist)>();
+    rhs.max_segment_length = node["max_segment_length"].as<decltype(rhs.max_segment_length)>();
     return true;
   }
 };
@@ -255,17 +299,16 @@ struct convert<opp_msgs::ToolPath>
   static bool decode(const Node& node, opp_msgs::ToolPath& rhs)
   {
     // Allow both old entries (without Noether params) and new entries (with Noether params)
-    if (node.size() != 5 && node.size() != 6)
-      return false;
-
+    //    if (node.size() != 6)
+    //    {
+    //      return false;
+    //    }
     // Get the opp_msgs::ToolPath fields
     rhs.header = node["header"].as<decltype(rhs.header)>();
     rhs.process_type = node["process_type"].as<decltype(rhs.process_type)>();
-    rhs.paths = node["paths"].as<decltype(rhs.paths)>();
+    rhs.paths = node["paths"].as<std::vector<geometry_msgs::PoseArray> >();
     rhs.dwell_time = node["dwell_time"].as<decltype(rhs.dwell_time)>();
     rhs.tool_offset = node["tool_offset"].as<decltype(rhs.tool_offset)>();
-
-    // Get the Noether parameters, if they exist
     if (node["params"])
     {
       rhs.params = node["params"].as<decltype(rhs.params)>();

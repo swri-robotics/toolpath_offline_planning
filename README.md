@@ -54,3 +54,9 @@ planning on those models. The GUI also hosts an interface to the database for sa
     roslaunch opp_startup planner_application.launch
     ```
 1. Follow the order of operations of the GUI
+   Load an object
+   define touchoff and verification points
+   save the object to the database
+   create a new job
+   run one of the many tool path planners
+   save the job to a database

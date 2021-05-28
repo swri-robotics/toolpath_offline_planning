@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "opp_area_selection/selection_artist.h"
+#include "opp_path_selection/path_selection_artist.h"
 
 #include <pcl/conversions.h>
 #include <pcl/point_cloud.h>
@@ -29,22 +29,21 @@
 #include <tf/tf.h>
 #include <tf_conversions/tf_eigen.h>
 
-#include "opp_area_selection/area_selector.h"
-#include "opp_area_selection/area_selector_parameters.h"
-#include <opp_msgs/GetROISelection.h>
+#include "opp_path_selection/path_selector.h"
+#include <opp_msgs/GetPathSelectionMesh.h>
 
-namespace opp_area_selection
+namespace opp_path_selection
 {
 const static double TF_LOOKUP_TIMEOUT = 5.0;
-const static std::string MARKER_ARRAY_TOPIC = "roi_markers";
+const static std::string MARKER_ARRAY_TOPIC = "path_markers";
 const static std::string CLICKED_POINT_TOPIC = "clicked_point";
-const static std::string CLEAR_ROI_POINTS_SERVICE = "clear_selection_points";
-const static std::string COLLECT_ROI_POINTS_SERVICE = "collect_selection_points";
-const static std::string area_selection_config_file = ros::package::getPath("opp_area_selection") + "/config/"
-                                                                                                    "area_selection_"
+const static std::string CLEAR_PATH_POINTS_SERVICE = "clear_path_selection_points";
+const static std::string COLLECT_PATH_POINTS_SERVICE = "collect_path_selection_points";
+const static std::string path_selection_config_file = ros::package::getPath("opp_path_selection") + "/config/"
+                                                                                                    "path_selection_"
                                                                                                     "parameters.yaml";
 
-}  // namespace opp_area_selection
+}  // namespace opp_path_selection
 
 namespace
 {
@@ -52,21 +51,21 @@ std::vector<visualization_msgs::Marker> makeVisual(const std::string& frame_id)
 {
   visualization_msgs::Marker points, lines;
   points.header.frame_id = lines.header.frame_id = frame_id;
-  points.ns = lines.ns = "roi_selection";
+  points.ns = lines.ns = "path_selection";
   points.action = lines.action = visualization_msgs::Marker::ADD;
 
   // Point specific properties
   points.id = 0;
   points.type = visualization_msgs::Marker::SPHERE_LIST;
   points.scale.x = points.scale.y = points.scale.z = 0.025;
-  points.color.r = points.color.a = 1.0;
+  points.color.b = points.color.a = 1.0;
   points.pose.orientation.w = 1.0;
 
   // Line specific properties
   lines.id = 1;
   lines.type = visualization_msgs::Marker::LINE_STRIP;
   lines.scale.x = 0.01;
-  lines.color.r = lines.color.a = 1.0;
+  lines.color.b = lines.color.a = 1.0;
   lines.pose.orientation.w = 1.0;
 
   std::vector<visualization_msgs::Marker> visuals;
@@ -163,53 +162,14 @@ bool pclFromShapeMsg(const shape_msgs::Mesh& mesh_msg, pcl::PolygonMesh& pcl_mes
 
 }  // namespace
 
-namespace YAML
+namespace opp_path_selection
 {
-template <>
-struct convert<opp_area_selection::AreaSelectorParameters>
-{
-  static Node encode(const opp_area_selection::AreaSelectorParameters& rhs)
-  {
-    Node node;
-    node["cluster_tolerance"] = rhs.cluster_tolerance;
-    node["min_cluster_size"] = rhs.min_cluster_size;
-    node["max_cluster_size"] = rhs.max_cluster_size;
-    node["plane_distance_threshold"] = rhs.plane_distance_threshold;
-    node["normal_est_radius"] = rhs.normal_est_radius;
-    node["region_growing_nneighbors"] = rhs.region_growing_nneighbors;
-    node["region_growing_smoothness"] = rhs.region_growing_smoothness;
-    node["region_growing_curvature"] = rhs.region_growing_curvature;
-    return node;
-  }
-
-  static bool decode(const Node& node, opp_area_selection::AreaSelectorParameters& rhs)
-  {
-    if (node.size() != 8)
-    {
-      return false;
-    }
-    rhs.cluster_tolerance = node["cluster_tolerance"].as<decltype(rhs.cluster_tolerance)>();
-    rhs.min_cluster_size = node["min_cluster_size"].as<decltype(rhs.min_cluster_size)>();
-    rhs.max_cluster_size = node["max_cluster_size"].as<decltype(rhs.max_cluster_size)>();
-    rhs.plane_distance_threshold = node["plane_distance_threshold"].as<decltype(rhs.plane_distance_threshold)>();
-    rhs.normal_est_radius = node["normal_est_radius"].as<decltype(rhs.normal_est_radius)>();
-    rhs.region_growing_nneighbors = node["region_growing_nneighbors"].as<decltype(rhs.region_growing_nneighbors)>();
-    rhs.region_growing_smoothness = node["region_growing_smoothness"].as<decltype(rhs.region_growing_smoothness)>();
-    rhs.region_growing_curvature = node["region_growing_curvature"].as<decltype(rhs.region_growing_curvature)>();
-    return true;
-  }
-};
-
-}  // namespace YAML
-
-namespace opp_area_selection
-{
-SelectionArtist::SelectionArtist(const ros::NodeHandle& nh,
-                                 const std::string& world_frame,
-                                 const std::string& sensor_frame)
+PathSelectionArtist::PathSelectionArtist(const ros::NodeHandle& nh,
+                                         const std::string& world_frame,
+                                         const std::string& sensor_frame)
   : nh_(nh), world_frame_(world_frame), sensor_frame_(sensor_frame)
 {
-  marker_pub_ = nh_.advertise<visualization_msgs::MarkerArray>(MARKER_ARRAY_TOPIC, 1, false);
+  marker_pub_ = nh_.advertise<visualization_msgs::MarkerArray>(MARKER_ARRAY_TOPIC, 1, true);
   listener_.reset(new tf::TransformListener(nh_));
 
   if (!listener_->waitForTransform(sensor_frame_, world_frame_, ros::Time(0), ros::Duration(TF_LOOKUP_TIMEOUT)))
@@ -218,13 +178,14 @@ SelectionArtist::SelectionArtist(const ros::NodeHandle& nh,
     throw std::runtime_error("Transform lookup timed out");
   }
 
-  clear_roi_points_srv_ = nh_.advertiseService(CLEAR_ROI_POINTS_SERVICE, &SelectionArtist::clearROIPointsCb, this);
-  collect_roi_points_srv_ =
-      nh_.advertiseService(COLLECT_ROI_POINTS_SERVICE, &SelectionArtist::collectROIPointsCb, this);
+  clear_path_points_srv_ =
+      nh_.advertiseService(CLEAR_PATH_POINTS_SERVICE, &PathSelectionArtist::clearPathPointsCb, this);
+  collect_path_points_srv_ =
+      nh_.advertiseService(COLLECT_PATH_POINTS_SERVICE, &PathSelectionArtist::collectPathPointsMeshCb, this);
 
   // Initialize subscribers and callbacks
   boost::function<void(const geometry_msgs::PointStampedConstPtr&)> drawn_points_cb;
-  drawn_points_cb = boost::bind(&SelectionArtist::addSelectionPoint, this, _1);
+  drawn_points_cb = boost::bind(&PathSelectionArtist::addSelectionPoint, this, _1);
   drawn_points_sub_ = nh_.subscribe(CLICKED_POINT_TOPIC, 1, drawn_points_cb);
 
   marker_array_.markers = makeVisual(sensor_frame);
@@ -232,10 +193,8 @@ SelectionArtist::SelectionArtist(const ros::NodeHandle& nh,
   enabled_ = true;
 }
 
-bool SelectionArtist::clearROIPointsCb(std_srvs::TriggerRequest& req, std_srvs::TriggerResponse& res)
+bool PathSelectionArtist::clearPathPointsCb(std_srvs::TriggerRequest&, std_srvs::TriggerResponse& res)
 {
-  (void)req;  // To suppress warnings, tell the compiler we will not use this parameter
-
   for (auto it = marker_array_.markers.begin(); it != marker_array_.markers.end(); ++it)
   {
     it->points.clear();
@@ -248,34 +207,77 @@ bool SelectionArtist::clearROIPointsCb(std_srvs::TriggerRequest& req, std_srvs::
   return true;
 }
 
-bool SelectionArtist::collectROIMesh(const shape_msgs::Mesh& mesh_msg,
-                                     shape_msgs::Mesh& submesh_msg,
-                                     std::string& message)
+bool PathSelectionArtist::collectPath(const shape_msgs::Mesh& mesh_msg,
+                                      std::vector<int>& points_idx,
+                                      std::string& message)
 {
+  // first get the mesh
   pcl::PolygonMesh mesh;
   pclFromShapeMsg(mesh_msg, mesh);
   pcl::PointCloud<pcl::PointXYZ> mesh_cloud;
   pcl::fromPCLPointCloud2(mesh.cloud, mesh_cloud);
-  opp_msgs::GetROISelection srv;
+  opp_msgs::GetPathSelectionCloud srv;
   pcl::toROSMsg(mesh_cloud, srv.request.input_cloud);
 
-  bool success = collectROIPointsCb(srv.request, srv.response);
-  if (!success || !srv.response.success)
+  // now get the path segments from markers and find point indices from mesh along each segment
+  bool success = collectPathPointsCloudCb(srv.request, srv.response);
+  message = srv.response.message;
+  points_idx.clear();
+  if (!success)
   {
-    submesh_msg = mesh_msg;
-    message = srv.response.message;
+    ROS_ERROR("collectPathPointsCloudCb failed");
     return false;
   }
+  if (!srv.response.success)  // no points found
+  {
+    points_idx.clear();  // this is not a failure, we allow zero points for the heat method
+    return true;
+  }
 
-  pcl::PolygonMesh submesh;
-  filterMesh(mesh, srv.response.cloud_indices, submesh);
-  pclToShapeMsg(submesh, submesh_msg);
+  // the response includes res.cloud_indices which represent the path of vertices between each segment of markers/points
+  for (int i = 0; i < srv.response.cloud_indices.size(); i++)
+  {
+    int idx = srv.response.cloud_indices[i];
+    points_idx.push_back(idx);
+  }
+  return true;
+}
+
+bool PathSelectionArtist::collectPathMesh(const shape_msgs::Mesh& mesh_msg,
+                                          std::vector<int>& points_idx,
+                                          std::string& message)
+{
+  // first get the mesh
+  opp_msgs::GetPathSelectionMesh srv;
+  srv.request.input_mesh = mesh_msg;
+
+  // now get the path segments from markers and find point indices from mesh along each segment
+  bool success = collectPathPointsMeshCb(srv.request, srv.response);
+  message = srv.response.message;
+  points_idx.clear();
+  if (!success)
+  {
+    return false;
+  }
+  if (!srv.response.success)
+  {
+    message = "No points found on mesh";
+  }
+
+  // the response includes res.cloud_indices which represent the path of vertices between each segment of markers/points
+  for (int i = 0; i < srv.response.mesh_indices.size(); i++)
+  {
+    int idx = srv.response.mesh_indices[i];
+    points_idx.push_back(idx);
+  }
 
   return true;
 }
 
-bool SelectionArtist::collectROIPointsCb(opp_msgs::GetROISelectionRequest& req, opp_msgs::GetROISelectionResponse& res)
+bool PathSelectionArtist::collectPathPointsCloudCb(opp_msgs::GetPathSelectionCloudRequest& req,
+                                                   opp_msgs::GetPathSelectionCloudResponse& res)
 {
+  // get points from existing marker_array_
   auto points_it = std::find_if(marker_array_.markers.begin(),
                                 marker_array_.markers.end(),
                                 [](const visualization_msgs::Marker& marker) { return marker.id == 0; });
@@ -289,18 +291,22 @@ bool SelectionArtist::collectROIPointsCb(opp_msgs::GetROISelectionRequest& req, 
     points.push_back(std::move(e));
   }
 
+  if (points.size() < 2)
+  {
+    res.cloud_indices.clear();
+    res.success = false;
+    res.message = "No Points Selected, use Geometric Axis";
+    return true;
+  }
+
+  // get point cloud from service request
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>());
   pcl::fromROSMsg(req.input_cloud, *cloud);
 
-  AreaSelectorParameters params;
-  bool success = message_serialization::deserialize(area_selection_config_file, params);
-  if (!success)
-  {
-    ROS_ERROR_STREAM("Could not load area selection config from: " << area_selection_config_file);
-    return false;
-  }
-  AreaSelector sel;
-  res.cloud_indices = sel.getRegionOfInterest(cloud, points, params);
+  // get all indices from provided mesh vertices along path
+  // TODO replace getRegionOfInterest with a path equivalent
+  PathSelector sel;
+  res.cloud_indices = sel.findPointsAlongSegments(cloud, points);
 
   if (!res.cloud_indices.empty())
   {
@@ -310,16 +316,59 @@ bool SelectionArtist::collectROIPointsCb(opp_msgs::GetROISelectionRequest& req, 
   else
   {
     res.success = false;
-    res.message = "Unable to identify points within selection boundary";
+    res.message = "Unable to identify points along selected path";
   }
 
   return true;
 }
 
-bool SelectionArtist::transformPoint(const geometry_msgs::PointStamped::ConstPtr pt_stamped,
-                                     geometry_msgs::Point& transformed_pt)
+bool PathSelectionArtist::collectPathPointsMeshCb(opp_msgs::GetPathSelectionMeshRequest& req,
+                                                  opp_msgs::GetPathSelectionMeshResponse& res)
 {
-  ROS_INFO_STREAM(pt_stamped->header.frame_id);
+  // get points from existing marker_array_
+  auto points_it = std::find_if(marker_array_.markers.begin(),
+                                marker_array_.markers.end(),
+                                [](const visualization_msgs::Marker& marker) { return marker.id == 0; });
+
+  // Convert the selection points to Eigen vectors
+  std::vector<Eigen::Vector3d> points;
+  for (const geometry_msgs::Point& pt : points_it->points)
+  {
+    Eigen::Vector3d e;
+    tf::pointMsgToEigen(pt, e);
+    points.push_back(std::move(e));
+  }
+
+  if (points.size() < 2)
+  {
+    res.mesh_indices.clear();
+    res.success = true;
+    res.message = "No Points Selected, use Geometric Axis";
+    return true;
+  }
+
+  // get all indices from provided mesh vertices along path
+  // TODO replace getRegionOfInterest with a path equivalent
+  PathSelector sel;
+  res.mesh_indices = sel.findPointsAlongSegments(req.input_mesh, points);
+
+  if (!res.mesh_indices.empty())
+  {
+    res.success = true;
+    res.message = "Selection complete";
+  }
+  else
+  {
+    res.success = false;
+    res.message = "Unable to identify points along selected path";
+  }
+
+  return true;
+}
+
+bool PathSelectionArtist::transformPoint(const geometry_msgs::PointStamped::ConstPtr pt_stamped,
+                                         geometry_msgs::Point& transformed_pt)
+{
   // Get the current transform from the world frame to the frame of the sensor data
   tf::StampedTransform frame;
   try
@@ -347,7 +396,7 @@ bool SelectionArtist::transformPoint(const geometry_msgs::PointStamped::ConstPtr
   return true;
 }
 
-void SelectionArtist::addSelectionPoint(const geometry_msgs::PointStampedConstPtr pt_stamped)
+void PathSelectionArtist::addSelectionPoint(const geometry_msgs::PointStampedConstPtr pt_stamped)
 {
   if (!enabled_)
     return;
@@ -355,6 +404,7 @@ void SelectionArtist::addSelectionPoint(const geometry_msgs::PointStampedConstPt
   geometry_msgs::Point pt;
   if (!transformPoint(pt_stamped, pt))
   {
+    ROS_ERROR("addSelectionPoint() couldn't transformPoint");
     return;
   }
 
@@ -372,34 +422,20 @@ void SelectionArtist::addSelectionPoint(const geometry_msgs::PointStampedConstPt
   // Add new point to the points marker
   if (points_it == marker_array_.markers.end() || lines_it == marker_array_.markers.end())
   {
-    ROS_ERROR("Unable to find line or point marker");
+    ROS_ERROR("addSelectionPoint() Unable to find line or point marker");
     return;
   }
   else
   {
     points_it->points.push_back(pt);
-
-    // Add the point to the front and back of the lines' points array if it is the first entry
-    // Lines connect adjacent points, so first point must be entered twice to close the polygon
-    if (lines_it->points.empty())
-    {
-      lines_it->points.push_back(pt);
-      lines_it->points.push_back(pt);
-    }
-    // Insert the new point in the second to last position if points already exist in the array
-    else
-    {
-      const auto it = lines_it->points.end() - 1;
-      lines_it->points.insert(it, pt);
-    }
+    lines_it->points.push_back(pt);
   }
 
   marker_pub_.publish(marker_array_);
 }
 
-void SelectionArtist::filterMesh(const pcl::PolygonMesh& input_mesh,
-                                 const std::vector<int>& inlying_indices,
-                                 pcl::PolygonMesh& output_mesh)
+pcl::PolygonMesh PathSelectionArtist::filterMesh(const pcl::PolygonMesh& input_mesh,
+                                                 const std::vector<int>& inlying_indices)
 {
   // mark inlying points as true and outlying points as false
   std::vector<bool> whitelist(input_mesh.cloud.width * input_mesh.cloud.height, false);
@@ -424,10 +460,12 @@ void SelectionArtist::filterMesh(const pcl::PolygonMesh& input_mesh,
 
   // Remove unused points and save the result to the output mesh
   pcl::surface::SimplificationRemoveUnusedVertices simplifier;
+  pcl::PolygonMesh output_mesh;
   simplifier.simplify(intermediate_mesh, output_mesh);
 
-  return;
+  return output_mesh;
 }
 
-void SelectionArtist::enable(bool value) { enabled_ = value; }
-}  // namespace opp_area_selection
+void PathSelectionArtist::enable(bool value) { enabled_ = value; }
+
+}  // namespace opp_path_selection

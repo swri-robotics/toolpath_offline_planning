@@ -4,11 +4,17 @@
     uri: 'https://github.com/ros-perception/perception_pcl.git'
     version: 1.7.1
 
-# Noether
+# Noether PR #114
 - git:
     local-name: noether
-    uri: 'https://github.com/ros-industrial/noether.git'
-    version: 9c97ac493f9eb2cee83523fadf5cf331f2c22ceb
+    uri: 'https://github.com/drchrislewis/noether.git'
+    version: 357c1fc3914a7789b1878ab8d0fd1347590bba0e
+
+# heat_raster current master
+- git:
+    local-name: heat_raster
+    uri: 'https://github.com/swri-robotics/heat_raster.git'
+    version: 00cf29bd9d31ba44db634c61eebe216a69245263
 
 # RViz Tool Cursor
 - git:
@@ -18,12 +24,12 @@
 
 # cmake_common_scripts
 - git:
-    local-name: cmake_common_scripts
-    uri: 'https://github.com/ros-industrial/cmake_common_scripts.git'
-    version: 15450c289e1a92c51e9b6d953f4d07d7e7ccaa18
+    local-name: ros_industrial_cmake_boilerplate
+    uri: 'https://github.com/ros-industrial/ros_industrial_cmake_boilerplate.git'
+    version: 25aabced08aff54720215abf2d2adbe42cc3ecf6
 
 # Message serialization
 - git:
     local-name: message_serialization
     uri: 'https://github.com/swri-robotics/message_serialization.git'
-    version: 0.1.0
+    version: c054e73dd8abc98b9aecef1ce96f4fec5394d890

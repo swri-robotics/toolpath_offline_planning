@@ -33,3 +33,9 @@
     local-name: message_serialization
     uri: 'https://github.com/swri-robotics/message_serialization.git'
     version: c054e73dd8abc98b9aecef1ce96f4fec5394d890
+
+# Colorized mesh RViz plugin
+- git:
+    local-name: colorized_mesh_display
+    uri: 'https://github.com/marip8/colorized_mesh_display.git'
+    version: a639e09c2c3aa1e9fa12b6d88218bade0d6b226a

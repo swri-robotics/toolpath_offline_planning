@@ -52,9 +52,16 @@ int main(int argc, char** argv)
   ROS_INFO_STREAM("Using fixed frame '" << fixed_frame << "' for displays");
 
   // Create the mesh message from the input resource
-  shape_msgs::Mesh mesh_msg;
-  if (!opp_gui::utils::getMeshMsgFromResource(mesh_resource, mesh_msg))
+  pcl_msgs::PolygonMesh polygon_mesh_msg;
+  if (!opp_gui::utils::getMeshMsgFromResource(mesh_resource, polygon_mesh_msg))
     return -1;
+
+  // Apply frame id to mesh message
+  polygon_mesh_msg.header.frame_id = fixed_frame;
+
+  // Convert pcl_msgs::PolygonMesh to shape_msgs::Mesh for initializing toolpath editor
+  shape_msgs::Mesh mesh_msg;
+  opp_gui::utils::pclMsgToShapeMsg(polygon_mesh_msg, mesh_msg);
 
   // Create and start the Qt application
   QApplication app(argc, argv);

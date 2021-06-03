@@ -29,13 +29,14 @@
 #include <geometric_shapes/mesh_operations.h>
 #include <geometric_shapes/shape_operations.h>
 #include <ros/console.h>
+#include <pcl_conversions/pcl_conversions.h>
 
 #include "opp_gui/utils.h"
 #include "opp_gui/widgets/tool_path_editor_widget.h"
 #include "opp_gui/widgets/touch_point_editor_widget.h"
 #include "ui_tool_path_planner.h"
 
-const static std::string MESH_MARKER_TOPIC = "mesh_marker";
+const static std::string PCL_MESH_TOPIC = "pcl_mesh";
 const static int MIN_TOUCH_POINTS = 0;
 const static int MIN_VERIFICATION_POINTS = 0;
 
@@ -124,7 +125,7 @@ ToolPathPlannerWidget::ToolPathPlannerWidget(QWidget* parent,
   connect(this, &ToolPathPlannerWidget::QWarningBox, this, &ToolPathPlannerWidget::onQWarningBox);
 
   // Add a publisher for the mesh marker
-  pub_ = nh_.advertise<visualization_msgs::Marker>(MESH_MARKER_TOPIC, 1, true);
+  pub_ = nh_.advertise<pcl_msgs::PolygonMesh>(PCL_MESH_TOPIC, 1, true);
 
   // Set up the Database views in the third page
   std::string query = "`suppressed`!=\"1\"";
@@ -192,7 +193,7 @@ void ToolPathPlannerWidget::loadMeshFromResource()
     std::smatch match;
     if (std::regex_search(filename, match, rgx))
     {
-      mesh_resource_ = "file://" + filename;
+      mesh_resource_ = filename;
       break;
     }
   }
@@ -599,14 +600,21 @@ void ToolPathPlannerWidget::clear()
 
 bool ToolPathPlannerWidget::loadMesh()
 {
-  // Attempt to load this file into a shape_msgs/Mesh type
-  shape_msgs::Mesh mesh;
-  if (!utils::getMeshMsgFromResource(mesh_resource_, mesh))
+  // Attempt to load this file into a pcl_msgs/PolygonMesh type
+  pcl_msgs::PolygonMesh polygon_mesh;
+  if (!utils::getMeshMsgFromResource(mesh_resource_, polygon_mesh))
   {
     std::string message = "Failed to load mesh from resource: '" + mesh_resource_ + "'";
     emit QWarningBox(message);
     return false;
   }
+
+  // Apply the frame id to the mesh
+  polygon_mesh.header.frame_id = marker_frame_;
+
+  // Convert pcl_msgs/PolygonMesh to shape_msgs/Mesh for initializing tool path editor.
+  shape_msgs::Mesh mesh;
+  utils::pclMsgToShapeMsg(polygon_mesh, mesh);
 
   // Clear the touch point and tool path editors' data before continuing
   clear();
@@ -618,11 +626,7 @@ bool ToolPathPlannerWidget::loadMesh()
   setModelTabsEnabled(true);
   setJobTabsEnabled(false, false);
 
-  // Publish the mesh marker
-  visualization_msgs::Marker mesh_marker =
-      utils::createMeshMarker(0, "mesh", Eigen::Isometry3d::Identity(), marker_frame_, mesh_resource_);
-
-  pub_.publish(mesh_marker);
+  pub_.publish(polygon_mesh);
 
   return true;
 }

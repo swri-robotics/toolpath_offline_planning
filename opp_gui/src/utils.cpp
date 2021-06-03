@@ -23,6 +23,7 @@
 #include <pcl/conversions.h>
 #include <pcl/point_cloud.h>
 #include <pcl/PolygonMesh.h>
+#include <pcl/io/vtk_lib_io.h>
 #include <pcl_conversions/pcl_conversions.h>
 
 namespace opp_gui
@@ -31,23 +32,17 @@ namespace utils
 {
 namespace vm = visualization_msgs;
 
-bool getMeshMsgFromResource(const std::string& resource, shape_msgs::Mesh& mesh_msg)
+bool getMeshMsgFromResource(const std::string& resource, pcl_msgs::PolygonMesh& polygon_mesh_msg)
 {
-  shapes::Mesh* mesh = shapes::createMeshFromResource(resource);
-  if (!mesh)
+  pcl::PolygonMesh pcl_mesh;
+
+  if (pcl::io::loadPolygonFile(resource, pcl_mesh) <= 0)
   {
-    ROS_ERROR_STREAM("Failed to load mesh from resource: '" << resource << "'");
+    ROS_ERROR_STREAM("Failed to load mesh from filename: '" << resource << "'");
     return false;
   }
 
-  shapes::ShapeMsg shape_msg;
-  if (!shapes::constructMsgFromShape(mesh, shape_msg))
-  {
-    ROS_ERROR_STREAM(__func__ << ": Failed to create shape message from mesh");
-    return false;
-  }
-
-  mesh_msg = boost::get<shape_msgs::Mesh>(shape_msg);
+  pcl_conversions::fromPCL(pcl_mesh, polygon_mesh_msg);
 
   return true;
 }

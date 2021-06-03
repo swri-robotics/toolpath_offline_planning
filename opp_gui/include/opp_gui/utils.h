@@ -35,7 +35,7 @@ namespace utils
  * @param mesh_msg: the loaded mesh
  * @return
  */
-bool getMeshMsgFromResource(const std::string& resource, shape_msgs::Mesh& mesh_msg);
+bool getMeshMsgFromResource(const std::string& resource, pcl_msgs::PolygonMesh& polygon_mesh_msg);
 
 std_msgs::ColorRGBA createColor(const float r, const float g, const float b, const float a = 1.0f);
 

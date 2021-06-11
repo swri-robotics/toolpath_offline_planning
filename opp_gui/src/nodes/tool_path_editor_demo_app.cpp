@@ -59,16 +59,12 @@ int main(int argc, char** argv)
   // Apply frame id to mesh message
   polygon_mesh_msg.header.frame_id = fixed_frame;
 
-  // Convert pcl_msgs::PolygonMesh to shape_msgs::Mesh for initializing toolpath editor
-  shape_msgs::Mesh mesh_msg;
-  opp_gui::utils::pclMsgToShapeMsg(polygon_mesh_msg, mesh_msg);
-
   // Create and start the Qt application
   QApplication app(argc, argv);
 
   opp_gui::ToolPathEditorWidget* tool_path_editor_widget =
       new opp_gui::ToolPathEditorWidget(nullptr, nh, fixed_frame, fixed_frame, fixed_frame);
-  tool_path_editor_widget->init(mesh_msg);
+  tool_path_editor_widget->init(polygon_mesh_msg);
   tool_path_editor_widget->show();
 
   app.exec();

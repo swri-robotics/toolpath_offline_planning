@@ -64,7 +64,7 @@ ToolPathEditorWidget::ToolPathEditorWidget(QWidget* parent,
   pub_ = nh_.advertise<geometry_msgs::PoseArray>(TOOL_PATH_TOPIC, 1, true);
 }
 
-void ToolPathEditorWidget::init(const shape_msgs::Mesh& mesh)
+void ToolPathEditorWidget::init(const pcl_msgs::PolygonMesh& mesh)
 {
   surface_selector_->init(mesh);
   editor_->init(mesh);
@@ -117,7 +117,7 @@ void ToolPathEditorWidget::addToolPathData(const std::vector<opp_msgs::ToolPath>
   }
 }
 
-void ToolPathEditorWidget::newTargetMeshSelected(const shape_msgs::Mesh::Ptr& target_mesh)
+void ToolPathEditorWidget::newTargetMeshSelected(const pcl_msgs::PolygonMesh::Ptr& target_mesh)
 {
   if (target_mesh != nullptr)
   {

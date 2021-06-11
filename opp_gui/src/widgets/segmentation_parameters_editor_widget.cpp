@@ -46,14 +46,13 @@ SegmentationParametersEditorWidget::SegmentationParametersEditorWidget(QWidget* 
 
 void SegmentationParametersEditorWidget::init(const pcl_msgs::PolygonMesh& mesh)
 {
-  shape_msgs::Mesh input_mesh;
-  opp_gui::utils::pclMsgToShapeMsg(mesh, input_mesh);
-  input_mesh_.reset(new shape_msgs::Mesh(input_mesh));
+  input_mesh_.reset(new pcl_msgs::PolygonMesh(mesh));
 }
 
 void SegmentationParametersEditorWidget::init(const shape_msgs::Mesh& mesh)
 {
-  input_mesh_.reset(new shape_msgs::Mesh(mesh));
+  input_mesh_.reset(new pcl_msgs::PolygonMesh());
+  utils::pclMsgFromShapeMsg(mesh, *input_mesh_);
 }
 
 void SegmentationParametersEditorWidget::setSegmentationConfig(const noether_msgs::SegmentationConfig& config)
@@ -115,12 +114,12 @@ void SegmentationParametersEditorWidget::segmentMesh()
   }
 
   // Get the correct mesh format for Noether
-  pcl_msgs::PolygonMesh pcl_mesh;
-  opp_gui::utils::pclMsgFromShapeMsg(*input_mesh_, pcl_mesh);
+  // pcl_msgs::PolygonMesh pcl_mesh;
+  // opp_gui::utils::pclMsgFromShapeMsg(*input_mesh_, pcl_mesh);
 
   // Create an action goal
   noether_msgs::SegmentGoal goal;
-  goal.input_mesh = std::move(pcl_mesh);
+  goal.input_mesh = pcl_msgs::PolygonMesh(*input_mesh_);
   goal.filtering_config = getFilteringConfig();
   goal.segmentation_config = getSegmentationConfig();
 
@@ -157,18 +156,11 @@ void SegmentationParametersEditorWidget::onSegmentMeshComplete(const actionlib::
     ROS_INFO_STREAM("Successfully segmented the mesh");
 
     // Store results
-    segments_.resize(res->output_mesh.size() - 1);
-    shape_msgs::Mesh mesh_msg;
-    for (std::size_t ind = 0; ind < res->output_mesh.size() - 1; ind++)
+    segments_.resize(res->output_mesh.size());
+    for (std::size_t ind = 0; ind < res->output_mesh.size(); ind++)
     {
-      // get the pcl_msgs::PolygonMesh
-      res->output_mesh[ind];
-
-      // convert to shape_msgs::Mesh
-      opp_gui::utils::pclMsgToShapeMsg(res->output_mesh[ind], mesh_msg);
-
       // Add to array
-      segments_[ind].reset(new shape_msgs::Mesh(mesh_msg));
+      segments_[ind].reset(new pcl_msgs::PolygonMesh(res->output_mesh[ind]));
 
       // convert to pcl::PolygonMesh
       pcl::PolygonMesh pcl_mesh;
@@ -178,8 +170,8 @@ void SegmentationParametersEditorWidget::onSegmentMeshComplete(const actionlib::
       std::string filename = "/tmp/segment_" + boost::lexical_cast<std::string>(ind) + ".stl";
       pcl::io::savePolygonFile(filename, pcl_mesh, true);
     }
-    opp_gui::utils::pclMsgToShapeMsg(res->output_mesh.back(), mesh_msg);
-    edges_.reset(new shape_msgs::Mesh(mesh_msg));
+    // opp_gui::utils::pclMsgToShapeMsg(res->output_mesh.back(), mesh_msg);
+    edges_.reset(new pcl_msgs::PolygonMesh(res->output_mesh.back()));
 
     emit segmentationFinished(segments_, edges_);
   }

@@ -20,10 +20,15 @@
 #include <QMetaType>
 
 #include <shape_msgs/Mesh.h>
+#include <pcl_msgs/PolygonMesh.h>
 
 Q_DECLARE_METATYPE(shape_msgs::Mesh);
 Q_DECLARE_METATYPE(shape_msgs::Mesh::Ptr);
 Q_DECLARE_METATYPE(std::vector<shape_msgs::Mesh>);
 Q_DECLARE_METATYPE(std::vector<shape_msgs::Mesh::Ptr>);
+Q_DECLARE_METATYPE(pcl_msgs::PolygonMesh);
+Q_DECLARE_METATYPE(pcl_msgs::PolygonMesh::Ptr);
+Q_DECLARE_METATYPE(std::vector<pcl_msgs::PolygonMesh>);
+Q_DECLARE_METATYPE(std::vector<pcl_msgs::PolygonMesh::Ptr>);
 
 #endif  // OPP_GUI_REGISTER_ROS_MSGS_FOR_QT_H

@@ -45,9 +45,9 @@ PolygonAreaSelectionWidget::PolygonAreaSelectionWidget(ros::NodeHandle& nh,
 
 PolygonAreaSelectionWidget::~PolygonAreaSelectionWidget() { delete ui_; }
 
-void PolygonAreaSelectionWidget::init(const shape_msgs::Mesh& mesh)
+void PolygonAreaSelectionWidget::init(const pcl_msgs::PolygonMesh& mesh)
 {
-  mesh_.reset(new shape_msgs::Mesh(mesh));
+  mesh_.reset(new pcl_msgs::PolygonMesh(mesh));
   clearROISelection();
   return;
 }
@@ -65,7 +65,7 @@ void PolygonAreaSelectionWidget::clearROISelection()
   {
     ROS_ERROR_STREAM("Tool Path Parameter Editor Widget: Area Selection error:" << srv.response.message);
   }
-  submesh_.reset(new shape_msgs::Mesh(*mesh_));
+  submesh_.reset(new pcl_msgs::PolygonMesh(*mesh_));
 
   emit(selectedSubmesh(submesh_));
   return;
@@ -78,7 +78,7 @@ void PolygonAreaSelectionWidget::applySelection()
     emit QWarningBox("No mesh available to crop");
     return;
   }
-  submesh_.reset(new shape_msgs::Mesh());
+  submesh_.reset(new pcl_msgs::PolygonMesh());
   std::string error_message;
   bool success = selector_.collectROIMesh(*mesh_, *submesh_, error_message);
   if (!success)
@@ -86,9 +86,9 @@ void PolygonAreaSelectionWidget::applySelection()
     ROS_ERROR_STREAM(
         "Tool Path Parameter Editor Widget: Area Selection error: could not compute submesh: " << error_message);
   }
-  if (submesh_->vertices.size() < 3 || submesh_->triangles.size() < 1)
+  if ((submesh_->cloud.height * submesh_->cloud.width) < 3 || submesh_->polygons.size() < 1)
   {
-    submesh_.reset(new shape_msgs::Mesh(*mesh_));
+    submesh_.reset(new pcl_msgs::PolygonMesh(*mesh_));
   }
 
   emit(selectedSubmesh(submesh_));

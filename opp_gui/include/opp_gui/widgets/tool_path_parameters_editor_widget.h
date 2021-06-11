@@ -26,6 +26,7 @@
 #include <ros/ros.h>
 
 #include <opp_msgs/ToolPath.h>
+#include <pcl_msgs/PolygonMesh.h>
 
 namespace Ui
 {
@@ -57,6 +58,8 @@ public:
    * @param intersecting_plane_height
    */
   void init(const shape_msgs::Mesh& mesh);
+
+  void init(const pcl_msgs::PolygonMesh& mesh);
 
   void setToolPath(const opp_msgs::ToolPath& tool_path);
 

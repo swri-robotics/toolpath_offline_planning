@@ -20,6 +20,7 @@
 #include <QWidget>
 
 #include <ros/ros.h>
+#include <pcl_msgs/PolygonMesh.h>
 
 #include <noether_msgs/SegmentationConfig.h>
 
@@ -46,7 +47,7 @@ public:
                                        QWidget* parent = nullptr);
   ~SurfaceSelectionComboWidget();
 
-  void init(const shape_msgs::Mesh& mesh);
+  void init(const pcl_msgs::PolygonMesh& mesh);
 
   /** @brief Create a segmentation config based on the spin boxes */
   noether_msgs::SegmentationConfig getSegmentationConfig();
@@ -55,18 +56,18 @@ public:
   void setSegmentationConfig(const noether_msgs::SegmentationConfig& config);
 
 Q_SIGNALS:
-  void newTargetMesh(const shape_msgs::Mesh::Ptr& target_mesh);
+  void newTargetMesh(const pcl_msgs::PolygonMesh::Ptr& target_mesh);
 
   void polylinePath(const std::vector<int> point_indices);
 
   void polylinePathGen(const std::vector<int> pnt_indices);
 
 private Q_SLOTS:
-  void newSegmentList(const std::vector<shape_msgs::Mesh::Ptr>&, const shape_msgs::Mesh::Ptr&);
+  void newSegmentList(const std::vector<pcl_msgs::PolygonMesh::Ptr>&, const pcl_msgs::PolygonMesh::Ptr&);
 
   void newSelectedSegment();
 
-  void newSelectedSubmesh(const shape_msgs::Mesh::Ptr& selected_submesh);
+  void newSelectedSubmesh(const pcl_msgs::PolygonMesh::Ptr& selected_submesh);
 
   void onPolylinePath(const std::vector<int>& path_indices, const shape_msgs::Mesh::Ptr& mesh);
 
@@ -83,13 +84,13 @@ private:
 
   PolylinePathSelectionWidget* path_selector_;
 
-  ros::Publisher selected_area_marker_publisher_;
+  ros::Publisher selected_area_mesh_publisher_;
 
-  shape_msgs::Mesh::Ptr mesh_;
+  pcl_msgs::PolygonMesh::Ptr mesh_;
 
-  std::vector<shape_msgs::Mesh::Ptr> segment_list_;
+  std::vector<pcl_msgs::PolygonMesh::Ptr> segment_list_;
 
-  shape_msgs::Mesh::Ptr selected_area_;
+  pcl_msgs::PolygonMesh::Ptr selected_area_;
 };
 
 }  // end namespace opp_gui

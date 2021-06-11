@@ -26,6 +26,8 @@
 #include <message_serialization/serialize.h>
 #include <ros/package.h>
 #include <shape_msgs/Mesh.h>
+#include <pcl_msgs/PolygonMesh.h>
+#include <pcl_conversions/pcl_conversions.h>
 #include <tf/tf.h>
 #include <tf_conversions/tf_eigen.h>
 
@@ -74,93 +76,6 @@ std::vector<visualization_msgs::Marker> makeVisual(const std::string& frame_id)
   visuals.push_back(lines);
   return visuals;
 }
-
-bool pclToShapeMsg(const pcl::PolygonMesh& pcl_mesh, shape_msgs::Mesh& mesh_msg)
-{
-  // Make sure that there are at least three points and at least one polygon
-  if (pcl_mesh.cloud.height * pcl_mesh.cloud.width < 3 || pcl_mesh.polygons.size() < 1)
-  {
-    return false;
-  }
-
-  // Prepare the message's vectors to receive data
-  // One resize now saves time later
-  mesh_msg.vertices.resize(pcl_mesh.cloud.height * pcl_mesh.cloud.width);
-  mesh_msg.triangles.resize(pcl_mesh.polygons.size());
-
-  // Get the points from the pcl mesh
-  pcl::PointCloud<pcl::PointXYZ> vertices;
-  pcl::fromPCLPointCloud2(pcl_mesh.cloud, vertices);
-
-  // Copy the coordinates inside the vertices into the new mesh
-  // TODO: Maybe check for nan?
-  for (std::size_t i = 0; i < vertices.size(); ++i)
-  {
-    mesh_msg.vertices[i].x = static_cast<double>(vertices[i]._PointXYZ::x);
-    mesh_msg.vertices[i].y = static_cast<double>(vertices[i]._PointXYZ::y);
-    mesh_msg.vertices[i].z = static_cast<double>(vertices[i]._PointXYZ::z);
-  }
-
-  // Copy the vertex indices (which describe each polygon) from
-  // the old mesh to the new mesh
-  for (std::size_t i = 0; i < pcl_mesh.polygons.size(); ++i)
-  {
-    // If a 'polygon' in the old mesh did not have 3 or more vertices,
-    // throw an error.  (If the polygon has 4 or more, just use the first
-    // 3 to make a triangle.)
-    // TODO: It is possible to decompose any polygon into multiple
-    // triangles, and that would prevent loss of data here.
-    if (pcl_mesh.polygons[i].vertices.size() < 3)
-    {
-      return false;
-    }
-    mesh_msg.triangles[i].vertex_indices[0] = pcl_mesh.polygons[i].vertices[0];
-    mesh_msg.triangles[i].vertex_indices[1] = pcl_mesh.polygons[i].vertices[1];
-    mesh_msg.triangles[i].vertex_indices[2] = pcl_mesh.polygons[i].vertices[2];
-  }
-
-  return true;
-}
-
-bool pclFromShapeMsg(const shape_msgs::Mesh& mesh_msg, pcl::PolygonMesh& pcl_mesh)
-{
-  // Make sure that there are at least three points and at least one polygon
-  if (mesh_msg.vertices.size() < 3 || mesh_msg.triangles.size() < 1)
-  {
-    return false;
-  }
-
-  // Prepare PCL structures to receive data
-  // Resizing once now saves time later
-  pcl::PointCloud<pcl::PointXYZ> vertices;
-  vertices.resize(mesh_msg.vertices.size());
-  pcl_mesh.polygons.resize(mesh_msg.triangles.size());
-
-  // Copy the vertex indices (which describe each polygon) from
-  // the old mesh to the new mesh
-  for (std::size_t i = 0; i < mesh_msg.vertices.size(); ++i)
-  {
-    vertices[i]._PointXYZ::x = static_cast<float>(mesh_msg.vertices[i].x);
-    vertices[i]._PointXYZ::y = static_cast<float>(mesh_msg.vertices[i].y);
-    vertices[i]._PointXYZ::z = static_cast<float>(mesh_msg.vertices[i].z);
-  }
-
-  // Copy the vertex indices (which describe each polygon) from
-  // the old mesh to the new mesh
-  for (std::size_t i = 0; i < mesh_msg.triangles.size(); ++i)
-  {
-    pcl_mesh.polygons[i].vertices.resize(3);
-    pcl_mesh.polygons[i].vertices[0] = mesh_msg.triangles[i].vertex_indices[0];
-    pcl_mesh.polygons[i].vertices[1] = mesh_msg.triangles[i].vertex_indices[1];
-    pcl_mesh.polygons[i].vertices[2] = mesh_msg.triangles[i].vertex_indices[2];
-  }
-
-  // Use the filled pointcloud to populate the pcl mesh
-  pcl::toPCLPointCloud2(vertices, pcl_mesh.cloud);
-
-  return true;
-}
-
 }  // namespace
 
 namespace YAML
@@ -248,12 +163,12 @@ bool SelectionArtist::clearROIPointsCb(std_srvs::TriggerRequest& req, std_srvs::
   return true;
 }
 
-bool SelectionArtist::collectROIMesh(const shape_msgs::Mesh& mesh_msg,
-                                     shape_msgs::Mesh& submesh_msg,
+bool SelectionArtist::collectROIMesh(const pcl_msgs::PolygonMesh& mesh_msg,
+                                     pcl_msgs::PolygonMesh& submesh_msg,
                                      std::string& message)
 {
   pcl::PolygonMesh mesh;
-  pclFromShapeMsg(mesh_msg, mesh);
+  pcl_conversions::toPCL(mesh_msg, mesh);
   pcl::PointCloud<pcl::PointXYZ> mesh_cloud;
   pcl::fromPCLPointCloud2(mesh.cloud, mesh_cloud);
   opp_msgs::GetROISelection srv;
@@ -269,7 +184,7 @@ bool SelectionArtist::collectROIMesh(const shape_msgs::Mesh& mesh_msg,
 
   pcl::PolygonMesh submesh;
   filterMesh(mesh, srv.response.cloud_indices, submesh);
-  pclToShapeMsg(submesh, submesh_msg);
+  pcl_conversions::fromPCL(submesh, submesh_msg);
 
   return true;
 }

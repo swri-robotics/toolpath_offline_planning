@@ -23,6 +23,7 @@
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <shape_msgs/Mesh.h>
+#include <pcl_msgs/PolygonMesh.h>
 #include <std_srvs/Trigger.h>
 #include <tf/transform_listener.h>
 #include <visualization_msgs/MarkerArray.h>
@@ -53,7 +54,7 @@ public:
 
   bool clearROIPointsCb(std_srvs::TriggerRequest& req, std_srvs::TriggerResponse& res);
 
-  bool collectROIMesh(const shape_msgs::Mesh& mesh_msg, shape_msgs::Mesh& submesh_msg, std::string& message);
+  bool collectROIMesh(const pcl_msgs::PolygonMesh& mesh_msg, pcl_msgs::PolygonMesh& submesh_msg, std::string& message);
 
   void enable(bool value);
 

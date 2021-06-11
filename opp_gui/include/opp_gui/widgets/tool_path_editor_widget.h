@@ -24,6 +24,7 @@
 #include <ros/node_handle.h>
 #include <ros/publisher.h>
 #include <shape_msgs/Mesh.h>
+#include <pcl_msgs/PolygonMesh.h>
 
 #include "opp_gui/widgets/list_editor_widget_base.h"
 #include "opp_gui/widgets/surface_selection_combo_widget.h"
@@ -57,7 +58,7 @@ public:
     data_.clear();
   }
 
-  void init(const shape_msgs::Mesh& mesh);
+  void init(const pcl_msgs::PolygonMesh& mesh);
 
   inline ToolPathDataMap getToolPathData() const { return data_; }
 
@@ -73,7 +74,7 @@ Q_SIGNALS:
 
 protected Q_SLOTS:
 
-  void newTargetMeshSelected(const shape_msgs::Mesh::Ptr& target_mesh);
+  void newTargetMeshSelected(const pcl_msgs::PolygonMesh::Ptr& target_mesh);
 
   virtual void onAddPressed() override;
 

@@ -612,15 +612,11 @@ bool ToolPathPlannerWidget::loadMesh()
   // Apply the frame id to the mesh
   polygon_mesh.header.frame_id = marker_frame_;
 
-  // Convert pcl_msgs/PolygonMesh to shape_msgs/Mesh for initializing tool path editor.
-  shape_msgs::Mesh mesh;
-  utils::pclMsgToShapeMsg(polygon_mesh, mesh);
-
   // Clear the touch point and tool path editors' data before continuing
   clear();
 
   // Initialize the tool path editor with the mesh
-  tool_path_editor_->init(mesh);
+  tool_path_editor_->init(polygon_mesh);
 
   // Enable the models tabs but not the jobs tabs
   setModelTabsEnabled(true);

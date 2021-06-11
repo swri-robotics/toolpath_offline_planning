@@ -28,7 +28,7 @@
 
 namespace opp_gui
 {
-const static std::string MARKER_TOPIC = "/target_area";
+const static std::string MESH_TOPIC = "/target_area";
 
 SurfaceSelectionComboWidget::SurfaceSelectionComboWidget(ros::NodeHandle& nh,
                                                          const std::string& selection_world_frame,
@@ -38,12 +38,12 @@ SurfaceSelectionComboWidget::SurfaceSelectionComboWidget(ros::NodeHandle& nh,
   , ui_(new Ui::SurfaceSelectionComboWidget)  // initialize the visible element
 {
   // Setup the publisher for visualizing the selected area in RViz
-  selected_area_marker_publisher_ = nh.advertise<visualization_msgs::Marker>(MARKER_TOPIC, 1, true);
+  selected_area_mesh_publisher_ = nh.advertise<pcl_msgs::PolygonMesh>(MESH_TOPIC, 1, true);
 
   // Register ROS-message types with QT so we can use them in signals & slots
-  int id = qRegisterMetaType<shape_msgs::Mesh>();
-  id = qRegisterMetaType<shape_msgs::Mesh::Ptr>();
-  id = qRegisterMetaType<std::vector<shape_msgs::Mesh::Ptr>>();
+  int id = qRegisterMetaType<pcl_msgs::PolygonMesh>();
+  id = qRegisterMetaType<pcl_msgs::PolygonMesh::Ptr>();
+  id = qRegisterMetaType<std::vector<pcl_msgs::PolygonMesh::Ptr>>();
 
   // Initialize the visual component
   ui_->setupUi(this);
@@ -124,20 +124,20 @@ void SurfaceSelectionComboWidget::setSegmentationConfig(const noether_msgs::Segm
   return;
 }
 
-void SurfaceSelectionComboWidget::init(const shape_msgs::Mesh& mesh)
+void SurfaceSelectionComboWidget::init(const pcl_msgs::PolygonMesh& mesh)
 {
   // Set the mesh
-  mesh_.reset(new shape_msgs::Mesh(mesh));
+  mesh_.reset(new pcl_msgs::PolygonMesh(mesh));
 
   // Empty the segment list, and reset the 'whole mesh' option
   segment_list_.resize(1);
-  segment_list_[0].reset(new shape_msgs::Mesh(mesh));
+  segment_list_[0].reset(new pcl_msgs::PolygonMesh(mesh));
   ui_->list_widget_segment_list->clear();
   ui_->list_widget_segment_list->addItem("Full Mesh");
   ui_->list_widget_segment_list->setCurrentRow(0);
 
   // Reset the selected area
-  selected_area_.reset(new shape_msgs::Mesh(mesh));
+  selected_area_.reset(new pcl_msgs::PolygonMesh(mesh));
 
   // Send the mesh along to the segmentation widget
   // (The polygon selector will get it automatically)
@@ -145,15 +145,15 @@ void SurfaceSelectionComboWidget::init(const shape_msgs::Mesh& mesh)
   return;
 }
 
-void SurfaceSelectionComboWidget::newSegmentList(const std::vector<shape_msgs::Mesh::Ptr>& segments,
-                                                 const shape_msgs::Mesh::Ptr& remnants)
+void SurfaceSelectionComboWidget::newSegmentList(const std::vector<pcl_msgs::PolygonMesh::Ptr>& segments,
+                                                 const pcl_msgs::PolygonMesh::Ptr& remnants)
 {
   // Save the original mesh with the segments
   segment_list_.resize(1);
-  segment_list_[0].reset(new shape_msgs::Mesh(*mesh_));
+  segment_list_[0].reset(new pcl_msgs::PolygonMesh(*mesh_));
   for (std::size_t i = 0; i < segments.size(); ++i)
   {
-    segment_list_.emplace_back(new shape_msgs::Mesh(*(segments[i])));
+    segment_list_.emplace_back(new pcl_msgs::PolygonMesh(*(segments[i])));
   }
 
   // Add labels for each segment to the list
@@ -187,16 +187,16 @@ void SurfaceSelectionComboWidget::newSelectedSegment()
   // Based on the user's selection, send the appropriate segment to the
   // polygon selection tool and set the selected area to the entire
   // selected segment.
-  selected_area_.reset(new shape_msgs::Mesh(*(segment_list_[selection_index])));
+  selected_area_.reset(new pcl_msgs::PolygonMesh(*(segment_list_[selection_index])));
   area_selector_->init(*(segment_list_[selection_index]));
   path_selector_->init(*(segment_list_[selection_index]));
   return;
 }
 
-void SurfaceSelectionComboWidget::newSelectedSubmesh(const shape_msgs::Mesh::Ptr& selected_submesh)
+void SurfaceSelectionComboWidget::newSelectedSubmesh(const pcl_msgs::PolygonMesh::Ptr& selected_submesh)
 {
   // Save the selected submesh, display it, then emit it as a signal
-  selected_area_.reset(new shape_msgs::Mesh(*selected_submesh));
+  selected_area_.reset(new pcl_msgs::PolygonMesh(*selected_submesh));
   publishTargetMesh();
   emit newTargetMesh(selected_area_);
 
@@ -218,34 +218,8 @@ void SurfaceSelectionComboWidget::onPolylinePathGen(const std::vector<int>& path
 
 void SurfaceSelectionComboWidget::publishTargetMesh()
 {
-  visualization_msgs::Marker target_mesh;
-  target_mesh.header.frame_id = "map";
-  target_mesh.header.stamp = ros::Time();
-  target_mesh.id = 0;
-  target_mesh.type = visualization_msgs::Marker::TRIANGLE_LIST;
-  target_mesh.action = visualization_msgs::Marker::ADD;
-  target_mesh.pose.position.x = 0;
-  target_mesh.pose.position.y = 0;
-  target_mesh.pose.position.z = 0;
-  target_mesh.pose.orientation.w = 1;
-  target_mesh.pose.orientation.x = 0;
-  target_mesh.pose.orientation.y = 0;
-  target_mesh.pose.orientation.z = 0;
-  target_mesh.scale.x = 1;
-  target_mesh.scale.y = 1;
-  target_mesh.scale.z = 1;
-  target_mesh.color.a = 1;
-  target_mesh.color.r = 1;
-  target_mesh.color.b = 0;
-  target_mesh.color.g = 1;
-  target_mesh.points.clear();
-  for (std::size_t i = 0; i < selected_area_->triangles.size(); ++i)
-  {
-    target_mesh.points.push_back(selected_area_->vertices[selected_area_->triangles[i].vertex_indices[0]]);
-    target_mesh.points.push_back(selected_area_->vertices[selected_area_->triangles[i].vertex_indices[1]]);
-    target_mesh.points.push_back(selected_area_->vertices[selected_area_->triangles[i].vertex_indices[2]]);
-  }
-  selected_area_marker_publisher_.publish(target_mesh);
+  selected_area_->header.frame_id = mesh_->header.frame_id;
+  selected_area_mesh_publisher_.publish(*selected_area_);
   return;
 }
 

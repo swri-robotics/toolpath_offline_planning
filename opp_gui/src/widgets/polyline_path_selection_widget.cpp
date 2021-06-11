@@ -17,6 +17,7 @@
 #include "opp_gui/widgets/polygon_area_selection_widget.h"
 #include "opp_gui/widgets/polyline_path_selection_widget.h"
 #include "ui_polyline_path_selection_widget.h"
+#include "opp_gui/utils.h"
 
 #include <QMessageBox>
 #include <QPushButton>
@@ -52,6 +53,15 @@ PolylinePathSelectionWidget::~PolylinePathSelectionWidget() { delete ui_; }
 void PolylinePathSelectionWidget::init(const shape_msgs::Mesh& mesh)
 {
   mesh_.reset(new shape_msgs::Mesh(mesh));
+  clearPolyline();
+  return;
+}
+
+void PolylinePathSelectionWidget::init(const pcl_msgs::PolygonMesh& mesh)
+{
+  mesh_.reset(new shape_msgs::Mesh());
+  utils::pclMsgToShapeMsg(mesh, *mesh_);
+
   clearPolyline();
   return;
 }

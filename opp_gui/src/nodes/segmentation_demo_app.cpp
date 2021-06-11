@@ -69,10 +69,8 @@ int main(int argc, char** argv)
       std::string filename =
           ros::package::getPath("opp_demos") + "/support/outputs/segmentation_output_" + ss.str() + ".stl";
 
-      pcl_msgs::PolygonMesh pcl_msg_mesh;
-      opp_gui::utils::pclMsgFromShapeMsg(*segmented_meshes[ind], pcl_mesh_msg);
       pcl::PolygonMesh pcl_mesh;
-      pcl_conversions::toPCL(pcl_mesh_msg, pcl_mesh);
+      pcl_conversions::toPCL(*segmented_meshes[ind], pcl_mesh);
       pcl::io::savePolygonFile(filename, pcl_mesh);
     }
   }

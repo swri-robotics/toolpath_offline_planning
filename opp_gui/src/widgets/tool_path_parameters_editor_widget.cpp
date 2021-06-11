@@ -70,6 +70,12 @@ ToolPathParametersEditorWidget::ToolPathParametersEditorWidget(ros::NodeHandle& 
 
 void ToolPathParametersEditorWidget::init(const shape_msgs::Mesh& mesh) { mesh_.reset(new shape_msgs::Mesh(mesh)); }
 
+void ToolPathParametersEditorWidget::init(const pcl_msgs::PolygonMesh& mesh)
+{
+  mesh_.reset(new shape_msgs::Mesh());
+  utils::pclMsgToShapeMsg(mesh, *mesh_);
+}
+
 void ToolPathParametersEditorWidget::setToolPathConfig(const noether_msgs::ToolPathConfig& config)
 {
   ui_->double_spin_box_point_spacing->setValue(config.surface_walk_generator.point_spacing);

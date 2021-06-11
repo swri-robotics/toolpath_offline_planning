@@ -21,7 +21,7 @@
 
 #include <actionlib/client/simple_action_client.h>
 #include <noether_msgs/SegmentAction.h>
-#include <shape_msgs/Mesh.h>
+#include <pcl_msgs/PolygonMesh.h>
 
 #include "opp_gui/register_ros_msgs_for_qt.h"
 
@@ -46,9 +46,6 @@ public:
   /** @brief initialize the widget with the input mesh */
   void init(const pcl_msgs::PolygonMesh& mesh);
 
-  /** @brief initialize the widget with the input mesh */
-  void init(const shape_msgs::Mesh& mesh);
-
   /** @brief Populates the spin boxes based on the segmentation config*/
   void setSegmentationConfig(const noether_msgs::SegmentationConfig& config);
 
@@ -62,17 +59,17 @@ public:
   noether_msgs::FilteringConfig getFilteringConfig() const;
 
   /** @brief Returns the segmentation results as a vector*/
-  std::vector<shape_msgs::Mesh::Ptr> getSegments() const { return segments_; }
+  std::vector<pcl_msgs::PolygonMesh::Ptr> getSegments() const { return segments_; }
 
   /** @brief Return the segmentation edges. These are the mesh trianges that were not classified into another segment */
-  shape_msgs::Mesh::Ptr getEdges() const { return edges_; }
+  pcl_msgs::PolygonMesh::Ptr getEdges() const { return edges_; }
 
 Q_SIGNALS:
 
   /**
    * @brief Signal emitted when segmentation is finished containing vector of the segments and the edges
    */
-  void segmentationFinished(const std::vector<shape_msgs::Mesh::Ptr>&, const shape_msgs::Mesh::Ptr&);
+  void segmentationFinished(const std::vector<pcl_msgs::PolygonMesh::Ptr>&, const pcl_msgs::PolygonMesh::Ptr&);
 
 private Q_SLOTS:
 
@@ -87,11 +84,11 @@ private:
 
   Ui::SegmentationParametersEditor* ui_;
 
-  shape_msgs::Mesh::Ptr input_mesh_;
+  pcl_msgs::PolygonMesh::Ptr input_mesh_;
 
-  std::vector<shape_msgs::Mesh::Ptr> segments_;
+  std::vector<pcl_msgs::PolygonMesh::Ptr> segments_;
 
-  shape_msgs::Mesh::Ptr edges_;
+  pcl_msgs::PolygonMesh::Ptr edges_;
 
   QProgressDialog* progress_dialog_;
 };

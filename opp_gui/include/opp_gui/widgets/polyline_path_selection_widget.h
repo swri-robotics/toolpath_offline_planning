@@ -21,6 +21,7 @@
 
 #include <ros/ros.h>
 #include <shape_msgs/Mesh.h>
+#include <pcl_msgs/PolygonMesh.h>
 
 #include <opp_path_selection/path_selection_artist.h>
 #include "opp_gui/register_ros_msgs_for_qt.h"
@@ -45,6 +46,8 @@ public:
 
 public Q_SLOTS:
   void init(const shape_msgs::Mesh& mesh);
+
+  void init(const pcl_msgs::PolygonMesh& mesh);
 
 Q_SIGNALS:
   void polylinePath(const std::vector<int>& path_indices, const shape_msgs::Mesh::Ptr& mesh);

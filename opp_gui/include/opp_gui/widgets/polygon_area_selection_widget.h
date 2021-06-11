@@ -20,7 +20,7 @@
 #include <QWidget>
 
 #include <ros/ros.h>
-#include <shape_msgs/Mesh.h>
+#include <pcl_msgs/PolygonMesh.h>
 
 #include <opp_area_selection/selection_artist.h>
 #include "opp_gui/register_ros_msgs_for_qt.h"
@@ -44,10 +44,10 @@ public:
   ~PolygonAreaSelectionWidget();
 
 public Q_SLOTS:
-  void init(const shape_msgs::Mesh& mesh);
+  void init(const pcl_msgs::PolygonMesh& mesh);
 
 Q_SIGNALS:
-  void selectedSubmesh(const shape_msgs::Mesh::Ptr& selected_submesh);
+  void selectedSubmesh(const pcl_msgs::PolygonMesh::Ptr& selected_submesh);
 
   void QWarningBox(const std::string message);
 
@@ -63,9 +63,9 @@ private Q_SLOTS:
 private:
   Ui::PolygonAreaSelectionWidget* ui_;
 
-  shape_msgs::Mesh::Ptr mesh_;
+  pcl_msgs::PolygonMesh::Ptr mesh_;
 
-  shape_msgs::Mesh::Ptr submesh_;
+  pcl_msgs::PolygonMesh::Ptr submesh_;
 
   opp_area_selection::SelectionArtist selector_;
 };  // end class PolygonAreaSelectionWidget

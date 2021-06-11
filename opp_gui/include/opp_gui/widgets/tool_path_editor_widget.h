@@ -23,7 +23,6 @@
 #include <noether_msgs/ToolPathConfig.h>
 #include <ros/node_handle.h>
 #include <ros/publisher.h>
-#include <shape_msgs/Mesh.h>
 #include <pcl_msgs/PolygonMesh.h>
 
 #include "opp_gui/widgets/list_editor_widget_base.h"

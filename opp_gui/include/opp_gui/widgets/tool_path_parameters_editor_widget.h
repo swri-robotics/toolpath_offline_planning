@@ -26,6 +26,7 @@
 #include <ros/ros.h>
 
 #include <opp_msgs/ToolPath.h>
+#include <shape_msgs/Mesh.h>
 #include <pcl_msgs/PolygonMesh.h>
 
 namespace Ui

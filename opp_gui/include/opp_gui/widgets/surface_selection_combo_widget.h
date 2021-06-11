@@ -21,6 +21,7 @@
 
 #include <ros/ros.h>
 #include <pcl_msgs/PolygonMesh.h>
+#include <shape_msgs/Mesh.h>
 
 #include <noether_msgs/SegmentationConfig.h>
 

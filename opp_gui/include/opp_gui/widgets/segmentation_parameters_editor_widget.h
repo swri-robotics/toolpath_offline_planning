@@ -21,7 +21,7 @@
 
 #include <actionlib/client/simple_action_client.h>
 #include <noether_msgs/SegmentAction.h>
-#include <shape_msgs/Mesh.h>
+#include <pcl_msgs/PolygonMesh.h>
 
 #include "opp_gui/register_ros_msgs_for_qt.h"
 
@@ -45,9 +45,6 @@ public:
 
   /** @brief initialize the widget with the input mesh */
   void init(const pcl_msgs::PolygonMesh& mesh);
-
-  /** @brief initialize the widget with the input mesh */
-  void init(const shape_msgs::Mesh& mesh);
 
   /** @brief Populates the spin boxes based on the segmentation config*/
   void setSegmentationConfig(const noether_msgs::SegmentationConfig& config);

@@ -20,7 +20,6 @@
 #include <QWidget>
 
 #include <ros/ros.h>
-#include <shape_msgs/Mesh.h>
 #include <pcl_msgs/PolygonMesh.h>
 
 #include <opp_area_selection/selection_artist.h>

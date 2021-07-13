@@ -102,6 +102,10 @@ noether_msgs::ToolPathConfig ToolPathParametersEditorWidget::getToolPathConfig()
   config.plane_slicer_generator.min_hole_size = ui_->double_spin_box_min_hole_size->value();
   config.plane_slicer_generator.tool_offset = ui_->double_spin_box_tool_z_offset->value();
   config.plane_slicer_generator.raster_rot_offset = ui_->double_spin_box_raster_angle->value() * M_PI / 180.0;
+  config.plane_slicer_generator.search_radius =  ui_->double_spin_box_normal_search_radius->value();;
+  config.plane_slicer_generator.interleave_rasters = ui_->checkBox_interleave_rasters->isChecked();
+  config.plane_slicer_generator.generate_extra_rasters = ui_->checkBox_generate_extra_rasters->isChecked();
+  config.plane_slicer_generator.smooth_rasters = ui_->checkBox_smooth_rasters->isChecked();
 
   return config;
 }
@@ -117,7 +121,7 @@ heat_msgs::HeatRasterGeneratorConfig ToolPathParametersEditorWidget::getHeatRast
   config.min_hole_size = ui_->double_spin_box_min_hole_size->value();
   config.min_segment_size = ui_->double_spin_box_min_segment_length->value();
   config.raster_rot_offset = ui_->double_spin_box_raster_angle->value() * M_PI / 180.0;
-  config.generate_extra_rasters = false;  // No option to set this from GUI at present.
+  config.generate_extra_rasters = ui_->checkBox_generate_extra_rasters->isChecked();
   return config;
 }
 
@@ -304,9 +308,7 @@ void ToolPathParametersEditorWidget::onGenerateToolPathsComplete(
           ui_->double_spin_box_raster_angle->value() * M_PI / 180.0;
       tp.params.config.surface_walk_generator.min_hole_size = ui_->double_spin_box_min_hole_size->value();
       tp.params.config.surface_walk_generator.min_segment_size = ui_->double_spin_box_min_segment_length->value();
-      tp.params.config.surface_walk_generator.generate_extra_rasters =
-          false;  // No option to set this from GUI at present.
-      false;      // No option to set this from GUI at present.
+      tp.params.config.surface_walk_generator.generate_extra_rasters = ui_->checkBox_generate_extra_rasters->isChecked();
       tp.params.config.surface_walk_generator.intersection_plane_height =
           ui_->double_spin_box_intersecting_plane_height->value();
 
@@ -317,7 +319,11 @@ void ToolPathParametersEditorWidget::onGenerateToolPathsComplete(
           ui_->double_spin_box_raster_angle->value() * M_PI / 180.0;
       tp.params.config.plane_slicer_generator.min_hole_size = ui_->double_spin_box_min_hole_size->value();
       tp.params.config.plane_slicer_generator.min_segment_size = ui_->double_spin_box_min_segment_length->value();
-
+      tp.params.config.plane_slicer_generator.search_radius = ui_->double_spin_box_normal_search_radius->value();
+      tp.params.config.plane_slicer_generator.interleave_rasters = ui_->checkBox_interleave_rasters->isChecked();
+      tp.params.config.plane_slicer_generator.generate_extra_rasters = ui_->checkBox_generate_extra_rasters->isChecked();
+      tp.params.config.plane_slicer_generator.smooth_rasters = ui_->checkBox_smooth_rasters->isChecked();
+      
       // Create the tool path offset transform
       // 1. Add z offset
       // 2. Rotate 180 degrees about X
@@ -378,7 +384,7 @@ void ToolPathParametersEditorWidget::onGenerateHeatToolPathsComplete(
       tp.params.config.heat_generator.raster_rot_offset = ui_->double_spin_box_raster_angle->value() * M_PI / 180.0;
       tp.params.config.heat_generator.min_hole_size = ui_->double_spin_box_min_hole_size->value();
       tp.params.config.heat_generator.min_segment_size = ui_->double_spin_box_min_segment_length->value();
-      tp.params.config.heat_generator.generate_extra_rasters = false;  // No option to set this from GUI at present.
+      tp.params.config.heat_generator.generate_extra_rasters = ui_->checkBox_generate_extra_rasters->isChecked();
 
       // Create the tool path offset transform
       // 1. Add z offset

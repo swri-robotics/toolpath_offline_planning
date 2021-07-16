@@ -106,7 +106,9 @@ noether_msgs::ToolPathConfig ToolPathParametersEditorWidget::getToolPathConfig()
   config.plane_slicer_generator.interleave_rasters = ui_->checkBox_interleave_rasters->isChecked();
   config.plane_slicer_generator.generate_extra_rasters = ui_->checkBox_generate_extra_rasters->isChecked();
   config.plane_slicer_generator.smooth_rasters = ui_->checkBox_smooth_rasters->isChecked();
-
+  if(ui_->radioButton_mow_style->isChecked())  config.plane_slicer_generator.raster_style = noether_msgs::ToolPathConfig::MOW_RASTER_STYLE;
+  if(ui_->radioButton_paint_style->isChecked())  config.plane_slicer_generator.raster_style = noether_msgs::ToolPathConfig::PAINT_RASTER_STYLE;
+  if(ui_->radioButton_read_style->isChecked())  config.plane_slicer_generator.raster_style = noether_msgs::ToolPathConfig::READ_RASTER_STYLE;
   return config;
 }
 
@@ -323,6 +325,10 @@ void ToolPathParametersEditorWidget::onGenerateToolPathsComplete(
       tp.params.config.plane_slicer_generator.interleave_rasters = ui_->checkBox_interleave_rasters->isChecked();
       tp.params.config.plane_slicer_generator.generate_extra_rasters = ui_->checkBox_generate_extra_rasters->isChecked();
       tp.params.config.plane_slicer_generator.smooth_rasters = ui_->checkBox_smooth_rasters->isChecked();
+      if(ui_->radioButton_mow_style->isChecked()) tp.params.config.plane_slicer_generator.raster_style = noether_msgs::ToolPathConfig::MOW_RASTER_STYLE;
+      if(ui_->radioButton_paint_style->isChecked()) tp.params.config.plane_slicer_generator.raster_style = noether_msgs::ToolPathConfig::PAINT_RASTER_STYLE;
+      if(ui_->radioButton_read_style->isChecked()) tp.params.config.plane_slicer_generator.raster_style = noether_msgs::ToolPathConfig::READ_RASTER_STYLE;
+
       
       // Create the tool path offset transform
       // 1. Add z offset

@@ -36,6 +36,8 @@
   <depend>pcl_ros</depend>
   <depend>rviz</depend>
   <depend>shape_msgs</depend>
+  <depend>smooth_pose_traj</depend>
+  <depend>tool_path_planner</depend>
   <depend>std_srvs</depend>
   <depend>visualization_msgs</depend>
 

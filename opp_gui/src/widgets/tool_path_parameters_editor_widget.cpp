@@ -27,9 +27,17 @@
 #include <opp_path_selection/path_selection_artist.h>
 #include "opp_gui/utils.h"
 #include "ui_tool_path_parameters_editor.h"
+#include <smooth_pose_traj/SmoothPoseTrajectory.h>  
+#include <geometry_msgs/PoseArray.h>
+#include <pcl/point_types.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/kdtree/kdtree_flann.h>
+#include <pcl/surface/mls.h>
+#include <tool_path_planner/utilities.h>
 
 const static std::string GENERATE_TOOLPATHS_ACTION = "generate_tool_paths";
 const static std::string GENERATE_HEAT_TOOLPATHS_ACTION = "generate_heat_tool_paths";
+const static std::string SMOOTH_POLYLINE_SERVICE = "polyline_smoother";
 
 namespace opp_gui
 {
@@ -66,6 +74,8 @@ ToolPathParametersEditorWidget::ToolPathParametersEditorWidget(ros::NodeHandle& 
   connect(
       this, &ToolPathParametersEditorWidget::polylinePathGen, this, &ToolPathParametersEditorWidget::onPolylinePathGen);
   connect(this, &ToolPathParametersEditorWidget::QWarningBox, this, &ToolPathParametersEditorWidget::onQWarningBox);
+  connect(this, &ToolPathParametersEditorWidget::polylinePath, this, &ToolPathParametersEditorWidget::onPolylinePath);
+  polyline_smooth_client_ = nh.serviceClient<smooth_pose_traj::SmoothPoseTrajectory>(SMOOTH_POLYLINE_SERVICE);
 }
 
 void ToolPathParametersEditorWidget::init(const shape_msgs::Mesh& mesh) { mesh_.reset(new shape_msgs::Mesh(mesh)); }
@@ -184,6 +194,63 @@ void ToolPathParametersEditorWidget::generateToolPath()
   progress_dialog_->show();
 }
 
+
+geometry_msgs::PoseArray ToolPathParametersEditorWidget::compute_pose_arrays(const std::vector<int> pnt_indices)
+{
+  double point_spacing = ui_->double_spin_box_point_spacing->value();
+  double normal_search_radius = ui_->double_spin_box_normal_search_radius->value();
+  geometry_msgs::PoseArray PA;
+
+  // compute vertex normals
+  std::vector<Eigen::Vector3d> vertex_normals, face_normals;
+  tool_path_planner::computeMeshNormals(*mesh_, face_normals, vertex_normals);
+
+  // convert mesh_ to a pcl::PointCloud<pcl::PointNormal>
+  pcl::PointCloud<pcl::PointXYZ>::Ptr mesh_cloud_ptr(new pcl::PointCloud<pcl::PointXYZ>() );
+  tool_path_planner::shapeMsgToPclPointXYZ(*mesh_, *mesh_cloud_ptr);
+
+  // compute normals of mesh using Moving Least Squares
+  auto mesh_normals_ptr = boost::make_shared<pcl::PointCloud<pcl::PointNormal> > (tool_path_planner::computeMLSMeshNormals(mesh_cloud_ptr, normal_search_radius));
+
+  // align the mls normals to the vertex normals
+  if(!tool_path_planner::alignToVertexNormals(*mesh_normals_ptr, vertex_normals))
+    {
+      ROS_ERROR("alignToVertexNormals failed");
+    }
+     
+  // generate equally spaced points
+  pcl::PointCloud<pcl::PointNormal> equal_spaced_points;
+  if(!tool_path_planner::applyEqualDistance(pnt_indices, *mesh_cloud_ptr, equal_spaced_points, point_spacing))
+    {
+      ROS_ERROR("could not find equal spaced points");
+    }
+  else
+    {
+      tool_path_planner::insertPointNormals(mesh_normals_ptr, equal_spaced_points);
+      tool_path_planner::ToolPathSegment segment;
+      if(!tool_path_planner::createToolPathSegment(equal_spaced_points, {}, segment))
+	{
+	  ROS_ERROR("failed to create tool path segment from equally spaced points");
+	}
+      else
+	{
+	  for(Eigen::Isometry3d pose : segment)
+	    {
+	      geometry_msgs::Pose gm_pose;
+	      Eigen::Quaterniond r(pose.rotation());
+	      gm_pose.position.x = pose.translation().x();
+	      gm_pose.position.y = pose.translation().y();
+	      gm_pose.position.z = pose.translation().z();
+	      gm_pose.orientation.x = r.x();
+	      gm_pose.orientation.y = r.y();
+	      gm_pose.orientation.z = r.z();	  
+	      gm_pose.orientation.w = r.w();	  
+	      PA.poses.push_back(gm_pose);
+	    }
+	}
+    }
+  return(PA);
+}
 void ToolPathParametersEditorWidget::onPolylinePath(const std::vector<int> pnt_indices)
 {
   if (!mesh_)
@@ -191,27 +258,23 @@ void ToolPathParametersEditorWidget::onPolylinePath(const std::vector<int> pnt_i
     emit QWarningBox("Mesh has not yet been specified");
     return;
   }
-
-  // Create an action goal with only one set of sources and configs
-  heat_msgs::GenerateHeatToolPathsGoal goal;
-  // copy pnt_indices into goal as the sources
-  heat_msgs::Source S;
-  for (int i = 0; i < pnt_indices.size(); i++)
-  {
-    S.source_indices.push_back(pnt_indices[i]);
-  }
   if (pnt_indices.size() == 0)
   {
-    emit QWarningBox("No path points selected, using raster angle instead");
+    emit QWarningBox("No polyline points yet selected");
+    return;
   }
-  goal.sources.push_back(S);
-  goal.path_configs.push_back(getHeatRasterGeneratorConfig());
-  goal.surface_meshes.push_back(*mesh_);
-  goal.proceed_on_failure = false;
+  geometry_msgs::PoseArray output_poses = compute_pose_arrays(pnt_indices);
 
-  heat_client_.sendGoal(goal,
-                        boost::bind(&ToolPathParametersEditorWidget::onGenerateHeatToolPathsComplete, this, _1, _2));
-
+  actionlib::SimpleClientGoalState state = actionlib::SimpleClientGoalState::SUCCEEDED;
+  heat_msgs::GenerateHeatToolPathsResult goal_;
+  goal_.success = true;
+  goal_.tool_path_validities.push_back(true);
+  heat_msgs::HeatToolPath tool_path; // geometry_msgs/PoseArray[] paths
+  noether_msgs::ToolPath ntool_path; // geometry_msgs/PoseArray[] segments
+  tool_path.paths.push_back(output_poses);
+  goal_.tool_raster_paths.push_back(tool_path);
+  auto goal = boost::make_shared<heat_msgs::GenerateHeatToolPathsResult>(goal_);
+  
   progress_dialog_ = new QProgressDialog(this);
   progress_dialog_->setModal(true);
   progress_dialog_->setLabelText("Heat Path Planning Progress");
@@ -220,6 +283,8 @@ void ToolPathParametersEditorWidget::onPolylinePath(const std::vector<int> pnt_i
 
   progress_dialog_->setValue(progress_dialog_->minimum());
   progress_dialog_->show();
+  
+  ToolPathParametersEditorWidget::onGenerateHeatToolPathsComplete(state, goal);
 }
 
 void ToolPathParametersEditorWidget::onPolylinePathGen(const std::vector<int> pnt_indices)

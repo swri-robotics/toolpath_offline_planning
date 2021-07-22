@@ -23,9 +23,10 @@
 #include <noether_msgs/GenerateToolPathsAction.h>
 #include <heat_msgs/GenerateHeatToolPathsAction.h>
 #include <heat_msgs/HeatRasterGeneratorConfig.h>
+#include <smooth_pose_traj/SmoothPoseTrajectory.h>
 #include <ros/ros.h>
-
 #include <opp_msgs/ToolPath.h>
+#include <geometry_msgs/PoseArray.h>
 
 namespace Ui
 {
@@ -67,6 +68,8 @@ public:
   noether_msgs::ToolPathConfig getToolPathConfig() const;
 
   heat_msgs::HeatRasterGeneratorConfig getHeatRasterGeneratorConfig() const;
+  
+  geometry_msgs::PoseArray compute_pose_arrays(const std::vector<int> pnt_indices);
 
 Q_SIGNALS:
 
@@ -109,6 +112,7 @@ private:
 
   actionlib::SimpleActionClient<noether_msgs::GenerateToolPathsAction> client_;
   actionlib::SimpleActionClient<heat_msgs::GenerateHeatToolPathsAction> heat_client_;
+  ros::ServiceClient polyline_smooth_client_;
 
   Ui::ToolPathParametersEditor* ui_;
 
@@ -117,6 +121,7 @@ private:
   shape_msgs::Mesh::Ptr mesh_;
 
   QProgressDialog* progress_dialog_;
+
 };
 
 }  // namespace opp_gui

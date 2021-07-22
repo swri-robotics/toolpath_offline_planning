@@ -266,12 +266,9 @@ void ToolPathEditorWidget::publishToolPathDisplay(const opp_msgs::ToolPath& tool
 
 void ToolPathEditorWidget::onPolylinePath(const std::vector<int> pnt_indices)
 {
-  // TODO: First find shortest path on surface between each segments same as with pathGen
-  // TODO TODO TODO TODO
-  char old_style[255];
-  sprintf(old_style, "new polyline path in ToolPathEditor has %ld pnts", pnt_indices.size());
-  emit QWarningBox(old_style);
+  emit(editor_->polylinePath(pnt_indices));
 }
+
 void ToolPathEditorWidget::onPolylinePathReset(const std::vector<int> pnt_indices)
 {
   std::string msg("Polyline path in ToolPathEditor was reset");

@@ -68,7 +68,7 @@ public:
   noether_msgs::ToolPathConfig getToolPathConfig() const;
 
   heat_msgs::HeatRasterGeneratorConfig getHeatRasterGeneratorConfig() const;
-  
+
   geometry_msgs::PoseArray compute_pose_arrays(const std::vector<int> pnt_indices);
 
 Q_SIGNALS:
@@ -121,7 +121,6 @@ private:
   shape_msgs::Mesh::Ptr mesh_;
 
   QProgressDialog* progress_dialog_;
-
 };
 
 }  // namespace opp_gui

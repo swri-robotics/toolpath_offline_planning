@@ -27,7 +27,7 @@
 #include <opp_path_selection/path_selection_artist.h>
 #include "opp_gui/utils.h"
 #include "ui_tool_path_parameters_editor.h"
-#include <smooth_pose_traj/SmoothPoseTrajectory.h>  
+#include <smooth_pose_traj/SmoothPoseTrajectory.h>
 #include <geometry_msgs/PoseArray.h>
 #include <pcl/point_types.h>
 #include <pcl/io/pcd_io.h>
@@ -112,13 +112,17 @@ noether_msgs::ToolPathConfig ToolPathParametersEditorWidget::getToolPathConfig()
   config.plane_slicer_generator.min_hole_size = ui_->double_spin_box_min_hole_size->value();
   config.plane_slicer_generator.tool_offset = ui_->double_spin_box_tool_z_offset->value();
   config.plane_slicer_generator.raster_rot_offset = ui_->double_spin_box_raster_angle->value() * M_PI / 180.0;
-  config.plane_slicer_generator.search_radius =  ui_->double_spin_box_normal_search_radius->value();;
+  config.plane_slicer_generator.search_radius = ui_->double_spin_box_normal_search_radius->value();
+  ;
   config.plane_slicer_generator.interleave_rasters = ui_->checkBox_interleave_rasters->isChecked();
   config.plane_slicer_generator.generate_extra_rasters = ui_->checkBox_generate_extra_rasters->isChecked();
   config.plane_slicer_generator.smooth_rasters = ui_->checkBox_smooth_rasters->isChecked();
-  if(ui_->radioButton_mow_style->isChecked())  config.plane_slicer_generator.raster_style = noether_msgs::ToolPathConfig::MOW_RASTER_STYLE;
-  if(ui_->radioButton_paint_style->isChecked())  config.plane_slicer_generator.raster_style = noether_msgs::ToolPathConfig::PAINT_RASTER_STYLE;
-  if(ui_->radioButton_read_style->isChecked())  config.plane_slicer_generator.raster_style = noether_msgs::ToolPathConfig::READ_RASTER_STYLE;
+  if (ui_->radioButton_mow_style->isChecked())
+    config.plane_slicer_generator.raster_style = noether_msgs::ToolPathConfig::MOW_RASTER_STYLE;
+  if (ui_->radioButton_paint_style->isChecked())
+    config.plane_slicer_generator.raster_style = noether_msgs::ToolPathConfig::PAINT_RASTER_STYLE;
+  if (ui_->radioButton_read_style->isChecked())
+    config.plane_slicer_generator.raster_style = noether_msgs::ToolPathConfig::READ_RASTER_STYLE;
   return config;
 }
 
@@ -194,7 +198,6 @@ void ToolPathParametersEditorWidget::generateToolPath()
   progress_dialog_->show();
 }
 
-
 geometry_msgs::PoseArray ToolPathParametersEditorWidget::compute_pose_arrays(const std::vector<int> pnt_indices)
 {
   double point_spacing = ui_->double_spin_box_point_spacing->value();
@@ -206,50 +209,51 @@ geometry_msgs::PoseArray ToolPathParametersEditorWidget::compute_pose_arrays(con
   tool_path_planner::computeMeshNormals(*mesh_, face_normals, vertex_normals);
 
   // convert mesh_ to a pcl::PointCloud<pcl::PointNormal>
-  pcl::PointCloud<pcl::PointXYZ>::Ptr mesh_cloud_ptr(new pcl::PointCloud<pcl::PointXYZ>() );
+  pcl::PointCloud<pcl::PointXYZ>::Ptr mesh_cloud_ptr(new pcl::PointCloud<pcl::PointXYZ>());
   tool_path_planner::shapeMsgToPclPointXYZ(*mesh_, *mesh_cloud_ptr);
 
   // compute normals of mesh using Moving Least Squares
-  auto mesh_normals_ptr = boost::make_shared<pcl::PointCloud<pcl::PointNormal> > (tool_path_planner::computeMLSMeshNormals(mesh_cloud_ptr, normal_search_radius));
+  auto mesh_normals_ptr = boost::make_shared<pcl::PointCloud<pcl::PointNormal> >(
+      tool_path_planner::computeMLSMeshNormals(mesh_cloud_ptr, normal_search_radius));
 
   // align the mls normals to the vertex normals
-  if(!tool_path_planner::alignToVertexNormals(*mesh_normals_ptr, vertex_normals))
-    {
-      ROS_ERROR("alignToVertexNormals failed");
-    }
-     
+  if (!tool_path_planner::alignToVertexNormals(*mesh_normals_ptr, vertex_normals))
+  {
+    ROS_ERROR("alignToVertexNormals failed");
+  }
+
   // generate equally spaced points
   pcl::PointCloud<pcl::PointNormal> equal_spaced_points;
-  if(!tool_path_planner::applyEqualDistance(pnt_indices, *mesh_cloud_ptr, equal_spaced_points, point_spacing))
-    {
-      ROS_ERROR("could not find equal spaced points");
-    }
+  if (!tool_path_planner::applyEqualDistance(pnt_indices, *mesh_cloud_ptr, equal_spaced_points, point_spacing))
+  {
+    ROS_ERROR("could not find equal spaced points");
+  }
   else
+  {
+    tool_path_planner::insertPointNormals(mesh_normals_ptr, equal_spaced_points);
+    tool_path_planner::ToolPathSegment segment;
+    if (!tool_path_planner::createToolPathSegment(equal_spaced_points, {}, segment))
     {
-      tool_path_planner::insertPointNormals(mesh_normals_ptr, equal_spaced_points);
-      tool_path_planner::ToolPathSegment segment;
-      if(!tool_path_planner::createToolPathSegment(equal_spaced_points, {}, segment))
-	{
-	  ROS_ERROR("failed to create tool path segment from equally spaced points");
-	}
-      else
-	{
-	  for(Eigen::Isometry3d pose : segment)
-	    {
-	      geometry_msgs::Pose gm_pose;
-	      Eigen::Quaterniond r(pose.rotation());
-	      gm_pose.position.x = pose.translation().x();
-	      gm_pose.position.y = pose.translation().y();
-	      gm_pose.position.z = pose.translation().z();
-	      gm_pose.orientation.x = r.x();
-	      gm_pose.orientation.y = r.y();
-	      gm_pose.orientation.z = r.z();	  
-	      gm_pose.orientation.w = r.w();	  
-	      PA.poses.push_back(gm_pose);
-	    }
-	}
+      ROS_ERROR("failed to create tool path segment from equally spaced points");
     }
-  return(PA);
+    else
+    {
+      for (Eigen::Isometry3d pose : segment)
+      {
+        geometry_msgs::Pose gm_pose;
+        Eigen::Quaterniond r(pose.rotation());
+        gm_pose.position.x = pose.translation().x();
+        gm_pose.position.y = pose.translation().y();
+        gm_pose.position.z = pose.translation().z();
+        gm_pose.orientation.x = r.x();
+        gm_pose.orientation.y = r.y();
+        gm_pose.orientation.z = r.z();
+        gm_pose.orientation.w = r.w();
+        PA.poses.push_back(gm_pose);
+      }
+    }
+  }
+  return (PA);
 }
 void ToolPathParametersEditorWidget::onPolylinePath(const std::vector<int> pnt_indices)
 {
@@ -269,12 +273,12 @@ void ToolPathParametersEditorWidget::onPolylinePath(const std::vector<int> pnt_i
   heat_msgs::GenerateHeatToolPathsResult goal_;
   goal_.success = true;
   goal_.tool_path_validities.push_back(true);
-  heat_msgs::HeatToolPath tool_path; // geometry_msgs/PoseArray[] paths
-  noether_msgs::ToolPath ntool_path; // geometry_msgs/PoseArray[] segments
+  heat_msgs::HeatToolPath tool_path;  // geometry_msgs/PoseArray[] paths
+  noether_msgs::ToolPath ntool_path;  // geometry_msgs/PoseArray[] segments
   tool_path.paths.push_back(output_poses);
   goal_.tool_raster_paths.push_back(tool_path);
   auto goal = boost::make_shared<heat_msgs::GenerateHeatToolPathsResult>(goal_);
-  
+
   progress_dialog_ = new QProgressDialog(this);
   progress_dialog_->setModal(true);
   progress_dialog_->setLabelText("Heat Path Planning Progress");
@@ -283,7 +287,7 @@ void ToolPathParametersEditorWidget::onPolylinePath(const std::vector<int> pnt_i
 
   progress_dialog_->setValue(progress_dialog_->minimum());
   progress_dialog_->show();
-  
+
   ToolPathParametersEditorWidget::onGenerateHeatToolPathsComplete(state, goal);
 }
 
@@ -375,7 +379,8 @@ void ToolPathParametersEditorWidget::onGenerateToolPathsComplete(
           ui_->double_spin_box_raster_angle->value() * M_PI / 180.0;
       tp.params.config.surface_walk_generator.min_hole_size = ui_->double_spin_box_min_hole_size->value();
       tp.params.config.surface_walk_generator.min_segment_size = ui_->double_spin_box_min_segment_length->value();
-      tp.params.config.surface_walk_generator.generate_extra_rasters = ui_->checkBox_generate_extra_rasters->isChecked();
+      tp.params.config.surface_walk_generator.generate_extra_rasters =
+          ui_->checkBox_generate_extra_rasters->isChecked();
       tp.params.config.surface_walk_generator.intersection_plane_height =
           ui_->double_spin_box_intersecting_plane_height->value();
 
@@ -388,13 +393,16 @@ void ToolPathParametersEditorWidget::onGenerateToolPathsComplete(
       tp.params.config.plane_slicer_generator.min_segment_size = ui_->double_spin_box_min_segment_length->value();
       tp.params.config.plane_slicer_generator.search_radius = ui_->double_spin_box_normal_search_radius->value();
       tp.params.config.plane_slicer_generator.interleave_rasters = ui_->checkBox_interleave_rasters->isChecked();
-      tp.params.config.plane_slicer_generator.generate_extra_rasters = ui_->checkBox_generate_extra_rasters->isChecked();
+      tp.params.config.plane_slicer_generator.generate_extra_rasters =
+          ui_->checkBox_generate_extra_rasters->isChecked();
       tp.params.config.plane_slicer_generator.smooth_rasters = ui_->checkBox_smooth_rasters->isChecked();
-      if(ui_->radioButton_mow_style->isChecked()) tp.params.config.plane_slicer_generator.raster_style = noether_msgs::ToolPathConfig::MOW_RASTER_STYLE;
-      if(ui_->radioButton_paint_style->isChecked()) tp.params.config.plane_slicer_generator.raster_style = noether_msgs::ToolPathConfig::PAINT_RASTER_STYLE;
-      if(ui_->radioButton_read_style->isChecked()) tp.params.config.plane_slicer_generator.raster_style = noether_msgs::ToolPathConfig::READ_RASTER_STYLE;
+      if (ui_->radioButton_mow_style->isChecked())
+        tp.params.config.plane_slicer_generator.raster_style = noether_msgs::ToolPathConfig::MOW_RASTER_STYLE;
+      if (ui_->radioButton_paint_style->isChecked())
+        tp.params.config.plane_slicer_generator.raster_style = noether_msgs::ToolPathConfig::PAINT_RASTER_STYLE;
+      if (ui_->radioButton_read_style->isChecked())
+        tp.params.config.plane_slicer_generator.raster_style = noether_msgs::ToolPathConfig::READ_RASTER_STYLE;
 
-      
       // Create the tool path offset transform
       // 1. Add z offset
       // 2. Rotate 180 degrees about X

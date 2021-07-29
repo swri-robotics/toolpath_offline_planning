@@ -21,7 +21,7 @@
 - git:
     local-name: rviz_tool_cursor
     uri: 'https://github.com/marip8/rviz_tool_cursor.git'
-    version: 0.1.0
+    version: f81dc0f63038676d18750c9d647b42782362dd84
 
 # cmake_common_scripts
 - git:

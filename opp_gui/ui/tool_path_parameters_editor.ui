@@ -13,16 +13,16 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="mainLayout">
-   <item>
+  <layout class="QFormLayout" name="formLayout_2">
+   <item row="0" column="0">
     <widget class="QLabel" name="label_tool_path_generation">
      <property name="text">
       <string>Tool Path Generation</string>
      </property>
     </widget>
    </item>
-   <item>
-    <layout class="QFormLayout" name="form_layout_process_type">
+   <item row="1" column="0" colspan="2">
+    <layout class="QFormLayout" name="formLayout">
      <item row="0" column="0">
       <widget class="QLabel" name="label_process_type">
        <property name="text">
@@ -45,198 +45,262 @@
      </item>
     </layout>
    </item>
-   <item>
-    <layout class="QFormLayout" name="form_layout_tpp_parameters">
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_line_spacing">
-       <property name="toolTip">
-        <string extracomment="Spacing between adjacent toolpath segments (in meters)"/>
-       </property>
-       <property name="text">
-        <string>Line Spacing (m)</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QDoubleSpinBox" name="double_spin_box_line_spacing">
-       <property name="decimals">
-        <number>3</number>
-       </property>
-       <property name="singleStep">
-        <double>0.010000000000000</double>
-       </property>
-       <property name="value">
-        <double>0.200000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_point_spacing">
-       <property name="toolTip">
-        <string extracomment="Spacing between adjacent waypoints on a segment (in meters)"/>
-       </property>
-       <property name="text">
-        <string>Point Spacing (m)</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QDoubleSpinBox" name="double_spin_box_point_spacing">
-       <property name="decimals">
-        <number>3</number>
-       </property>
-       <property name="singleStep">
-        <double>0.010000000000000</double>
-       </property>
-       <property name="value">
-        <double>0.100000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_tool_offset">
-       <property name="toolTip">
-        <string extracomment="Tool offset along the z-axis from each waypoint (in meters)"/>
-       </property>
-       <property name="text">
-        <string>Tool Z-axis Offset (m)</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QDoubleSpinBox" name="double_spin_box_tool_z_offset">
-       <property name="decimals">
-        <number>3</number>
-       </property>
-       <property name="singleStep">
-        <double>0.010000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="label_min_hole_size">
-       <property name="toolTip">
-        <string extracomment="The minimum surface hole size for which the tool path planner will break a segment (in meters)"/>
-       </property>
-       <property name="text">
-        <string>Min. Hole Size (m)</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="QDoubleSpinBox" name="double_spin_box_min_hole_size">
-       <property name="decimals">
-        <number>3</number>
-       </property>
-       <property name="singleStep">
-        <double>0.010000000000000</double>
-       </property>
-       <property name="value">
-        <double>0.025000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="label_min_segment_length">
-       <property name="toolTip">
-        <string extracomment="Minimum length of a toolpath segment (in meters)"/>
-       </property>
-       <property name="text">
-        <string>Min. Segment Length (m)</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="1">
-      <widget class="QDoubleSpinBox" name="double_spin_box_min_segment_length">
-       <property name="decimals">
-        <number>3</number>
-       </property>
-       <property name="singleStep">
-        <double>0.010000000000000</double>
-       </property>
-       <property name="value">
-        <double>0.050000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0">
-      <widget class="QLabel" name="label_intersecting_plane_height">
-       <property name="text">
-        <string>Intersecting Plane Height (m)</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="1">
-      <widget class="QDoubleSpinBox" name="double_spin_box_intersecting_plane_height">
-       <property name="decimals">
-        <number>3</number>
-       </property>
-       <property name="value">
-        <double>0.050000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="0">
-      <widget class="QLabel" name="label_raster_angle">
-       <property name="text">
-        <string>Raster Angle (deg)</string>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="1">
-      <widget class="QDoubleSpinBox" name="double_spin_box_raster_angle">
-       <property name="decimals">
-        <number>3</number>
-       </property>
-       <property name="minimum">
-        <double>-180.000000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>180.000000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="label_tool_pitch">
-       <property name="text">
-        <string>Tool Pitch (degrees)</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QDoubleSpinBox" name="double_spin_box_tool_pitch">
-       <property name="decimals">
-        <number>3</number>
-       </property>
-       <property name="minimum">
-        <double>-60.000000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>60.000000000000000</double>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QPushButton" name="push_button_generate">
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_line_spacing">
+     <property name="toolTip">
+      <string extracomment="Spacing between adjacent toolpath segments (in meters)"/>
+     </property>
      <property name="text">
-      <string>Generate</string>
+      <string>Line Spacing (m)</string>
      </property>
     </widget>
    </item>
-   <item>
+   <item row="2" column="1">
+    <widget class="QDoubleSpinBox" name="double_spin_box_line_spacing">
+     <property name="decimals">
+      <number>3</number>
+     </property>
+     <property name="singleStep">
+      <double>0.010000000000000</double>
+     </property>
+     <property name="value">
+      <double>0.200000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_point_spacing">
+     <property name="toolTip">
+      <string extracomment="Spacing between adjacent waypoints on a segment (in meters)"/>
+     </property>
+     <property name="text">
+      <string>Point Spacing (m)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QDoubleSpinBox" name="double_spin_box_point_spacing">
+     <property name="decimals">
+      <number>3</number>
+     </property>
+     <property name="singleStep">
+      <double>0.010000000000000</double>
+     </property>
+     <property name="value">
+      <double>0.100000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="label_tool_offset">
+     <property name="toolTip">
+      <string extracomment="Tool offset along the z-axis from each waypoint (in meters)"/>
+     </property>
+     <property name="text">
+      <string>Tool Z-axis Offset (m)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QDoubleSpinBox" name="double_spin_box_tool_z_offset">
+     <property name="decimals">
+      <number>3</number>
+     </property>
+     <property name="singleStep">
+      <double>0.010000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="label_tool_pitch">
+     <property name="text">
+      <string>Tool Pitch (degrees)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="QDoubleSpinBox" name="double_spin_box_tool_pitch">
+     <property name="decimals">
+      <number>3</number>
+     </property>
+     <property name="minimum">
+      <double>-60.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>60.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="label_min_hole_size">
+     <property name="toolTip">
+      <string extracomment="The minimum surface hole size for which the tool path planner will break a segment (in meters)"/>
+     </property>
+     <property name="text">
+      <string>Min. Hole Size (m)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QDoubleSpinBox" name="double_spin_box_min_hole_size">
+     <property name="decimals">
+      <number>3</number>
+     </property>
+     <property name="singleStep">
+      <double>0.010000000000000</double>
+     </property>
+     <property name="value">
+      <double>0.025000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="label_min_segment_length">
+     <property name="toolTip">
+      <string extracomment="Minimum length of a toolpath segment (in meters)"/>
+     </property>
+     <property name="text">
+      <string>Min. Segment Length (m)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1">
+    <widget class="QDoubleSpinBox" name="double_spin_box_min_segment_length">
+     <property name="decimals">
+      <number>3</number>
+     </property>
+     <property name="singleStep">
+      <double>0.010000000000000</double>
+     </property>
+     <property name="value">
+      <double>0.050000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="label_intersecting_plane_height">
+     <property name="text">
+      <string>Intersecting Plane Height (m)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="QDoubleSpinBox" name="double_spin_box_intersecting_plane_height">
+     <property name="decimals">
+      <number>3</number>
+     </property>
+     <property name="value">
+      <double>0.050000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0">
+    <widget class="QLabel" name="label_raster_angle">
+     <property name="text">
+      <string>Raster Angle (deg)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="1">
+    <widget class="QDoubleSpinBox" name="double_spin_box_raster_angle">
+     <property name="decimals">
+      <number>3</number>
+     </property>
+     <property name="minimum">
+      <double>-180.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>180.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="0">
+    <widget class="QLabel" name="label_normal_search_radius">
+     <property name="text">
+      <string>Normal Search Radius (m)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="1">
+    <widget class="QDoubleSpinBox" name="double_spin_box_normal_search_radius">
+     <property name="decimals">
+      <number>3</number>
+     </property>
+     <property name="minimum">
+      <double>-180.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>180.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>0.010000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="0">
+    <widget class="QCheckBox" name="checkBox_interleave_rasters">
+     <property name="text">
+      <string>Interleave Rasters</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="0">
+    <widget class="QCheckBox" name="checkBox_smooth_rasters">
+     <property name="text">
+      <string>Smooth Rasters</string>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="0">
+    <widget class="QCheckBox" name="checkBox_generate_extra_rasters">
+     <property name="text">
+      <string>Generate Extra Rasters</string>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="0">
+    <widget class="QRadioButton" name="radioButton_mow_style">
+     <property name="text">
+      <string>Mow Style</string>
+     </property>
+    </widget>
+   </item>
+   <item row="15" column="0">
+    <widget class="QRadioButton" name="radioButton_paint_style">
+     <property name="text">
+      <string>Paint Style</string>
+     </property>
+    </widget>
+   </item>
+   <item row="16" column="0">
+    <widget class="QRadioButton" name="radioButton_read_style">
+     <property name="text">
+      <string>Read Style</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="16" column="1">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>20</width>
+       <width>386</width>
        <height>40</height>
       </size>
      </property>
     </spacer>
+   </item>
+   <item row="17" column="0">
+    <widget class="QPushButton" name="push_button_generate">
+     <property name="text">
+      <string>Generate</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

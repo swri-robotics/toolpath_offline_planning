@@ -20,6 +20,8 @@ find_package(catkin REQUIRED COMPONENTS
   pcl_ros
   rviz
   shape_msgs
+  smooth_pose_traj
+  tool_path_planner
   std_srvs
   visualization_msgs
 )

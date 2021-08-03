@@ -13,7 +13,7 @@
 # heat_raster current master
 - git:
     local-name: heat_raster
-    uri: 'https://github.com/swri-robotics/heat_raster.git'
+    uri: 'https://github.com/drchrislewis/heat_raster.git'
     version: 328797aa5d2c21c3078078f96ea478d870ea55c2
 
 
